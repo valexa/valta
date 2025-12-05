@@ -9,6 +9,14 @@
 /* Begin PBXBuildFile section */
 		F51CBB212EE170D800615E23 /* FULL_SPECIFICATION.md in Resources */ = {isa = PBXBuildFile; fileRef = F51CBB202EE170D800615E23 /* FULL_SPECIFICATION.md */; };
 		F51CBB4E2EE17E6E00615E23 /* IMPLEMENTATION_PLAN.md in Resources */ = {isa = PBXBuildFile; fileRef = F51CBB4D2EE17E6E00615E23 /* IMPLEMENTATION_PLAN.md */; };
+		F559C3AA2EE240B4004EB3E0 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = F559C3A92EE240B4004EB3E0 /* FirebaseCrashlytics */; };
+		F559C3AC2EE240B4004EB3E0 /* FirebasePerformance in Frameworks */ = {isa = PBXBuildFile; productRef = F559C3AB2EE240B4004EB3E0 /* FirebasePerformance */; };
+		F559C3AE2EE240B4004EB3E0 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = F559C3AD2EE240B4004EB3E0 /* FirebaseStorage */; };
+		F559C3C02EE2482D004EB3E0 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = F559C3BF2EE2482D004EB3E0 /* FirebaseCrashlytics */; };
+		F559C3C22EE2482D004EB3E0 /* FirebasePerformance in Frameworks */ = {isa = PBXBuildFile; productRef = F559C3C12EE2482D004EB3E0 /* FirebasePerformance */; };
+		F559C3C42EE2482D004EB3E0 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = F559C3C32EE2482D004EB3E0 /* FirebaseStorage */; };
+		F559C3CE2EE24C9B004EB3E0 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = F559C3CD2EE24C9B004EB3E0 /* FirebaseAuth */; };
+		F559C3D02EE24CA2004EB3E0 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = F559C3CF2EE24CA2004EB3E0 /* FirebaseAuth */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,9 +62,34 @@
 		F5338F9E2EE16BA500619943 /* valtaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = valtaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		F559C3C62EE24B7F004EB3E0 /* Exceptions for "valtaManager" folder in "valtaManager" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = F51CBB252EE17C8F00615E23 /* valtaManager */;
+		};
+		F559C3C82EE24B9B004EB3E0 /* Exceptions for "valta" folder in "valta" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = F5338F862EE16BA300619943 /* valta */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		A1SHARED2EE1900000000001 /* Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Shared;
+			sourceTree = "<group>";
+		};
 		F51CBB272EE17C8F00615E23 /* valtaManager */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				F559C3C62EE24B7F004EB3E0 /* Exceptions for "valtaManager" folder in "valtaManager" target */,
+			);
 			path = valtaManager;
 			sourceTree = "<group>";
 		};
@@ -72,6 +105,9 @@
 		};
 		F5338F892EE16BA300619943 /* valta */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				F559C3C82EE24B9B004EB3E0 /* Exceptions for "valta" folder in "valta" target */,
+			);
 			path = valta;
 			sourceTree = "<group>";
 		};
@@ -92,6 +128,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F559C3CE2EE24C9B004EB3E0 /* FirebaseAuth in Frameworks */,
+				F559C3C42EE2482D004EB3E0 /* FirebaseStorage in Frameworks */,
+				F559C3C02EE2482D004EB3E0 /* FirebaseCrashlytics in Frameworks */,
+				F559C3C22EE2482D004EB3E0 /* FirebasePerformance in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -113,6 +153,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F559C3D02EE24CA2004EB3E0 /* FirebaseAuth in Frameworks */,
+				F559C3AE2EE240B4004EB3E0 /* FirebaseStorage in Frameworks */,
+				F559C3AA2EE240B4004EB3E0 /* FirebaseCrashlytics in Frameworks */,
+				F559C3AC2EE240B4004EB3E0 /* FirebasePerformance in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -139,12 +183,14 @@
 				F51CBB1F2EE16FE600615E23 /* README.md */,
 				F51CBB202EE170D800615E23 /* FULL_SPECIFICATION.md */,
 				F51CBB4D2EE17E6E00615E23 /* IMPLEMENTATION_PLAN.md */,
+				A1SHARED2EE1900000000001 /* Shared */,
 				F5338F892EE16BA300619943 /* valta */,
 				F5338F972EE16BA500619943 /* valtaTests */,
 				F5338FA12EE16BA500619943 /* valtaUITests */,
 				F51CBB272EE17C8F00615E23 /* valtaManager */,
 				F51CBB352EE17C9000615E23 /* valtaManagerTests */,
 				F51CBB3F2EE17C9000615E23 /* valtaManagerUITests */,
+				F559C3CC2EE24C9B004EB3E0 /* Frameworks */,
 				F5338F882EE16BA300619943 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -160,6 +206,13 @@
 				F51CBB3C2EE17C9000615E23 /* valtaManagerUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		F559C3CC2EE24C9B004EB3E0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -178,10 +231,15 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				A1SHARED2EE1900000000001 /* Shared */,
 				F51CBB272EE17C8F00615E23 /* valtaManager */,
 			);
 			name = valtaManager;
 			packageProductDependencies = (
+				F559C3BF2EE2482D004EB3E0 /* FirebaseCrashlytics */,
+				F559C3C12EE2482D004EB3E0 /* FirebasePerformance */,
+				F559C3C32EE2482D004EB3E0 /* FirebaseStorage */,
+				F559C3CD2EE24C9B004EB3E0 /* FirebaseAuth */,
 			);
 			productName = valtaManager;
 			productReference = F51CBB262EE17C8F00615E23 /* valtaManager.app */;
@@ -246,10 +304,15 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				A1SHARED2EE1900000000001 /* Shared */,
 				F5338F892EE16BA300619943 /* valta */,
 			);
 			name = valta;
 			packageProductDependencies = (
+				F559C3A92EE240B4004EB3E0 /* FirebaseCrashlytics */,
+				F559C3AB2EE240B4004EB3E0 /* FirebasePerformance */,
+				F559C3AD2EE240B4004EB3E0 /* FirebaseStorage */,
+				F559C3CF2EE24CA2004EB3E0 /* FirebaseAuth */,
 			);
 			productName = valta;
 			productReference = F5338F872EE16BA300619943 /* valta.app */;
@@ -344,6 +407,9 @@
 			);
 			mainGroup = F5338F7E2EE16BA300619943;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				F559C3A62EE240B4004EB3E0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F5338F882EE16BA300619943 /* Products */;
 			projectDirPath = "";
@@ -480,14 +546,26 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = valtaManager/valtaManager.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6P6BQ65AWN;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = valtaManager/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -524,14 +602,26 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = valtaManager/valtaManager.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6P6BQ65AWN;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = valtaManager/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -786,14 +876,26 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = valta/valta.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6P6BQ65AWN;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = valta/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -830,14 +932,26 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = valta/valta.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6P6BQ65AWN;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = valta/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -1038,6 +1152,60 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		F559C3A62EE240B4004EB3E0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.6.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F559C3A92EE240B4004EB3E0 /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F559C3A62EE240B4004EB3E0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
+		};
+		F559C3AB2EE240B4004EB3E0 /* FirebasePerformance */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F559C3A62EE240B4004EB3E0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebasePerformance;
+		};
+		F559C3AD2EE240B4004EB3E0 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F559C3A62EE240B4004EB3E0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+		F559C3BF2EE2482D004EB3E0 /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F559C3A62EE240B4004EB3E0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
+		};
+		F559C3C12EE2482D004EB3E0 /* FirebasePerformance */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F559C3A62EE240B4004EB3E0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebasePerformance;
+		};
+		F559C3C32EE2482D004EB3E0 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F559C3A62EE240B4004EB3E0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+		F559C3CD2EE24C9B004EB3E0 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F559C3A62EE240B4004EB3E0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		F559C3CF2EE24CA2004EB3E0 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F559C3A62EE240B4004EB3E0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = F5338F7F2EE16BA300619943 /* Project object */;
 }

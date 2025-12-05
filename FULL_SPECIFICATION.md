@@ -25,6 +25,8 @@ The manager can trigger a activity completion event for a team member's assigned
 
 The deadlines for each activity are monitored each minute, once a activity has passed the deadline without a manager completion it gets automatically transitioned to status being updated to completed, outcome to overrun and color code to red unless there is a pending completion event from the team member in which case the activity status is updated to pending.
 
+If a activity reaches deadline and it has the "team member pending" status set the status to canceled and outcome to empty
+
 Activity status:
 running
 completed
