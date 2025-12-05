@@ -1,10 +1,10 @@
 //
-//  valtaApp.swift
-//  valta team member app entry point
-//  Synopsis: 3 tabs, activities, team and log
-//  Activities tab shows assigned activities and their status
-//  Team tab displays all running or pending activities assigned to the user's team
-//  Log tab provides a history of completed activities
+//  valtaManagerApp.swift
+//  valtaManager Manager App entry point
+//  Synopsis: two tabs, teams and requests
+//  Teams tab enables creation and management of teams and their members
+//  Requests tab allows viewing and managing requests from team members
+//
 //  Created by vlad on 04/12/2025.
 //
 
@@ -14,7 +14,7 @@ import Firebase
 import FirebaseAuth
 
 @main
-struct valtaApp: App {
+struct valtaManagerApp: App {
 
     init() {
         FirebaseApp.configure()
@@ -27,7 +27,7 @@ struct valtaApp: App {
 #if os(macOS)
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 #endif
-
+    
     @State private var dataManager = DataManager.shared
     @State private var authService = AuthService.shared
     
