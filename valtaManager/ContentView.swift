@@ -21,11 +21,11 @@ struct ContentView: View {
             }
         }
         .environment(appState)
-        .onChange(of: appState.completionRequests.count) { _, newCount in
+        .onChange(of: appState.pendingActivities.count) { _, newCount in
             updateDockBadge(count: newCount)
         }
         .onAppear {
-            updateDockBadge(count: appState.completionRequests.count)
+            updateDockBadge(count: appState.pendingActivities.count)
         }
     }
     
@@ -74,7 +74,7 @@ struct MainTabView: View {
             Tab("Requests", systemImage: "checkmark.rectangle.stack") {
                 RequestsTab()
             }
-            .badge(appState.completionRequests.count)
+            .badge(appState.pendingActivities.count)
             
             TabSection("Team Members") {
                 ForEach(appState.team.members) { member in

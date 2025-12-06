@@ -6,6 +6,28 @@ Live Team Activities is a macOS application suite consisting of two apps:
 - **valtaManager** - For team leaders to manage teams and activities
 - **valta** - For team members to view and interact with their activities
 
+## Architectural Decisions (Updated)
+- Observation over Combine
+  - We standardized on the Observation framework (`@Observable`) for state management.
+  - We removed `ObservableObject`, `@Published`, and Combine subscriptions from the shared data layer.
+  - Views use `@Environment(Type.self)` and `.environment(instance)` for dependency injection instead of `@EnvironmentObject`.
+
+- Nested mutation handling
+  - Observation does not notify on nested mutations by default.
+  - `DataManager` exposes `notifyTeamsChanged()` which performs a top-level write (`teams = teams`) and triggers a callback.
+  - `DataManager` provides `onTeamsChanged: (() -> Void)?` to notify state containers.
+
+- State container invalidation
+  - `AppState` and `TeamMemberAppState` each expose `dataVersion: Int`.
+  - Derived/computed properties depend on `dataVersion` to re-evaluate when changes occur.
+
+- UI animation strategy
+  - Mutating actions are wrapped in `withAnimation(.spring(...))` at call sites.
+  - Lists use `.animation(..., value: items.map(\.id))` to animate insertions/removals/reorders.
+
+- Simplified UI components
+  - `CompletionButton` simplified to a minimal wrapper around `Button` to remove progress state and complexity.
+
 ---
 
 ## Phase 1: UI Foundation ✅ COMPLETED
@@ -19,7 +41,6 @@ Live Team Activities is a macOS application suite consisting of two apps:
   - [x] `TeamMember` struct with avatar support
   - [x] `Activity` struct with all required fields
   - [x] `Team` struct
-  - [x] `CompletionRequest` struct
   - [x] `ActivityLogEntry` struct for history
 - [x] Create mock data for development
 - [x] Implement shared UI components (`SharedComponents.swift`)
@@ -143,8 +164,8 @@ Live Team Activities is a macOS application suite consisting of two apps:
 - [ ] Direct completion by manager
 
 ### 3.4 Team Member Actions
-- [ ] Start activity (acknowledge assignment)
-- [ ] Request completion with outcome
+- [ ] Start activity
+- [ ] Submit completion 
 - [ ] View activity details
 
 ---

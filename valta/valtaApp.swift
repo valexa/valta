@@ -35,7 +35,7 @@ struct valtaApp: App {
         WindowGroup {
             ContentView()
                 .focusEffectDisabled()
-                .environmentObject(dataManager)
+                .environment(dataManager)
                 .environment(authService)
                 .task {
                     do {

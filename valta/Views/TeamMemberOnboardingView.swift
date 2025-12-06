@@ -12,7 +12,7 @@ import SwiftUI
 
 struct TeamMemberOnboardingView: View {
     @Environment(TeamMemberAppState.self) private var appState
-    @EnvironmentObject private var dataManager: DataManager
+    @Environment(DataManager.self) private var dataManager
     @State private var selectedTeam: Team?
     @State private var selectedMember: TeamMember?
     @State private var currentStep: OnboardingStep = .selectTeam
@@ -197,7 +197,7 @@ struct TeamMemberOnboardingView: View {
 // MARK: - Team Selection View
 
 struct TeamSelectionView: View {
-    @EnvironmentObject private var dataManager: DataManager
+    @Environment(DataManager.self) private var dataManager
     @Binding var selectedTeam: Team?
     
     var body: some View {
@@ -332,5 +332,5 @@ struct TeamCard: View {
 #Preview {
     TeamMemberOnboardingView()
         .environment(TeamMemberAppState())
-        .environmentObject(DataManager.shared)
+        .environment(DataManager.shared)
 }

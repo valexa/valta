@@ -15,16 +15,17 @@ struct RequestsTab: View {
     var body: some View {
         // Content
         Group {
-            if appState.completionRequests.isEmpty {
+            if appState.pendingActivities.isEmpty {
                 EmptyRequestsView()
             } else {
                 ScrollView {
                     LazyVStack(spacing: 16) {
-                        ForEach(appState.completionRequests) { request in
-                            RequestCard(request: request)
+                        ForEach(appState.pendingActivities) { activity in
+                            RequestCard(activity: activity)
                         }
                     }
                     .padding()
+                    .animation(.spring(response: 0.35, dampingFraction: 0.9), value: appState.pendingActivities.map(\.id))
                 }
             }
         }
@@ -33,9 +34,13 @@ struct RequestsTab: View {
                 Spacer()
             }
             ToolbarItem {
-                if !appState.completionRequests.isEmpty {
-                    Button("Approve All", role: .confirm) {
-                        approveAll()
+                if !appState.pendingActivities.isEmpty {
+                    CompletionButton(role: .confirm, action: {
+                        withAnimation(.spring(response: 0.35, dampingFraction: 0.9)) {
+                            approveAll()
+                        }
+                    }) {
+                        Text("Approve All")
                     }
                     .buttonStyle(.glassProminent)
                 }
@@ -44,8 +49,8 @@ struct RequestsTab: View {
     }
 
     private func approveAll() {
-        for request in appState.completionRequests {
-            appState.approveCompletion(request)
+        for activity in appState.pendingActivities {
+            appState.approveCompletion(activity)
         }
     }
 }
@@ -54,7 +59,7 @@ struct RequestsTab: View {
 // MARK: - Request Card
 
 struct RequestCard: View {
-    let request: CompletionRequest
+    let activity: Activity
     @Environment(AppState.self) private var appState
     @State private var isHovered = false
 
@@ -62,12 +67,12 @@ struct RequestCard: View {
         VStack(spacing: 0) {
             HStack(alignment: .top, spacing: 16) {
                 // Requester avatar
-                MemberAvatar(member: request.activity.assignedMember, size: 48)
+                MemberAvatar(member: activity.assignedMember, size: 48)
 
                 VStack(alignment: .leading, spacing: 8) {
                     // Header
                     HStack {
-                        Text(request.activity.assignedMember.name)
+                        Text(activity.assignedMember.name)
                             .font(.system(size: 15, weight: .semibold))
 
                         Text("requested completion")
@@ -75,22 +80,25 @@ struct RequestCard: View {
                             .foregroundColor(.secondary)
 
                         Spacer()
-
-                        Text(request.requestedAt.formatted(.relative(presentation: .named)))
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+                        
+                        // Use completedAt or a default date
+                        if let completedAt = activity.completedAt {
+                            Text(completedAt.formatted(.relative(presentation: .named)))
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
                     }
 
                     // Activity details
                     VStack(alignment: .leading, spacing: 6) {
                         HStack(spacing: 8) {
-                            PriorityBadge(priority: request.activity.priority)
+                            PriorityBadge(priority: activity.priority)
 
-                            Text(request.activity.name)
+                            Text(activity.name)
                                 .font(.system(size: 14, weight: .medium))
                         }
 
-                        Text(request.activity.description)
+                        Text(activity.description)
                             .font(.system(size: 13))
                             .foregroundColor(.secondary)
                             .lineLimit(2)
@@ -100,30 +108,45 @@ struct RequestCard: View {
                     .background(Color(NSColor.windowBackgroundColor))
                     .cornerRadius(8)
 
-                    // Requested outcome
-                    HStack(spacing: 8) {
-                        Text("Requested outcome:")
-                            .font(.system(size: 13))
+                    // Requested outcome (if nil, user hasn't selected one, maybe show pending?)
+                    // The previous flow set it to nil initially. The card should reflect what's available or allow setting it.
+                    // Assuming for now we just show what is there.
+                    if let outcome = activity.outcome {
+                        HStack(spacing: 8) {
+                            Text("Activity outcome:")
+                                .font(.system(size: 13))
+                                .foregroundColor(.secondary)
+
+                            HStack(spacing: 4) {
+                                Image(symbol: outcome.icon)
+                                Text(outcome.rawValue)
+                            }
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundColor(outcome.color)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(outcome.color.opacity(0.15))
+                            .cornerRadius(6)
+
+                            Spacer()
+
+                            // Deadline info
+                            HStack(spacing: 4) {
+                                Image(symbol: AppSymbols.calendarBadgeClock)
+                                    .font(.system(size: 12))
+                                Text("Deadline: \(activity.deadline.formatted(date: .abbreviated, time: .shortened))")
+                                    .font(.system(size: 12))
+                            }
                             .foregroundColor(.secondary)
-
-                        HStack(spacing: 4) {
-                            Image(symbol: request.requestedOutcome.icon)
-                            Text(request.requestedOutcome.rawValue)
                         }
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundColor(request.requestedOutcome.color)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(request.requestedOutcome.color.opacity(0.15))
-                        .cornerRadius(6)
-
-                        Spacer()
-
-                        // Deadline info
-                        HStack(spacing: 4) {
+                    } else {
+                        // Manager needs to set outcome, or it's implicitly successful?
+                        // For now, let's show a "Pending Review" or similar if nil, but standard flow had JIT default.
+                        // Let's hide the outcome row if nil, or show minimal info.
+                         HStack(spacing: 4) {
                             Image(symbol: AppSymbols.calendarBadgeClock)
                                 .font(.system(size: 12))
-                            Text("Deadline: \(request.activity.deadline.formatted(date: .abbreviated, time: .shortened))")
+                            Text("Deadline: \(activity.deadline.formatted(date: .abbreviated, time: .shortened))")
                                 .font(.system(size: 12))
                         }
                         .foregroundColor(.secondary)
@@ -140,14 +163,22 @@ struct RequestCard: View {
             HStack(spacing: 12) {
                 Spacer()
 
-                Button("Reject", role: .destructive) {
-                    appState.rejectCompletion(request)
+                CompletionButton(role: .destructive, action: {
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.9)) {
+                        appState.rejectCompletion(activity)
+                    }
+                }) {
+                    Text("Reject")
                 }
                 .buttonStyle(.glass)
                 .tint(.orange)
 
-                Button("Approve", role: .confirm) {
-                    appState.approveCompletion(request)
+                CompletionButton(role: .confirm, action: {
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.9)) {
+                        appState.approveCompletion(activity)
+                    }
+                }) {
+                    Text("Approve")
                 }
                 .buttonStyle(.glass)
                 .tint(.blue)
@@ -204,4 +235,3 @@ struct EmptyRequestsView: View {
         .environment(AppState())
         .frame(width: 800, height: 600)
 }
-

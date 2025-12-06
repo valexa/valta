@@ -35,7 +35,7 @@ struct valtaManagerApp: App {
         WindowGroup {
             ContentView()
                 .focusEffectDisabled()
-                .environmentObject(dataManager)
+                .environment(dataManager)
                 .environment(authService)
                 .task {
                     do {
@@ -50,3 +50,4 @@ struct valtaManagerApp: App {
         .windowToolbarStyle(.unified)
     }
 }
+

@@ -15,7 +15,7 @@ The workspace for team members to manage their assigned activities.
 **Features:**
 - **My Activities** - View and manage personally assigned activities
 - **Start Activities** - Acknowledge and begin assigned work
-- **Request Completion** - Submit completion requests with outcome assessment
+- **Request Completion** - Submit completion requests with automatic outcome assessment
 - **Team Visibility** - See what everyone on the team is working on
 - **Activity Log** - Browse history of all activity events
 - **Dock Badge** - App icon shows count of pending activities awaiting start
@@ -70,8 +70,8 @@ The control center for team leaders to manage teams and activities.
 | Outcome | Meaning | Color |
 |---------|---------|-------|
 | Ahead | Completed ≥30 min before deadline | 🟢 Green |
-| Just In Time | Completed within ±5 min of deadline | 🟡 Yellow |
-| Overrun | Completed after deadline | 🔴 Red |
+| Just In Time | Completed within ±5 min of deadline (before or after) | 🟡 Yellow |
+| Overrun | Completed ±5 min after deadline | 🔴 Red |
 
 > **Note:** P0 (Critical) activities with "Just In Time" outcome display red instead of yellow.
 
@@ -138,6 +138,31 @@ valta/
 │       └── AddMemberSheet.swift
 └── ...
 ```
+## Architecture & State Management (Updated)
+
+### Architecture
+
+The architecture is based on MVVM with clearly separated views, view models, and model layers.
+
+- **Models**: Define core business data structures including `Activity`, `TeamMember`, `CompletionRequest`.
+- **ViewModels**: Handle state and business logic, exposing observable properties to views.
+- **Views**: SwiftUI views composed with reusable components and bound to view models.
+- **Services**: Networking, data persistence, and synchronization layers abstracted behind protocols.
+
+### State Management
+
+- **ObservableObject**: Used for view models to publish changes.
+- **@Published**: Properties that need to update views.
+- **EnvironmentObject**: For shared app state across views.
+- **Combine**: Reactive framework for asynchronous events and binding.
+- **State restoration**: Persistence of UI state for continuity.
+- **Data flow**: Unidirectional where possible, with actions triggering view model updates, which update models, then views.
+
+### Data Flow Example
+
+- User taps "Start Activity" → View notifies ViewModel → ViewModel updates Activity status → Published changes reflect in UI → Persistence saves updated status.
+
+---
 
 ## Requirements
 
