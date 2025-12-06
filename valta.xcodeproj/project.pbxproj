@@ -17,6 +17,8 @@
 		F559C3C42EE2482D004EB3E0 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = F559C3C32EE2482D004EB3E0 /* FirebaseStorage */; };
 		F559C3CE2EE24C9B004EB3E0 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = F559C3CD2EE24C9B004EB3E0 /* FirebaseAuth */; };
 		F559C3D02EE24CA2004EB3E0 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = F559C3CF2EE24CA2004EB3E0 /* FirebaseAuth */; };
+		F5A10C172EE43C68006A8DFD /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = F5A10C162EE43C68006A8DFD /* AppIcon.icon */; };
+		F5A10C192EE441C3006A8DFD /* AppIconManager.icon in Resources */ = {isa = PBXBuildFile; fileRef = F5A10C182EE441C3006A8DFD /* AppIconManager.icon */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +62,8 @@
 		F5338F872EE16BA300619943 /* valta.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = valta.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F5338F942EE16BA500619943 /* valtaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = valtaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F5338F9E2EE16BA500619943 /* valtaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = valtaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F5A10C162EE43C68006A8DFD /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
+		F5A10C182EE441C3006A8DFD /* AppIconManager.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIconManager.icon; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -180,6 +184,8 @@
 		F5338F7E2EE16BA300619943 = {
 			isa = PBXGroup;
 			children = (
+				F5A10C162EE43C68006A8DFD /* AppIcon.icon */,
+				F5A10C182EE441C3006A8DFD /* AppIconManager.icon */,
 				F51CBB1F2EE16FE600615E23 /* README.md */,
 				F51CBB202EE170D800615E23 /* FULL_SPECIFICATION.md */,
 				F51CBB4D2EE17E6E00615E23 /* IMPLEMENTATION_PLAN.md */,
@@ -430,6 +436,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F5A10C192EE441C3006A8DFD /* AppIconManager.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -453,6 +460,7 @@
 			files = (
 				F51CBB4E2EE17E6E00615E23 /* IMPLEMENTATION_PLAN.md in Resources */,
 				F51CBB212EE170D800615E23 /* FULL_SPECIFICATION.md in Resources */,
+				F5A10C172EE43C68006A8DFD /* AppIcon.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -544,7 +552,7 @@
 		F51CBB452EE17C9000615E23 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconManager;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = valtaManager/valtaManager.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -600,7 +608,7 @@
 		F51CBB462EE17C9000615E23 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconManager;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = valtaManager/valtaManager.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -876,6 +884,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = valta/valta.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -932,6 +941,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = valta/valta.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
