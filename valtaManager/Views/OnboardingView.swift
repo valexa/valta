@@ -57,7 +57,7 @@ struct OnboardingView: View {
                 }
             } else if let error = dataManager.errorMessage {
                 VStack(spacing: 16) {
-                    Image(systemName: "exclamationmark.triangle.fill")
+                    Image(symbol: AppSymbols.exclamationTriangle)
                         .font(.system(size: 44))
                         .foregroundColor(AppColors.destructive)
                     Text("Error loading teams")
@@ -114,31 +114,8 @@ struct OnboardingView: View {
                     }
                     
                     // Continue Button
-                    Button(action: finishOnboarding) {
-                        HStack(spacing: 8) {
-                            Text("Start Managing")
-                                .font(.system(size: 16, weight: .semibold))
-                            
-                            Image(symbol: AppSymbols.arrowRight)
-                                .font(.system(size: 14, weight: .semibold))
-                        }
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 48)
-                        .padding(.vertical, 14)
-                        .background(
-                            LinearGradient(
-                                colors: [
-                                    AppColors.Manager.primary,
-                                    AppColors.Manager.secondary
-                                ],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .cornerRadius(12)
-                        .shadow(color: AppColors.Manager.secondary.opacity(0.4), radius: 15, y: 5)
-                    }
-                    .buttonStyle(.plain)
+                    Button("Start Managing", systemImage: AppSymbols.arrowRight, action: finishOnboarding)
+                        .onboardingButton()
                     .disabled(selectedTeam == nil)
                     .opacity(selectedTeam == nil ? 0.5 : 1.0)
                     .padding(.bottom, 40)
@@ -220,10 +197,9 @@ struct TeamSelectionCard: View {
                 }
             }
             .padding(16)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(isSelected ? Color.white.opacity(0.15) : Color.white.opacity(0.05))
-            )
+
+            .background(.regularMaterial)
+            .cornerRadius(16)
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
                     .stroke(

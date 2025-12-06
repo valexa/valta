@@ -105,7 +105,7 @@ struct ActivityCard: View {
                 Divider()
                 
                 HStack(spacing: 8) {
-                    Image(systemName: outcome.icon)
+                    Image(symbol: outcome.icon)
                         .font(.system(size: 12))
                     
                     Text("Completed \(outcome.rawValue)")
@@ -219,7 +219,7 @@ struct OutcomeOption: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 12) {
-                Image(systemName: outcome.icon)
+                Image(symbol: outcome.icon)
                     .font(.system(size: 20))
                     .foregroundColor(outcome.color)
                     .frame(width: 32)

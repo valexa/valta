@@ -39,8 +39,7 @@ valta/
 │       ├── TeamsTab.swift
 │       ├── ActivityCard.swift
 │       ├── RequestsTab.swift
-│       ├── NewActivitySheet.swift
-│       └── AddMemberSheet.swift
+│       └── NewActivitySheet.swift
 └── ...
 ```
 
@@ -380,10 +379,6 @@ Reusable UI components used throughout both apps:
 - Priority selection with visual cards
 - Deadline picker with quick-set buttons (1h, 4h, 1d, 3d, 1w)
 - Notification preview
-
-#### AddMemberSheet.swift
-- Name and email fields
-- Live avatar preview using `MemberAvatar(initials:)`
 
 ---
 

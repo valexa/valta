@@ -56,7 +56,6 @@ Live Team Activities is a macOS application suite consisting of two apps:
   - [x] Form fields (name, description, assignee, priority, deadline)
   - [x] Quick deadline buttons
   - [x] Notification preview
-- [x] Add Member Sheet
 - [x] Complete Activity Sheet with outcome selection
 
 ### 1.3 Team Member App UI ✅
@@ -272,8 +271,7 @@ valta/
 │       ├── TeamsTab.swift
 │       ├── ActivityCard.swift
 │       ├── RequestsTab.swift
-│       ├── NewActivitySheet.swift
-│       └── AddMemberSheet.swift
+│       └── NewActivitySheet.swift
 ├── FULL_SPECIFICATION.md
 ├── IMPLEMENTATION_PLAN.md           # This file
 └── PROJECT_COMP.md                  # Implementation summary

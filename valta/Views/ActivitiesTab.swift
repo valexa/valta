@@ -22,24 +22,36 @@ enum MyActivitiesFilter: Equatable {
 
 struct ActivitiesTab: View {
     @Environment(TeamMemberAppState.self) private var appState
+    @State private var searchText: String = ""
     @State private var statsFilter: MyActivitiesFilter? = nil
     
     var filteredActivities: [Activity] {
-        guard let filter = statsFilter else {
-            return appState.myActivities
+        let activities: [Activity]
+        
+        // Determine base activities based on filter
+        if let filter = statsFilter {
+            switch filter {
+            case .all:
+                activities = appState.myActivities
+            case .pending:
+                activities = appState.myPendingActivities
+            case .running:
+                activities = appState.myRunningActivities
+            case .awaiting:
+                activities = appState.myAwaitingApproval
+            case .outcome(let outcome):
+                activities = appState.myCompletedActivities.filter { $0.outcome == outcome }
+            }
+        } else {
+            activities = appState.myActivities
         }
         
-        switch filter {
-        case .all:
-            return appState.myActivities
-        case .pending:
-            return appState.myPendingActivities
-        case .running:
-            return appState.myRunningActivities
-        case .awaiting:
-            return appState.myAwaitingApproval
-        case .outcome(let outcome):
-            return appState.myCompletedActivities.filter { $0.outcome == outcome }
+        if searchText.isEmpty {
+            return activities
+        }
+        
+        return activities.filter { activity in
+            activity.name.localizedCaseInsensitiveContains(searchText)
         }
     }
     
@@ -66,12 +78,12 @@ struct ActivitiesTab: View {
             // Content
             if filteredActivities.isEmpty {
                 EmptyStateView(
-                    icon: "checkmark.circle",
+                    icon: AppSymbols.checkmarkCircle,
                     title: "No Activities",
                     message: emptyStateMessage,
                     iconColor: AppColors.success
                 )
-            } else if statsFilter != nil {
+            } else if statsFilter != nil || !searchText.isEmpty {
                 // Filtered view - show flat list
                 ScrollView {
                     LazyVStack(spacing: 6) {
@@ -126,6 +138,7 @@ struct ActivitiesTab: View {
             }
         }
         .background(Color(NSColor.controlBackgroundColor))
+        .searchable(text: $searchText, placement: .toolbar, prompt: "Search activities...")
     }
     
     private func styleForActivity(_ activity: Activity) -> ActivitySectionStyle {
@@ -168,7 +181,7 @@ struct ActivitiesHeader: View {
                 // Stats buttons (filterable)
                 HStack(spacing: 12) {
                     StatButton(
-                        icon: "tray.full.fill",
+                        icon: AppSymbols.trayFullFill,
                         value: appState.myActivities.count,
                         label: "All",
                         color: AppColors.statTotal,
@@ -422,7 +435,7 @@ struct OutcomeSelectionRow: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 12) {
-                Image(systemName: outcome.icon)
+                Image(symbol: outcome.icon)
                     .font(.system(size: 20))
                     .foregroundColor(outcome.color)
                     .frame(width: 32)

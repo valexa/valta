@@ -97,8 +97,7 @@ enum AppColors {
         static let iconGradientEnd = Color(red: 0.6, green: 0.4, blue: 1.0)
         
         /// Add members step
-        static let addMembersStart = Color(red: 0.5, green: 0.8, blue: 0.5)
-        static let addMembersEnd = Color(red: 0.3, green: 0.7, blue: 0.6)
+
         
         /// Team name step
         static let teamNameStart = Color(red: 0.4, green: 0.7, blue: 1.0)

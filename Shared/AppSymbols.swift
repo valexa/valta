@@ -22,7 +22,8 @@ enum AppSymbols {
     static let teamMemberPending = "clock.badge.questionmark"
     
     // MARK: - Outcome Icons
-    
+
+    static let outcome = "timer"
     static let outcomeAhead = "hare.fill"
     static let outcomeJIT = "clock.fill"
     static let outcomeOverrun = "tortoise.fill"
@@ -39,12 +40,14 @@ enum AppSymbols {
     static let xmarkCircleFill = "xmark.circle.fill"
     static let plus = "plus"
     static let plusCircleFill = "plus.circle.fill"
+    static let paperplaneCircleFill = "paperplane.circle.fill"
     
     // MARK: - Navigation Icons
     
     static let arrowRight = "arrow.right"
     static let arrowLeft = "arrow.left"
     static let chevronDown = "chevron.down"
+    static let chevronRight = "chevron.right"
     
     // MARK: - Time & Calendar Icons
     
@@ -66,17 +69,23 @@ enum AppSymbols {
     static let person3 = "person.3"
     static let personBadgePlus = "person.badge.plus"
     static let personCropCircleBadgeCheckmark = "person.crop.circle.badge.checkmark"
+    static let person2Fill = "person.2.fill"
     
     // MARK: - UI Icons
     
     static let magnifyingGlass = "magnifyingglass"
     static let ellipsisCircle = "ellipsis.circle"
     static let filter = "line.3.horizontal.decrease.circle"
-    static let flag = "flag.fill"
+    static let flagFill = "flag.fill"
+    static let flagSlash = "flag.slash"
+    static let flag = "flag"
+    static let flagBadge = "flag.badge.ellipsis"
     static let flagCheckered = "flag.checkered"
     static let tray = "tray"
     static let rectangleGroup = "rectangle.3.group.fill"
     static let listBullet = "list.bullet.rectangle"
+    static let listBulletClipboard = "list.bullet.clipboard"
+    static let trayFullFill = "tray.full.fill"
 }
 
 // MARK: - Image Extension

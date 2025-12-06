@@ -27,7 +27,7 @@ struct NewActivitySheet: View {
         VStack(spacing: 0) {
             // Header
             HStack {
-                Button("Cancel") {
+                Button("Cancel", role: .destructive) {
                     dismiss()
                 }
                 .buttonStyle(.plain)
@@ -40,121 +40,86 @@ struct NewActivitySheet: View {
                 
                 Spacer()
                 
-                Button("Create") {
+                Button("Create", role: .confirm) {
                     createActivity()
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.glass)
+                .tint(.green)
                 .disabled(!isValid)
             }
             .padding()
-            .background(Color(NSColor.windowBackgroundColor))
-            
-            Divider()
+
             
             // Form
             ScrollView {
-                VStack(spacing: 24) {
-                    // Activity name
-                    FormField(label: "Activity Name", required: true) {
-                        TextField("Enter activity name", text: $name)
-                            .textFieldStyle(.roundedBorder)
-                    }
-                    
-                    // Description
-                    FormField(label: "Description", required: true) {
-                        TextEditor(text: $description)
-                            .font(.body)
-                            .frame(minHeight: 80)
-                            .padding(4)
-                            .background(Color(NSColor.textBackgroundColor))
-                            .cornerRadius(6)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 6)
-                                    .stroke(Color(NSColor.separatorColor), lineWidth: 1)
-                            )
-                    }
-                    
-                    // Assigned member
-                    FormField(label: "Assign To", required: true) {
-                        Menu {
-                            ForEach(appState.team.members) { member in
-                                Button(action: { selectedMember = member }) {
-                                    HStack {
-                                        Text(member.name)
-                                        if selectedMember?.id == member.id {
-                                            Image(symbol: AppSymbols.checkmark)
-                                        }
-                                    }
-                                }
-                            }
-                        } label: {
-                            HStack {
-                                if let member = selectedMember {
-                                    HStack(spacing: 8) {
-                                        MemberAvatar(member: member, size: 24)
-                                        
-                                        Text(member.name)
-                                            .foregroundColor(.primary)
-                                    }
-                                } else {
-                                    Text("Select team member")
-                                        .foregroundColor(.secondary)
-                                }
-                                
-                                Spacer()
-                                
-                                Image(symbol: AppSymbols.chevronDown)
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                            .padding(10)
-                            .background(Color(NSColor.textBackgroundColor))
-                            .cornerRadius(6)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 6)
-                                    .stroke(Color(NSColor.separatorColor), lineWidth: 1)
-                            )
-                        }
-                        .menuStyle(.borderlessButton)
-                    }
-                    
-                    // Priority
-                    FormField(label: "Priority", required: true) {
-                        HStack(spacing: 8) {
-                            ForEach(ActivityPriority.allCases, id: \.self) { p in
-                                PriorityOption(
-                                    priority: p,
-                                    isSelected: priority == p,
-                                    action: { priority = p }
-                                )
-                            }
-                        }
-                    }
-                    
-                    // Deadline
-                    FormField(label: "Deadline", required: true) {
+                VStack(alignment: .leading, spacing: 16) {
+
+                    // Deadline section
+                    HStack {
                         DatePicker(
                             "",
                             selection: $deadline,
                             in: Date()...,
                             displayedComponents: [.date, .hourAndMinute]
                         )
-                        .datePickerStyle(.compact)
+                        .datePickerStyle(.field)
                         .labelsHidden()
+
+                        // Quick deadline buttons
+                        HStack(spacing: 8) {
+                            QuickDeadlineButton(label: "1h", action: { deadline = Date().addingTimeInterval(3600) })
+                            QuickDeadlineButton(label: "4h", action: { deadline = Date().addingTimeInterval(3600 * 4) })
+                            QuickDeadlineButton(label: "1d", action: { deadline = Date().addingTimeInterval(86400) })
+                            QuickDeadlineButton(label: "3d", action: { deadline = Date().addingTimeInterval(86400 * 3) })
+                            QuickDeadlineButton(label: "1w", action: { deadline = Date().addingTimeInterval(86400 * 7) })
+                        }
                     }
+
+
+                    // Assigned member
+                    memberSelectionView
+
+                    // Activity name
+                    TextField("Activity name", text: $name)
+                        .focusEffectDisabled()
+                    // Description
+                    ZStack(alignment: .topLeading) {
+                        if description.isEmpty {
+                            Text("Activity description")
+                                .foregroundColor(.secondary.opacity(0.5))
+                                .padding(.top, 8)
+                                .padding(.leading, 8)
+                        }
+                        
+                        TextEditor(text: $description)
+                            .font(.body)
+                            .frame(minHeight: 80)
+                            .padding(4)
+                            .background(Color.clear)
+                            .scrollContentBackground(.hidden) 
+                    }
+                    .background(Color(NSColor.textBackgroundColor))
+                    .cornerRadius(6)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(Color(NSColor.separatorColor), lineWidth: 1)
+                    )
                     
-                    // Quick deadline buttons
+                    // Priority
                     HStack(spacing: 8) {
-                        QuickDeadlineButton(label: "1h", action: { deadline = Date().addingTimeInterval(3600) })
-                        QuickDeadlineButton(label: "4h", action: { deadline = Date().addingTimeInterval(3600 * 4) })
-                        QuickDeadlineButton(label: "1d", action: { deadline = Date().addingTimeInterval(86400) })
-                        QuickDeadlineButton(label: "3d", action: { deadline = Date().addingTimeInterval(86400 * 3) })
-                        QuickDeadlineButton(label: "1w", action: { deadline = Date().addingTimeInterval(86400 * 7) })
+                        ForEach(ActivityPriority.allCases, id: \.self) { p in
+                            PriorityOption(
+                                priority: p,
+                                isSelected: priority == p,
+                                action: { priority = p }
+                            )
+                        }
                     }
+                    .frame(height: 40)
                 }
-                .padding(24)
             }
-            
+            .padding(.all)
+
             Divider()
             
             // Preview
@@ -174,7 +139,7 @@ struct NewActivitySheet: View {
                 .background(Color(NSColor.controlBackgroundColor))
             }
         }
-        .frame(width: 520, height: 620)
+        .frame(width: 520, height: 520)
     }
     
     private func createActivity() {
@@ -192,31 +157,36 @@ struct NewActivitySheet: View {
         appState.addActivity(activity)
         dismiss()
     }
-}
-
-// MARK: - Form Field
-
-struct FormField<Content: View>: View {
-    let label: String
-    var required: Bool = false
-    @ViewBuilder let content: Content
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 4) {
-                Text(label)
-                    .font(.system(size: 13, weight: .medium))
-                
-                if required {
-                    Text("*")
-                        .foregroundColor(AppColors.destructive)
+    private var memberSelectionView: some View {
+        Menu {
+            ForEach(appState.team.members) { member in
+                Button(action: { selectedMember = member }) {
+                    HStack {
+                        Text(member.name)
+                        if selectedMember?.id == member.id {
+                            Image(symbol: AppSymbols.checkmark)
+                        }
+                    }
                 }
             }
-            
-            content
+        } label: {
+            HStack {
+                if let member = selectedMember {
+                    HStack(spacing: 8) {
+                        MemberAvatar(member: member, size: 44)
+                        Text(member.name)
+                            .foregroundColor(.primary)
+                    }
+                } else {
+                    Text("Team member")
+                        .foregroundColor(.secondary)
+                }
+            }
         }
     }
 }
+
+
 
 // MARK: - Priority Option
 
@@ -236,7 +206,7 @@ struct PriorityOption: View {
             }
             .foregroundColor(isSelected ? .white : priority.color)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 10)
+            .padding(.vertical, 2)
             .background(isSelected ? priority.color : priority.color.opacity(0.1))
             .cornerRadius(8)
             .overlay(

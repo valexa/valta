@@ -68,7 +68,16 @@ public enum ActivityPriority: Int, Codable, Equatable, Hashable, CaseIterable, C
         case .p3: return "P3"
         }
     }
-    
+
+    var icon: String {
+        switch self {
+        case .p0: return AppSymbols.flagFill
+        case .p1: return AppSymbols.flag
+        case .p2: return AppSymbols.flag
+        case .p3: return AppSymbols.flagSlash
+        }
+    }
+
     var color: Color {
         switch self {
         case .p0: return AppColors.priorityP0

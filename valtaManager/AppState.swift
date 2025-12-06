@@ -47,9 +47,7 @@ final class AppState {
     
     // MARK: - UI State
     
-    var selectedTab: AppTab = .teams
     var showingNewActivitySheet: Bool = false
-    var showingAddMemberSheet: Bool = false
     var selectedActivity: Activity? = nil
     
     // MARK: - Initialization
@@ -175,11 +173,4 @@ final class AppState {
             await dataManager.syncActivities()
         }
     }
-}
-
-// MARK: - App Tab
-
-enum AppTab: Hashable {
-    case teams
-    case requests
 }

@@ -11,40 +11,10 @@ import SwiftUI
 
 struct RequestsTab: View {
     @Environment(AppState.self) private var appState
-    
+
     var body: some View {
-        VStack(spacing: 0) {
-            // Header
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Completion Requests")
-                        .font(.system(size: 24, weight: .bold, design: .rounded))
-                    
-                    Text("\(appState.completionRequests.count) pending approval\(appState.completionRequests.count == 1 ? "" : "s")")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-                
-                Spacer()
-                
-                if !appState.completionRequests.isEmpty {
-                    Button(action: approveAll) {
-                        HStack(spacing: 6) {
-                            Image(symbol: AppSymbols.checkmarkCircleFill)
-                            Text("Approve All")
-                        }
-                        .font(.system(size: 13, weight: .semibold))
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .tint(AppColors.success)
-                }
-            }
-            .padding()
-            .background(Color(NSColor.windowBackgroundColor))
-            
-            Divider()
-            
-            // Content
+        // Content
+        Group {
             if appState.completionRequests.isEmpty {
                 EmptyRequestsView()
             } else {
@@ -58,9 +28,21 @@ struct RequestsTab: View {
                 }
             }
         }
-        .background(Color(NSColor.controlBackgroundColor))
+        .toolbar {
+            ToolbarItem {
+                Spacer()
+            }
+            ToolbarItem {
+                if !appState.completionRequests.isEmpty {
+                    Button("Approve All", role: .confirm) {
+                        approveAll()
+                    }
+                    .buttonStyle(.glassProminent)
+                }
+            }
+        }
     }
-    
+
     private func approveAll() {
         for request in appState.completionRequests {
             appState.approveCompletion(request)
@@ -68,45 +50,46 @@ struct RequestsTab: View {
     }
 }
 
+
 // MARK: - Request Card
 
 struct RequestCard: View {
     let request: CompletionRequest
     @Environment(AppState.self) private var appState
     @State private var isHovered = false
-    
+
     var body: some View {
         VStack(spacing: 0) {
             HStack(alignment: .top, spacing: 16) {
                 // Requester avatar
                 MemberAvatar(member: request.activity.assignedMember, size: 48)
-                
+
                 VStack(alignment: .leading, spacing: 8) {
                     // Header
                     HStack {
                         Text(request.activity.assignedMember.name)
                             .font(.system(size: 15, weight: .semibold))
-                        
+
                         Text("requested completion")
                             .font(.system(size: 15))
                             .foregroundColor(.secondary)
-                        
+
                         Spacer()
-                        
+
                         Text(request.requestedAt.formatted(.relative(presentation: .named)))
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
-                    
+
                     // Activity details
                     VStack(alignment: .leading, spacing: 6) {
                         HStack(spacing: 8) {
                             PriorityBadge(priority: request.activity.priority)
-                            
+
                             Text(request.activity.name)
                                 .font(.system(size: 14, weight: .medium))
                         }
-                        
+
                         Text(request.activity.description)
                             .font(.system(size: 13))
                             .foregroundColor(.secondary)
@@ -116,15 +99,15 @@ struct RequestCard: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(Color(NSColor.windowBackgroundColor))
                     .cornerRadius(8)
-                    
+
                     // Requested outcome
                     HStack(spacing: 8) {
                         Text("Requested outcome:")
                             .font(.system(size: 13))
                             .foregroundColor(.secondary)
-                        
+
                         HStack(spacing: 4) {
-                            Image(systemName: request.requestedOutcome.icon)
+                            Image(symbol: request.requestedOutcome.icon)
                             Text(request.requestedOutcome.rawValue)
                         }
                         .font(.system(size: 13, weight: .semibold))
@@ -133,9 +116,9 @@ struct RequestCard: View {
                         .padding(.vertical, 4)
                         .background(request.requestedOutcome.color.opacity(0.15))
                         .cornerRadius(6)
-                        
+
                         Spacer()
-                        
+
                         // Deadline info
                         HStack(spacing: 4) {
                             Image(symbol: AppSymbols.calendarBadgeClock)
@@ -146,44 +129,28 @@ struct RequestCard: View {
                         .foregroundColor(.secondary)
                     }
                 }
-                
+
                 Spacer()
             }
             .padding(20)
-            
+
             Divider()
-            
+
             // Actions
             HStack(spacing: 12) {
                 Spacer()
-                
-                Button(action: { appState.rejectCompletion(request) }) {
-                    HStack(spacing: 6) {
-                        Image(symbol: AppSymbols.xmark)
-                        Text("Reject")
-                    }
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundColor(AppColors.destructive)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(AppColors.destructive.opacity(0.1))
-                    .cornerRadius(8)
+
+                Button("Reject", role: .destructive) {
+                    appState.rejectCompletion(request)
                 }
-                .buttonStyle(.plain)
-                
-                Button(action: { appState.approveCompletion(request) }) {
-                    HStack(spacing: 6) {
-                        Image(symbol: AppSymbols.checkmark)
-                        Text("Approve")
-                    }
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(AppColors.success.gradient)
-                    .cornerRadius(8)
+                .buttonStyle(.glass)
+                .tint(.orange)
+
+                Button("Approve", role: .confirm) {
+                    appState.approveCompletion(request)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.glass)
+                .tint(.blue)
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 14)
@@ -213,15 +180,15 @@ struct EmptyRequestsView: View {
                 Circle()
                     .fill(AppColors.success.opacity(0.1))
                     .frame(width: 100, height: 100)
-                
+
                 Image(symbol: AppSymbols.checkmarkSeal)
                     .font(.system(size: 48))
                     .foregroundStyle(AppGradients.success)
             }
-            
+
             Text("All Caught Up!")
                 .font(.system(size: 22, weight: .bold, design: .rounded))
-            
+
             Text("No pending completion requests from your team")
                 .font(.subheadline)
                 .foregroundColor(.secondary)

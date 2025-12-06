@@ -13,29 +13,30 @@ import SwiftUI
 // MARK: - Font Sizes
 
 /// Centralized font size definitions
+/// Optimized scale: 10, 14, 18, 22, 26, 32, 40, 48 (min 4pt steps)
 enum AppFontSize {
     // MARK: - Icon Sizes
     
     /// Extra large icons (onboarding, empty states) - 48pt
     static let iconXL: CGFloat = 48
-    /// Large icons (onboarding headers) - 44pt
-    static let iconLarge: CGFloat = 44
+    /// Large icons (onboarding headers) - 40pt
+    static let iconLarge: CGFloat = 40
     /// Medium large icons (app icons) - 40pt
     static let iconMedium: CGFloat = 40
-    /// Standard icons (section icons) - 28pt
-    static let iconStandard: CGFloat = 28
-    /// Notification/alert icons - 24pt
-    static let iconNotification: CGFloat = 24
-    /// Action button icons - 20pt
-    static let iconAction: CGFloat = 20
+    /// Standard icons (section icons) - 26pt
+    static let iconStandard: CGFloat = 26
+    /// Notification/alert icons - 22pt
+    static let iconNotification: CGFloat = 22
+    /// Action button icons - 18pt
+    static let iconAction: CGFloat = 18
     /// Inline icons - 18pt
     static let iconInline: CGFloat = 18
     /// Small icons - 14pt
     static let iconSmall: CGFloat = 14
-    /// Info row icons - 11pt
-    static let iconInfo: CGFloat = 11
-    /// Badge icons (compact) - 9pt
-    static let iconBadgeCompact: CGFloat = 9
+    /// Info row icons - 10pt
+    static let iconInfo: CGFloat = 10
+    /// Badge icons (compact) - 10pt
+    static let iconBadgeCompact: CGFloat = 10
     /// Badge icons - 10pt
     static let iconBadge: CGFloat = 10
     
@@ -43,33 +44,33 @@ enum AppFontSize {
     
     /// Extra large headers (onboarding) - 32pt
     static let headerXL: CGFloat = 32
-    /// Large headers (onboarding) - 28pt
-    static let headerLarge: CGFloat = 28
-    /// Page titles - 24pt
-    static let headerPage: CGFloat = 24
+    /// Large headers (onboarding) - 26pt
+    static let headerLarge: CGFloat = 26
+    /// Page titles - 22pt
+    static let headerPage: CGFloat = 22
     /// Section headers - 22pt
     static let headerSection: CGFloat = 22
-    /// Large stat values - 24pt
-    static let statLarge: CGFloat = 24
-    /// Medium stat values - 20pt
-    static let statMedium: CGFloat = 20
+    /// Large stat values - 22pt
+    static let statLarge: CGFloat = 22
+    /// Medium stat values - 18pt
+    static let statMedium: CGFloat = 18
     
     // MARK: - Body Text Sizes
     
-    /// Subtitle text - 17pt
-    static let subtitle: CGFloat = 17
-    /// Large body/section titles - 16pt
-    static let bodyLarge: CGFloat = 16
-    /// Activity name/primary content - 15pt
-    static let bodyPrimary: CGFloat = 15
+    /// Subtitle text - 18pt
+    static let subtitle: CGFloat = 18
+    /// Large body/section titles - 18pt
+    static let bodyLarge: CGFloat = 18
+    /// Activity name/primary content - 14pt
+    static let bodyPrimary: CGFloat = 14
     /// Form labels, member info - 14pt
     static let bodySecondary: CGFloat = 14
-    /// Standard body text - 13pt
-    static let bodyStandard: CGFloat = 13
-    /// Small labels, time, captions - 12pt
-    static let caption: CGFloat = 12
-    /// Small captions, badge text - 11pt
-    static let captionSmall: CGFloat = 11
+    /// Standard body text - 14pt
+    static let bodyStandard: CGFloat = 14
+    /// Small labels, time, captions - 10pt
+    static let caption: CGFloat = 10
+    /// Small captions, badge text - 10pt
+    static let captionSmall: CGFloat = 10
     /// Tiny labels, compact badge text - 10pt
     static let captionTiny: CGFloat = 10
 }
@@ -161,4 +162,3 @@ enum AppFont {
     /// Medium stat value
     static let statMedium = Font.system(size: AppFontSize.statMedium, weight: .bold, design: .rounded)
 }
-

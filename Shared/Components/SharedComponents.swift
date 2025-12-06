@@ -145,7 +145,7 @@ struct ActivityInfoRow: View {
     
     var body: some View {
         HStack(spacing: 4) {
-            Image(systemName: icon)
+            Image(symbol: icon)
                 .font(.system(size: 11))
             Text(text)
                 .font(.system(size: 12))
@@ -164,7 +164,7 @@ struct EmptyStateView: View {
     
     var body: some View {
         VStack(spacing: 16) {
-            Image(systemName: icon)
+            Image(symbol: icon)
                 .font(.system(size: 48))
                 .foregroundColor(iconColor)
             

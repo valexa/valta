@@ -93,7 +93,7 @@ struct TeamTab: View {
             // Content
             if groupedActivities.isEmpty {
                 EmptyStateView(
-                    icon: "person.3",
+                    icon: AppSymbols.person3,
                     title: "No Team Activities",
                     message: emptyStateMessage,
                     iconColor: AppColors.statusRunning
@@ -110,6 +110,7 @@ struct TeamTab: View {
             }
         }
         .background(Color(NSColor.controlBackgroundColor))
+        .searchable(text: $searchText, placement: .toolbarPrincipal, prompt: "Search activities or members...")
     }
 }
 
@@ -137,7 +138,7 @@ struct TeamTabHeader: View {
                 // Team stats (filterable)
                 HStack(spacing: 12) {
                     StatButton(
-                        icon: "person.2.fill",
+                        icon: AppSymbols.person2Fill,
                         value: appState.team.activities.count,
                         label: "All",
                         color: AppColors.statTotal,
@@ -196,19 +197,7 @@ struct TeamTabHeader: View {
             }
             
             HStack(spacing: 12) {
-                // Search
-                HStack {
-                    Image(symbol: AppSymbols.magnifyingGlass)
-                        .foregroundColor(.secondary)
-                    TextField("Search activities or members...", text: $searchText)
-                        .textFieldStyle(.plain)
-                }
-                .padding(8)
-                .background(Color(NSColor.controlBackgroundColor))
-                .cornerRadius(8)
-                .frame(maxWidth: 280)
-                
-                // Clear filter button
+                Spacer()
                 if statsFilter != nil {
                     Button(action: { 
                         withAnimation(.easeInOut(duration: 0.2)) {
@@ -286,7 +275,7 @@ struct TeamMemberSection: View {
                     
                     Spacer()
                     
-                    Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
+                    Image(symbol: isExpanded ? AppSymbols.chevronDown : AppSymbols.chevronRight)
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundColor(.secondary)
                 }

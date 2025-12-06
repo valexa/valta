@@ -64,7 +64,7 @@ struct TeamMemberOnboardingView: View {
                 }
             } else if let error = dataManager.errorMessage {
                 VStack(spacing: 16) {
-                    Image(systemName: "exclamationmark.triangle.fill")
+                    Image(symbol: AppSymbols.exclamationTriangle)
                         .font(.system(size: 44))
                         .foregroundColor(AppColors.destructive)
                     Text("Error loading teams")
@@ -139,12 +139,8 @@ struct TeamMemberOnboardingView: View {
                                         .font(.system(size: 16, weight: .semibold))
                                 }
                                 .foregroundColor(.white.opacity(0.7))
-                                .padding(.horizontal, 32)
-                                .padding(.vertical, 14)
-                                .background(Color.white.opacity(0.1))
-                                .cornerRadius(12)
                             }
-                            .buttonStyle(.plain)
+                            .onboardingButton()
                         }
                         
                         Button(action: handleContinue) {
@@ -156,25 +152,9 @@ struct TeamMemberOnboardingView: View {
                                     .font(.system(size: 14, weight: .semibold))
                             }
                             .foregroundColor(.white)
-                            .padding(.horizontal, 32)
-                            .padding(.vertical, 14)
-                            .background(
-                                LinearGradient(
-                                    colors: canContinue ? [
-                                        AppColors.TeamMember.primary,
-                                        AppColors.TeamMember.primaryEnd
-                                    ] : [
-                                        Color.gray.opacity(0.3),
-                                        Color.gray.opacity(0.3)
-                                    ],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .cornerRadius(12)
-                            .shadow(color: canContinue ? AppColors.TeamMember.primary.opacity(0.4) : .clear, radius: 15, y: 5)
                         }
-                        .buttonStyle(.plain)
+                        .onboardingButton()
+                        .tint(.primary)
                         .disabled(!canContinue)
                     }
                 }
