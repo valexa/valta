@@ -98,6 +98,15 @@ final class AppState {
             mutableActivity.outcome = mutableActivity.calculateOutcome(completionDate: completionTime)
         }
         Task {
+            // Send notification to all team members
+            do {
+                try await NotificationSender.shared.sendActivityCompletedNotification(
+                    activity: activity,
+                    team: team
+                )
+            } catch {
+                print("⚠️ Failed to send activity completed notification: \(error.localizedDescription)")
+            }
         }
     }
     
@@ -115,6 +124,16 @@ final class AppState {
             mutableActivity.completedAt = now
             mutableActivity.outcome = mutableActivity.calculateOutcome(completionDate: now)
         }
+        Task {
+            // Send notification to all team members
+            do {
+                try await NotificationSender.shared.sendActivityCompletedNotification(
+                    activity: activity,
+                    team: team
+                )
+            } catch {
+                print("⚠️ Failed to send activity completed notification: \(error.localizedDescription)")
+            }
         }
     }
     
@@ -133,6 +152,19 @@ final class AppState {
         
         Task {
             await dataManager.syncActivities()
+            
+            // Send notification to assigned team member
+            do {
+                // Use "Manager" as default name (can be enhanced later with actual manager name)
+                let managerName = "Manager"
+                try await NotificationSender.shared.sendActivityAssignedNotification(
+                    activity: activity,
+                    assignedTo: activity.assignedMember,
+                    managerName: managerName
+                )
+            } catch {
+                print("⚠️ Failed to send activity assigned notification: \(error.localizedDescription)")
+            }
         }
     }
 }

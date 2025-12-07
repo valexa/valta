@@ -180,6 +180,19 @@ final class TeamMemberAppState {
             mutableActivity.status = .running
             mutableActivity.startedAt = Date()
         }
+        }
+        
+        // Send notification to all team members
+        Task {
+            do {
+                try await NotificationSender.shared.sendActivityStartedNotification(
+                    activity: activity,
+                    team: team
+                )
+            } catch {
+                print("⚠️ Failed to send activity started notification: \(error.localizedDescription)")
+            }
+        }
     }
     
     func requestReview(_ activity: Activity) {
@@ -188,8 +201,19 @@ final class TeamMemberAppState {
             mutableActivity.outcome = nil
             mutableActivity.completedAt = Date()
         }
+        }
         
-        print("🔔 Notification sent to manager for activity: \(activity.name)")
+        // Send notification to manager
+        Task {
+            do {
+                try await NotificationSender.shared.sendCompletionRequestedNotification(
+                    activity: activity
+                )
+                print("🔔 Notification sent to manager for activity: \(activity.name)")
+            } catch {
+                print("⚠️ Failed to send completion requested notification: \(error.localizedDescription)")
+            }
+        }
     }
     
     func selectMember(_ member: TeamMember) {

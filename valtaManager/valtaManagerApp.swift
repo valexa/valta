@@ -30,6 +30,7 @@ struct valtaManagerApp: App {
     
     @State private var dataManager = DataManager.shared
     @State private var authService = AuthService.shared
+    @State private var notificationService = NotificationService.shared
     
     var body: some Scene {
         WindowGroup {
@@ -37,10 +38,19 @@ struct valtaManagerApp: App {
                 .focusEffectDisabled()
                 .environment(dataManager)
                 .environment(authService)
+                .environment(notificationService)
                 .task {
                     do {
                         try await authService.signInAnonymously()
                         await dataManager.loadData()
+                        
+                        // Request notification permissions and register for remote notifications
+                        let granted = await notificationService.requestNotificationPermission()
+                        if granted {
+                            print("✅ Notification permissions granted")
+                        } else {
+                            print("⚠️ Notification permissions denied")
+                        }
                     } catch {
                         print("Authentication error: \(error.localizedDescription)")
                     }
