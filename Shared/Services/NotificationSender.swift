@@ -12,13 +12,54 @@ import Foundation
 import FirebaseAuth
 import FirebaseFunctions
 
+// MARK: - Protocols
+
+protocol CloudFunctionProvider {
+    func call(name: String, data: [String: Any]) async throws -> Any
+}
+
+protocol AuthChecking {
+    var isAuthenticated: Bool { get }
+}
+
+// MARK: - Default Implementations
+
+struct FirebaseFunctionProvider: CloudFunctionProvider {
+    private let functions = Functions.functions()
+    
+    func call(name: String, data: [String: Any]) async throws -> Any {
+        let result = try await functions.httpsCallable(name).call(data)
+        return result.data
+    }
+}
+
+struct FirebaseAuthChecker: AuthChecking {
+    var isAuthenticated: Bool {
+        Auth.auth().currentUser != nil
+    }
+}
+
 @MainActor
 final class NotificationSender {
     static let shared = NotificationSender()
     
-    private let functions = Functions.functions()
+    private let functionProvider: CloudFunctionProvider
+    private let authChecker: AuthChecking
     
-    private init() {}
+    private let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter
+    }()
+    
+    init(
+        functionProvider: CloudFunctionProvider = FirebaseFunctionProvider(),
+        authChecker: AuthChecking = FirebaseAuthChecker()
+    ) {
+        self.functionProvider = functionProvider
+        self.authChecker = authChecker
+    }
     
     // MARK: - Notification Types
     
@@ -28,10 +69,6 @@ final class NotificationSender {
         assignedTo member: TeamMember,
         managerName: String
     ) async throws {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        dateFormatter.timeStyle = .short
-        
         let createdDate = dateFormatter.string(from: activity.createdAt)
         let deadlineDate = dateFormatter.string(from: activity.deadline)
         
@@ -54,10 +91,6 @@ final class NotificationSender {
         activity: Activity,
         team: Team
     ) async throws {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        dateFormatter.timeStyle = .short
-        
         let startedDate = activity.startedAt.map { dateFormatter.string(from: $0) } ?? "now"
         let deadlineDate = dateFormatter.string(from: activity.deadline)
         
@@ -82,7 +115,7 @@ final class NotificationSender {
     ) async throws {
         let message = "\(activity.assignedMember.name) has requested completion approval for \(activity.priority.shortName) activity \"\(activity.name)\""
         
-        let data: [String: Any] = [
+        var data: [String: Any] = [
             "type": "completion_requested",
             "activityId": activity.id.uuidString,
             "memberName": activity.assignedMember.name,
@@ -90,6 +123,10 @@ final class NotificationSender {
             "message": message,
             "activityName": activity.name
         ]
+        
+        if let managerID = activity.managerID {
+            data["managerId"] = managerID
+        }
         
         try await callCloudFunction(name: "sendCompletionRequestedNotification", data: data)
     }
@@ -134,15 +171,13 @@ final class NotificationSender {
     // MARK: - Cloud Function Call
     
     private func callCloudFunction(name: String, data: [String: Any]) async throws {
-        guard Auth.auth().currentUser != nil else {
+        guard authChecker.isAuthenticated else {
             throw NotificationError.notAuthenticated
         }
         
-        let function = functions.httpsCallable(name)
-        
         do {
-            let result = try await function.call(data)
-            print("✅ Successfully called \(name): \(result.data ?? "no data")")
+            let result = try await functionProvider.call(name: name, data: data)
+            print("✅ Successfully called \(name): \(result)")
         } catch {
             print("❌ Error calling \(name): \(error.localizedDescription)")
             throw NotificationError.cloudFunctionError(error.localizedDescription)

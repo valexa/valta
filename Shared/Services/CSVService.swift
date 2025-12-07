@@ -33,7 +33,7 @@ class CSVService {
             let columns = parseCSVLine(line)
             if columns.count < 9 { continue } // Ensure minimum required columns
             
-            // Schema: id,name,description,memberName,priority,status,outcome,createdAt,deadline,startedAt,completedAt
+            // Schema: id,name,description,memberName,priority,status,outcome,createdAt,deadline,startedAt,completedAt,managerID
             
             let idString = columns[0]
             let name = columns[1]
@@ -46,6 +46,8 @@ class CSVService {
             let deadlineString = columns[8]
             let startedAtString = columns.count > 9 ? columns[9] : ""
             let completedAtString = columns.count > 10 ? columns[10] : ""
+            let managerID = columns.count > 11 ? columns[11].trimmingCharacters(in: .whitespacesAndNewlines) : nil
+            let finalManagerID = (managerID?.isEmpty ?? true) ? nil : managerID
             
             // Find assigned member
             guard let member = teamMembers.first(where: { $0.name == memberName }) else {
@@ -78,7 +80,8 @@ class CSVService {
                 createdAt: createdAt,
                 deadline: deadline,
                 startedAt: startedAt,
-                completedAt: completedAt
+                completedAt: completedAt,
+                managerID: finalManagerID
             )
             
             activities.append(activity)
@@ -88,7 +91,7 @@ class CSVService {
     }
     
     func serializeActivities(_ activities: [Activity]) -> String {
-        var csv = "id,name,description,memberName,priority,status,outcome,createdAt,deadline,startedAt,completedAt\n"
+        var csv = "id,name,description,memberName,priority,status,outcome,createdAt,deadline,startedAt,completedAt,managerID\n"
         
         for activity in activities {
             let row = [
@@ -102,7 +105,8 @@ class CSVService {
                 dateFormatter.string(from: activity.createdAt),
                 dateFormatter.string(from: activity.deadline),
                 activity.startedAt.map { dateFormatter.string(from: $0) } ?? "",
-                activity.completedAt.map { dateFormatter.string(from: $0) } ?? ""
+                activity.completedAt.map { dateFormatter.string(from: $0) } ?? "",
+                activity.managerID ?? ""
             ]
             
             csv += row.joined(separator: ",") + "\n"

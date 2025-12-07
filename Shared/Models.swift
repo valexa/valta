@@ -147,6 +147,7 @@ struct Activity: Identifiable, Codable {
     var deadline: Date
     var startedAt: Date?
     var completedAt: Date?
+    var managerID: String?
     
     init(
         id: UUID = UUID(),
@@ -159,7 +160,8 @@ struct Activity: Identifiable, Codable {
         createdAt: Date = Date(),
         deadline: Date,
         startedAt: Date? = nil,
-        completedAt: Date? = nil
+        completedAt: Date? = nil,
+        managerID: String? = nil
     ) {
         self.id = id
         self.name = name
@@ -172,6 +174,7 @@ struct Activity: Identifiable, Codable {
         self.deadline = deadline
         self.startedAt = startedAt
         self.completedAt = completedAt
+        self.managerID = managerID
     }
     
     /// Returns the display color based on status, priority, outcome, and special rules

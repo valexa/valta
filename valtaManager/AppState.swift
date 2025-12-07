@@ -148,7 +148,13 @@ final class AppState {
     func addActivity(_ activity: Activity) {
         guard let teamIndex = dataManager.teams.firstIndex(where: { $0.id == team.id }) else { return }
         
-        teamService.addActivity(activity, to: &dataManager.teams[teamIndex])
+        // Inject current user (manager) ID
+        var newActivity = activity
+        if let managerID = Auth.auth().currentUser?.uid {
+            newActivity.managerID = managerID
+        }
+        
+        teamService.addActivity(newActivity, to: &dataManager.teams[teamIndex])
         
         Task {
             await dataManager.syncActivities()
@@ -158,8 +164,8 @@ final class AppState {
                 // Use "Manager" as default name (can be enhanced later with actual manager name)
                 let managerName = "Manager"
                 try await NotificationSender.shared.sendActivityAssignedNotification(
-                    activity: activity,
-                    assignedTo: activity.assignedMember,
+                    activity: newActivity,
+                    assignedTo: newActivity.assignedMember,
                     managerName: managerName
                 )
             } catch {

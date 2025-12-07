@@ -102,8 +102,7 @@ final class NotificationService: NSObject {
             print("Error retrieving FCM token: \(error.localizedDescription)")
         }
     }
-    
-    /// Uploads FCM token to Firestore/backend
+
     /// Uploads FCM token to Firestore/backend
     private func uploadFCMToken(_ token: String, userId: String) async {
         print("📤 Uploading FCM token for user: \(userId)")
