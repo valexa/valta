@@ -98,7 +98,6 @@ final class AppState {
             mutableActivity.outcome = mutableActivity.calculateOutcome(completionDate: completionTime)
         }
         Task {
-            await dataManager.syncActivities()
         }
     }
     
