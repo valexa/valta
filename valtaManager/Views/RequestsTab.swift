@@ -64,7 +64,9 @@ struct RequestCard: View {
     @State private var isHovered = false
 
     var body: some View {
-        VStack(spacing: 0) {
+        let outcome = activity.calculateOutcome()
+        
+        return VStack(spacing: 0) {
             HStack(alignment: .top, spacing: 16) {
                 // Requester avatar
                 MemberAvatar(member: activity.assignedMember, size: 48)
@@ -115,14 +117,14 @@ struct RequestCard: View {
                             .foregroundColor(.secondary)
 
                         HStack(spacing: 4) {
-                            Image(symbol: activity.calculateOutcome().icon)
-                            Text(activity.calculateOutcome().rawValue)
+                            Image(symbol: outcome.icon)
+                            Text(outcome.rawValue)
                         }
                         .font(.system(size: 13, weight: .semibold))
-                        .foregroundColor(activity.calculateOutcome().color)
+                        .foregroundColor(outcome.color)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(activity.calculateOutcome().color.opacity(0.15))
+                        .background(outcome.color.opacity(0.15))
                         .cornerRadius(6)
 
                         Spacer()
