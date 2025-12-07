@@ -21,9 +21,6 @@ final class AppState {
     private let activityService = ActivityService()
     private let teamService = TeamService()
     
-    /// Timer for refreshing time-based displays
-    let refreshTimer = RefreshTimer.shared
-    
     // Reference to DataManager for live data
     private let dataManager = DataManager.shared
     
@@ -40,18 +37,10 @@ final class AppState {
     // MARK: - Initialization
     
     init() {
-        refreshTimer.start()
         // Observe DataManager team changes via callback
         DataManager.shared.onTeamsChanged = { [weak self] in
             self?.dataVersion &+= 1
         }
-    }
-    
-    // MARK: - Time Refresh
-    
-    /// Current refresh tick - observe this to trigger time-based UI updates
-    var refreshTick: UInt64 {
-        refreshTimer.tick
     }
     
     // MARK: - Data Accessors (delegate to DataManager)

@@ -72,7 +72,7 @@ struct MainTabView: View {
                 .tag(TeamMemberTab.log)
         }
         .tabViewStyle(.sidebarAdaptable)
-        .frame(minWidth: 900, minHeight: 550)
+        .frame(minWidth: 1000, minHeight: 550)
     }
 }
 

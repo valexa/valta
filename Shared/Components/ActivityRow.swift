@@ -25,6 +25,7 @@ struct ActivityRow: View {
     @State private var isHovered = false
     
     var body: some View {
+        
         HStack(spacing: 10) {
             // Priority badge
             PriorityBadge(priority: activity.priority, compact: true)

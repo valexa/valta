@@ -36,6 +36,7 @@ struct StatButton: View {
                     Text(label)
                         .font(.system(size: 9))
                         .foregroundColor(isSelected ? .white.opacity(0.8) : .secondary)
+                        .lineLimit(1)
                 }
             }
             .padding(.horizontal, 10)

@@ -112,8 +112,7 @@ valta/
 │   ├── Services/
 │   │   ├── ActivityFilter.swift     # Activity filtering/querying
 │   │   ├── ActivityStats.swift      # Statistics calculations
-│   │   ├── ActivityService.swift    # Business logic/mutations
-│   │   └── RefreshTimer.swift       # Timer for live time updates
+│   │   └── ActivityService.swift    # Business logic/mutations
 │   └── Components/
 │       ├── SharedComponents.swift  # Badges, avatars, labels
 │       ├── ActivityRow.swift       # Unified activity row

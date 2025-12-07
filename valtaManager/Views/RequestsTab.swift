@@ -108,42 +108,27 @@ struct RequestCard: View {
                     .background(Color(NSColor.windowBackgroundColor))
                     .cornerRadius(8)
 
-                    // Requested outcome (if nil, user hasn't selected one, maybe show pending?)
-                    // The previous flow set it to nil initially. The card should reflect what's available or allow setting it.
-                    // Assuming for now we just show what is there.
-                    if let outcome = activity.outcome {
-                        HStack(spacing: 8) {
-                            Text("Activity outcome:")
-                                .font(.system(size: 13))
-                                .foregroundColor(.secondary)
-
-                            HStack(spacing: 4) {
-                                Image(symbol: outcome.icon)
-                                Text(outcome.rawValue)
-                            }
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundColor(outcome.color)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(outcome.color.opacity(0.15))
-                            .cornerRadius(6)
-
-                            Spacer()
-
-                            // Deadline info
-                            HStack(spacing: 4) {
-                                Image(symbol: AppSymbols.calendarBadgeClock)
-                                    .font(.system(size: 12))
-                                Text("Deadline: \(activity.deadline.formatted(date: .abbreviated, time: .shortened))")
-                                    .font(.system(size: 12))
-                            }
+                    // Outcome details
+                    HStack(spacing: 8) {
+                        Text("Activity outcome:")
+                            .font(.system(size: 13))
                             .foregroundColor(.secondary)
+
+                        HStack(spacing: 4) {
+                            Image(symbol: activity.calculateOutcome().icon)
+                            Text(activity.calculateOutcome().rawValue)
                         }
-                    } else {
-                        // Manager needs to set outcome, or it's implicitly successful?
-                        // For now, let's show a "Pending Review" or similar if nil, but standard flow had JIT default.
-                        // Let's hide the outcome row if nil, or show minimal info.
-                         HStack(spacing: 4) {
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(activity.calculateOutcome().color)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(activity.calculateOutcome().color.opacity(0.15))
+                        .cornerRadius(6)
+
+                        Spacer()
+
+                        // Deadline info
+                        HStack(spacing: 4) {
                             Image(symbol: AppSymbols.calendarBadgeClock)
                                 .font(.system(size: 12))
                             Text("Deadline: \(activity.deadline.formatted(date: .abbreviated, time: .shortened))")
@@ -235,3 +220,4 @@ struct EmptyRequestsView: View {
         .environment(AppState())
         .frame(width: 800, height: 600)
 }
+

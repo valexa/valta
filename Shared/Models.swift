@@ -224,8 +224,11 @@ struct Activity: Identifiable {
     /// - Just In Time: Completed within ±5 min of deadline (before or after)
     /// - Overrun: Completed >5 min after deadline
     func calculateOutcome(completionDate: Date = Date()) -> ActivityOutcome {
-        let timeDifference = completionDate.timeIntervalSince(deadline)
-        
+        var timeDifference = completionDate.timeIntervalSince(deadline)
+        if let completedAt = completedAt {
+            timeDifference = completedAt.timeIntervalSince(deadline)
+        }
+
         // Constants for outcome thresholds
         let aheadThreshold: TimeInterval = 30 * 60  // 30 minutes in seconds
         let jitWindow: TimeInterval = 5 * 60        // 5 minutes in seconds

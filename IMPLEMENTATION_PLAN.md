@@ -136,37 +136,37 @@ Live Team Activities is a macOS application suite consisting of two apps:
 
 ---
 
-## Phase 3: Business Logic 🔲 TODO
+## Phase 3: Business Logic ✅ COMPLETED
 
 ### 3.1 Activity Lifecycle
-- [ ] Implement activity state machine
-  - [ ] teamMemberPending → running (on start)
-  - [ ] running → managerPending (on completion request)
-  - [ ] managerPending → completed (on approval)
-  - [ ] managerPending → running (on rejection)
-  - [ ] Any → canceled
-- [ ] Implement deadline monitoring (every minute)
-- [ ] Auto-transition overdue activities to completed/overrun
-- [ ] Handle pending completion events at deadline
+- [x] Implement activity state machine
+  - [x] teamMemberPending → running (on start)
+  - [x] running → managerPending (on completion request)
+  - [x] managerPending → completed (on approval)
+  - [x] managerPending → running (on rejection)
+  - [x] Any → canceled
+- [x] Implement deadline monitoring (every minute)
+- [x] Auto-transition overdue activities to completed/overrun
+- [x] Handle pending completion events at deadline
 
 ### 3.2 Outcome Calculation
-- [ ] Implement outcome thresholds
-  - [ ] Ahead: ≥30 min before deadline
-  - [ ] JIT: within ±5 min of deadline
-  - [ ] Overrun: after deadline
-- [ ] P0 exception: JIT outcome shows red color
+- [x] Implement outcome thresholds
+  - [x] Ahead: ≥30 min before deadline
+  - [x] JIT: within ±5 min of deadline
+  - [x] Overrun: after deadline
+- [x] P0 exception: JIT outcome shows red color
 
 ### 3.3 Manager Actions
-- [ ] Create activity with notification generation
-- [ ] Approve completion request
-- [ ] Reject completion request
-- [ ] Cancel activity
-- [ ] Direct completion by manager
+- [x] Create activity with notification generation
+- [x] Approve completion request
+- [x] Reject completion request
+- [x] Cancel activity
+- [x] Direct completion by manager
 
 ### 3.4 Team Member Actions
-- [ ] Start activity
-- [ ] Submit completion 
-- [ ] View activity details
+- [x] Start activity
+- [x] Submit completion 
+- [x] View activity details
 
 ---
 
@@ -186,18 +186,30 @@ Live Team Activities is a macOS application suite consisting of two apps:
 
 ---
 
-## Phase 5: Inter-App Communication ✅ COMPLETED
+## Phase 5: Firestore Integration (Replacing CSV) 🔲 TODO
 
-### 5.1 Shared State (via CSV in Storage)
-- [x] Verify CSV round-trip (Model -> CSV -> Cloud -> CSV -> Model)
-- [x] Manager app successfully syncs changes to Firebase
-- [x] Both apps read from same source of truth
+### 5.1 Setup
+- [ ] Enable Firestore in Firebase Console
+- [ ] Add `FirebaseFirestore` SDK via SPM
+- [ ] Configure Firestore Security Rules
+
+### 5.2 Persistence Layer Migration
+- [ ] Create `FirestoreService`
+- [ ] Implement `Activity` document mapping
+- [ ] Implement `Team` and `TeamMember` document mapping
+- [ ] Implement real-time listeners for data sync
+- [ ] Migrate FCM token storage to Firestore
+
+### 5.3 Cleanup
+- [ ] Remove `CSVService`
+- [ ] Remove `FirebaseStorage` dependency (if unused)
+- [ ] Deprecate file-based sync logic
 
 
 
 ---
 
-## Phase 6: Polish & Testing 🔲 TODO
+## Phase 6: Unit Testing, Polish, and Integration Testing 🔲 TODO
 
 ### 6.1 UI Polish
 - [ ] Add loading states
@@ -268,8 +280,7 @@ valta/
 │   ├── Services/
 │   │   ├── ActivityFilter.swift     # ✅ Filtering/querying
 │   │   ├── ActivityStats.swift      # ✅ Statistics
-│   │   ├── ActivityService.swift    # ✅ Business logic
-│   │   └── RefreshTimer.swift       # ✅ Live time updates
+│   │   └── ActivityService.swift    # ✅ Business logic
 │   └── Components/
 │       ├── SharedComponents.swift   # ✅ Reusable UI components
 │       ├── ActivityRow.swift        # ✅ Unified activity row
@@ -306,9 +317,10 @@ valta/
 |-------|--------|----------|
 | Phase 1: UI Foundation | ✅ Complete | 100% |
 | Phase 2: Data Persistence | ✅ Complete | 100% |
-| Phase 3: Business Logic | 🔲 Not Started | 0% |
+| Phase 3: Business Logic | ✅ Complete | 100% |
 | Phase 4: Notifications | 🔄 In Progress | 10% |
-| Phase 5: Inter-App Communication | ✅ Complete | 100% |
+| Phase 5: Firestore Integration | 🔲 Not Started | 0% |
+| Phase 6: Testing & Polish | 🔲 Not Started | 0% |
 **Overall Progress: ~52%** (3.1 of 6 phases complete)
 
 ---
@@ -316,6 +328,6 @@ valta/
 ## Next Steps
 
 1. **Immediate**: Implement push notifications using Firebase Cloud Messaging
-2. **Short-term**: Build out activity lifecycle state machine (Phase 3)
-3. **Medium-term**: Implement business logic for activity transitions
-4. **Long-term**: Polish UI and add comprehensive testing
+2. **Short-term**: Migrate data persistence to Firestore
+3. **Medium-term**: Comprehensive Unit & Integration Testing
+4. **Long-term**: Final UI Polish and Release

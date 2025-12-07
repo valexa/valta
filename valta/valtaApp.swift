@@ -50,3 +50,4 @@ struct valtaApp: App {
         .windowToolbarStyle(.unified)
     }
 }
+

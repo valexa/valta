@@ -164,14 +164,10 @@ struct ActivitiesHeader: View {
                 if let member = appState.currentMember {
                     HStack(spacing: 12) {
                         MemberAvatar(member: member, size: 44)
-                        
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("My Activities")
-                                .font(.system(size: 22, weight: .bold, design: .rounded))
-                            
                             Text(member.name)
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
+                                .lineLimit(1)
+                                .truncationMode(.tail)
                         }
                     }
                 }

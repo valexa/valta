@@ -68,11 +68,6 @@ struct TimeRemainingLabel: View {
     var compact: Bool = false
     var showProgressBar: Bool = false
     
-    /// Observes refresh timer for automatic updates
-    private var refreshTick: UInt64 {
-        RefreshTimer.shared.tick
-    }
-    
     var body: some View {
         HStack(spacing: 6) {
             HStack(spacing: 4) {
@@ -87,7 +82,6 @@ struct TimeRemainingLabel: View {
                 TimeProgressBar(activity: activity, height: compact ? 3 : 4, width: compact ? 40 : 50)
             }
         }
-        .id(refreshTick) // Force refresh when timer ticks
     }
 }
 
@@ -99,11 +93,6 @@ struct TimeProgressBar: View {
     let activity: Activity
     var height: CGFloat = 4
     var width: CGFloat = 60
-    
-    /// Observes refresh timer for automatic updates
-    private var refreshTick: UInt64 {
-        RefreshTimer.shared.tick
-    }
     
     private var progressColor: Color {
         let remaining = activity.timeRemainingProgress
@@ -132,7 +121,6 @@ struct TimeProgressBar: View {
             }
         }
         .frame(width: width, height: height)
-        .id(refreshTick) // Force refresh when timer ticks
     }
 }
 
