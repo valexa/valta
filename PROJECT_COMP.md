@@ -15,8 +15,7 @@ valta/
 │   ├── Services/
 │   │   ├── ActivityFilter.swift     # Activity filtering and querying
 │   │   ├── ActivityStats.swift      # Statistics calculations
-│   │   ├── ActivityService.swift    # Business logic and mutations
-│   │   └── RefreshTimer.swift       # Timer for time-based UI updates
+│   │   └── ActivityService.swift    # Business logic and mutations
 │   └── Components/
 │       ├── SharedComponents.swift   # Reusable UI components (badges, avatars)
 │       ├── ActivityRow.swift        # Unified activity row with time delta
@@ -39,8 +38,7 @@ valta/
 │       ├── TeamsTab.swift
 │       ├── ActivityCard.swift
 │       ├── RequestsTab.swift
-│       ├── NewActivitySheet.swift
-│       └── AddMemberSheet.swift
+│       └── NewActivitySheet.swift
 └── ...
 ```
 
@@ -278,31 +276,6 @@ Handles activity mutations following Command pattern.
 
 > **Note:** Services are injectable and testable via `now` closure. AppState delegates to services.
 
-#### RefreshTimer.swift
-Observable timer for automatic time-based UI updates.
-
-**Properties:**
-- `tick: UInt64` - Increments every interval (triggers Observation updates)
-- `currentTime: Date` - Current time, updated every tick
-- `interval: TimeInterval` - Refresh interval (default: 60 seconds)
-
-**Methods:**
-- `start()` - Starts the timer
-- `stop()` - Stops the timer
-- `refresh(at:)` - Manual refresh trigger
-
-**Usage:**
-```swift
-// In AppState
-let refreshTimer = RefreshTimer.shared
-init() { refreshTimer.start() }
-
-// In time-sensitive views
-.id(RefreshTimer.shared.tick)  // Force re-render on tick
-```
-
-> **Note:** Shared instance ensures single timer for the app. Progress bars and time labels auto-update every minute.
-
 ### SharedComponents.swift
 Reusable UI components used throughout both apps:
 
@@ -380,10 +353,6 @@ Reusable UI components used throughout both apps:
 - Priority selection with visual cards
 - Deadline picker with quick-set buttons (1h, 4h, 1d, 3d, 1w)
 - Notification preview
-
-#### AddMemberSheet.swift
-- Name and email fields
-- Live avatar preview using `MemberAvatar(initials:)`
 
 ---
 

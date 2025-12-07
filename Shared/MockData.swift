@@ -3,7 +3,7 @@
 //  Shared
 //
 //  Mock data for development and testing purposes.
-//  Contains sample TeamMembers, Activities, CompletionRequests, Teams, and ActivityLogEntries.
+//  Contains sample TeamMembers, Activities, Teams, and ActivityLogEntries.
 //
 //  Created by vlad on 2025-12-04.
 //
@@ -162,27 +162,6 @@ extension Activity {
     }()
 }
 
-// MARK: - Mock Completion Requests
-
-extension CompletionRequest {
-    static let mockRequests: [CompletionRequest] = {
-        let activities = Activity.mockActivities
-        return [
-            // Sarah's API Rate Limiting (index 3)
-            CompletionRequest(
-                activity: activities[3],
-                requestedAt: Date().addingTimeInterval(-1800),
-                requestedOutcome: .ahead
-            ),
-            // Alex Kim's Database Migration (index 8)
-            CompletionRequest(
-                activity: activities[8],
-                requestedAt: Date().addingTimeInterval(-3600),
-                requestedOutcome: .ahead
-            ),
-        ]
-    }()
-}
 
 // MARK: - Mock Team
 

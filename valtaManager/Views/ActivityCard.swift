@@ -105,7 +105,7 @@ struct ActivityCard: View {
                 Divider()
                 
                 HStack(spacing: 8) {
-                    Image(systemName: outcome.icon)
+                    Image(symbol: outcome.icon)
                         .font(.system(size: 12))
                     
                     Text("Completed \(outcome.rawValue)")
@@ -148,13 +148,11 @@ struct ActivityCard: View {
     }
 }
 
-// MARK: - Complete Activity Sheet
 
 struct CompleteActivitySheet: View {
     let activity: Activity
     @Environment(AppState.self) private var appState
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedOutcome: ActivityOutcome = .jit
     
     var body: some View {
         VStack(spacing: 24) {
@@ -174,18 +172,13 @@ struct CompleteActivitySheet: View {
             
             Divider()
             
-            // Outcome selection
+            // Info
             VStack(alignment: .leading, spacing: 12) {
-                Text("Select Outcome")
+                Text("Are you sure you want to complete this activity?")
                     .font(.headline)
                 
-                ForEach(ActivityOutcome.allCases, id: \.self) { outcome in
-                    OutcomeOption(
-                        outcome: outcome,
-                        isSelected: selectedOutcome == outcome,
-                        action: { selectedOutcome = outcome }
-                    )
-                }
+                Text("The outcome will be automatically determined based on the deadline.")
+                    .foregroundColor(.secondary)
             }
             
             Spacer()
@@ -199,7 +192,7 @@ struct CompleteActivitySheet: View {
                 .controlSize(.large)
                 
                 Button("Complete") {
-                    appState.completeActivity(activity, outcome: selectedOutcome)
+                    appState.completeActivity(activity)
                     dismiss()
                 }
                 .buttonStyle(.borderedProminent)
@@ -207,57 +200,7 @@ struct CompleteActivitySheet: View {
             }
         }
         .padding(24)
-        .frame(width: 400, height: 420)
-    }
-}
-
-struct OutcomeOption: View {
-    let outcome: ActivityOutcome
-    let isSelected: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 12) {
-                Image(systemName: outcome.icon)
-                    .font(.system(size: 20))
-                    .foregroundColor(outcome.color)
-                    .frame(width: 32)
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(outcome.rawValue)
-                        .font(.system(size: 14, weight: .semibold))
-                    
-                    Text(outcomeDescription)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-                
-                Spacer()
-                
-                if isSelected {
-                    Image(symbol: AppSymbols.checkmarkCircleFill)
-                        .foregroundColor(.accentColor)
-                        .font(.system(size: 20))
-                }
-            }
-            .padding(12)
-            .background(isSelected ? Color.accentColor.opacity(0.1) : Color(NSColor.controlBackgroundColor))
-            .cornerRadius(10)
-            .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(isSelected ? Color.accentColor : Color.clear, lineWidth: 2)
-            )
-        }
-        .buttonStyle(.plain)
-    }
-    
-    var outcomeDescription: String {
-        switch outcome {
-        case .ahead: return "Completed more than 30 minutes before deadline"
-        case .jit: return "Completed within 5 minutes of deadline"
-        case .overrun: return "Completed after the deadline"
-        }
+        .frame(width: 400, height: 320)
     }
 }
 

@@ -9,17 +9,25 @@
 //
 
 import Foundation
-import Combine
+import Observation
 
-@MainActor
-class DataManager: ObservableObject {
+@Observable
+class DataManager {
     static let shared = DataManager()
     
-    @Published var teams: [Team] = []
-    @Published var activities: [Activity] = []
-    @Published var currentUser: TeamMember?
-    @Published var isLoading = false
-    @Published var errorMessage: String?
+    var teams: [Team] = []
+    var activities: [Activity] = []
+    var currentUser: TeamMember?
+    var isLoading = false
+    var errorMessage: String?
+    var onTeamsChanged: (() -> Void)?
+    
+    // Force observers to refresh when nested mutations occur
+    func notifyTeamsChanged() {
+        // Reassign to trigger Observation write and invoke callback
+        teams = teams
+        onTeamsChanged?()
+    }
     
     private let storage = StorageService.shared
     private let csv = CSVService.shared
@@ -101,3 +109,4 @@ class DataManager: ObservableObject {
         await loadData()
     }
 }
+

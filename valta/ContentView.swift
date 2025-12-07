@@ -22,6 +22,24 @@ struct ContentView: View {
             }
         }
         .environment(appState)
+        .onChange(of: appState.myPendingActivities.count) { _, newCount in
+            updateDockBadge(count: newCount)
+        }
+        .onAppear {
+            updateDockBadge(count: appState.myPendingActivities.count)
+        }
+    }
+    
+    private func updateDockBadge(count: Int) {
+        #if os(macOS)
+        DispatchQueue.main.async {
+            if count > 0 {
+                NSApplication.shared.dockTile.badgeLabel = "\(count)"
+            } else {
+                NSApplication.shared.dockTile.badgeLabel = nil
+            }
+        }
+        #endif
     }
 }
 
@@ -53,7 +71,8 @@ struct MainTabView: View {
                 }
                 .tag(TeamMemberTab.log)
         }
-        .frame(minWidth: 800, minHeight: 550)
+        .tabViewStyle(.sidebarAdaptable)
+        .frame(minWidth: 1000, minHeight: 550)
     }
 }
 

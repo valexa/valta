@@ -15,9 +15,10 @@ The workspace for team members to manage their assigned activities.
 **Features:**
 - **My Activities** - View and manage personally assigned activities
 - **Start Activities** - Acknowledge and begin assigned work
-- **Request Completion** - Submit completion requests with outcome assessment
+- **Request Completion** - Submit completion requests with automatic outcome assessment
 - **Team Visibility** - See what everyone on the team is working on
 - **Activity Log** - Browse history of all activity events
+- **Dock Badge** - App icon shows count of pending activities awaiting start
 
 **Tabs:**
 | Tab | Description |
@@ -32,11 +33,12 @@ The workspace for team members to manage their assigned activities.
 The control center for team leaders to manage teams and activities.
 
 **Features:**
-- **Team Management** - Create teams, add/remove members
+- **Team Selection** - Choose team from Firebase Storage (CSV)
 - **Activity Dashboard** - View all activities with search and filters
 - **Activity Creation** - Assign activities with priority (P0-P3), deadlines, and descriptions
 - **Approval Workflow** - Review and approve/reject completion requests from team members
 - **Interactive Stats** - Click stat cards to filter the activity list by status
+- **Dock Badge** - App icon shows count of pending completion requests
 
 **Tabs:**
 | Tab | Description |
@@ -68,8 +70,8 @@ The control center for team leaders to manage teams and activities.
 | Outcome | Meaning | Color |
 |---------|---------|-------|
 | Ahead | Completed ≥30 min before deadline | 🟢 Green |
-| Just In Time | Completed within ±5 min of deadline | 🟡 Yellow |
-| Overrun | Completed after deadline | 🔴 Red |
+| Just In Time | Completed within ±5 min of deadline (before or after) | 🟡 Yellow |
+| Overrun | Completed >5 min after deadline | 🔴 Red |
 
 > **Note:** P0 (Critical) activities with "Just In Time" outcome display red instead of yellow.
 
@@ -78,8 +80,13 @@ The control center for team leaders to manage teams and activities.
 Both apps share a unified design system with centralized colors and reusable components.
 
 ### App Themes
-- **Manager App** - Purple/blue gradient theme
-- **Team Member App** - Teal/cyan gradient theme
+- **Manager App** - Purple/blue gradient theme with hidden title bar
+- **Team Member App** - Teal/cyan gradient theme with hidden title bar
+- **Window Style** - Both apps use `.hiddenTitleBar` with `.unified` toolbar style for modern macOS appearance
+
+### Navigation
+- **Native TabView** - Both apps use SwiftUI's native `TabView` with `Tab` views for seamless navigation
+- **Dock Badges** - Automatic badge counts on app icons for pending activities
 
 ### Shared Components
 - `MemberAvatar` - Unified avatar component with neutral gray color
@@ -105,8 +112,7 @@ valta/
 │   ├── Services/
 │   │   ├── ActivityFilter.swift     # Activity filtering/querying
 │   │   ├── ActivityStats.swift      # Statistics calculations
-│   │   ├── ActivityService.swift    # Business logic/mutations
-│   │   └── RefreshTimer.swift       # Timer for live time updates
+│   │   └── ActivityService.swift    # Business logic/mutations
 │   └── Components/
 │       ├── SharedComponents.swift  # Badges, avatars, labels
 │       ├── ActivityRow.swift       # Unified activity row
@@ -131,6 +137,31 @@ valta/
 │       └── AddMemberSheet.swift
 └── ...
 ```
+## Architecture & State Management (Updated)
+
+### Architecture
+
+The architecture is based on MVVM with clearly separated views, view models, and model layers.
+
+- **Models**: Define core business data structures including `Activity`, `TeamMember`, `CompletionRequest`.
+- **ViewModels**: Handle state and business logic, exposing observable properties to views.
+- **Views**: SwiftUI views composed with reusable components and bound to view models.
+- **Services**: Networking, data persistence, and synchronization layers abstracted behind protocols.
+
+### State Management
+
+- **ObservableObject**: Used for view models to publish changes.
+- **@Published**: Properties that need to update views.
+- **EnvironmentObject**: For shared app state across views.
+- **Combine**: Reactive framework for asynchronous events and binding.
+- **State restoration**: Persistence of UI state for continuity.
+- **Data flow**: Unidirectional where possible, with actions triggering view model updates, which update models, then views.
+
+### Data Flow Example
+
+- User taps "Start Activity" → View notifies ViewModel → ViewModel updates Activity status → Published changes reflect in UI → Persistence saves updated status.
+
+---
 
 ## Requirements
 

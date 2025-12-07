@@ -24,7 +24,7 @@ struct StatButton: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 6) {
-                Image(systemName: icon)
+                Image(symbol: icon)
                     .font(.system(size: 12))
                     .foregroundColor(isSelected ? .white : color)
                 
@@ -36,6 +36,7 @@ struct StatButton: View {
                     Text(label)
                         .font(.system(size: 9))
                         .foregroundColor(isSelected ? .white.opacity(0.8) : .secondary)
+                        .lineLimit(1)
                 }
             }
             .padding(.horizontal, 10)

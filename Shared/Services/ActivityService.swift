@@ -140,27 +140,4 @@ struct TeamService {
     }
 }
 
-// MARK: - Completion Request Service
-
-/// Handles completion request operations
-struct CompletionRequestService {
-    
-    let activityService: ActivityService
-    
-    init(activityService: ActivityService = ActivityService()) {
-        self.activityService = activityService
-    }
-    
-    /// Approves a completion request
-    func approve(_ request: CompletionRequest, activities: inout [Activity], requests: inout [CompletionRequest]) {
-        activityService.approveCompletion(id: request.activity.id, in: &activities)
-        requests.removeAll { $0.id == request.id }
-    }
-    
-    /// Rejects a completion request
-    func reject(_ request: CompletionRequest, activities: inout [Activity], requests: inout [CompletionRequest]) {
-        activityService.rejectCompletion(id: request.activity.id, in: &activities)
-        requests.removeAll { $0.id == request.id }
-    }
-}
 

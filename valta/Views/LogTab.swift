@@ -72,21 +72,10 @@ struct LogTab: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Header
-            LogTabHeader(
-                searchText: $searchText,
-                statusFilter: $statusFilter,
-                priorityFilter: $priorityFilter,
-                outcomeFilter: $outcomeFilter,
-                showOnlyMine: $showOnlyMine
-            )
-            
-            Divider()
-            
             // Content
             if filteredEntries.isEmpty {
                 EmptyStateView(
-                    icon: "list.bullet.clipboard",
+                    icon: AppSymbols.listBulletClipboard,
                     title: "No Log Entries",
                     message: showOnlyMine ? "You haven't had any activity yet" : "No activity log entries match your filter",
                     iconColor: .secondary
@@ -103,157 +92,52 @@ struct LogTab: View {
             }
         }
         .background(Color(NSColor.controlBackgroundColor))
-    }
-}
+        .searchable(text: $searchText, placement: .toolbarPrincipal, prompt: "Search log...")
+        .toolbar {
 
-// MARK: - Log Tab Header
-
-struct LogTabHeader: View {
-    @Environment(TeamMemberAppState.self) private var appState
-    @Binding var searchText: String
-    @Binding var statusFilter: ActivityStatus?
-    @Binding var priorityFilter: ActivityPriority?
-    @Binding var outcomeFilter: ActivityOutcome?
-    @Binding var showOnlyMine: Bool
-    
-    var body: some View {
-        VStack(spacing: 12) {
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Activity Log")
-                        .font(.system(size: 22, weight: .bold, design: .rounded))
-                    
-                    Text("\(appState.activityLog.count) entries")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-                
-                Spacer()
-                
-                // All/My Activities toggle
+            // Filters
+            ToolbarItemGroup(placement: .navigation) {
+                // All/My Activities
                 Picker("", selection: $showOnlyMine) {
-                    Text("All Activities").tag(false)
-                    Text("My Activities").tag(true)
+                    Text("All").tag(false)
+                    Text("Mine").tag(true)
                 }
                 .pickerStyle(.segmented)
-                .frame(width: 220)
+                .frame(width: 100)
             }
-            
-            HStack(spacing: 12) {
-                // Search
-                HStack {
-                    Image(symbol: AppSymbols.magnifyingGlass)
-                        .foregroundColor(.secondary)
-                    TextField("Search log...", text: $searchText)
-                        .textFieldStyle(.plain)
-                }
-                .padding(8)
-                .background(Color(NSColor.controlBackgroundColor))
-                .cornerRadius(8)
-                .frame(maxWidth: 200)
-                
-                // Status filter
-                Menu {
-                    Button("All Statuses") { statusFilter = nil }
-                    Divider()
-                    ForEach(ActivityStatus.allCases, id: \.self) { status in
-                        Button(action: { statusFilter = status }) {
-                            HStack {
-                                Image(systemName: status.icon)
-                                Text(status.rawValue)
-                            }
-                        }
-                    }
-                } label: {
-                    HStack(spacing: 4) {
-                        Image(symbol: AppSymbols.filter)
-                        Text(statusFilter?.rawValue ?? "Status")
-                        Image(symbol: AppSymbols.chevronDown)
-                            .font(.caption2)
-                    }
-                    .font(.system(size: 12))
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .background(statusFilter != nil ? Color.accentColor.opacity(0.15) : Color(NSColor.controlBackgroundColor))
-                    .cornerRadius(6)
-                }
-                .menuStyle(.borderlessButton)
-                
-                // Priority filter
-                Menu {
-                    Button("All Priorities") { priorityFilter = nil }
-                    Divider()
-                    ForEach(ActivityPriority.allCases, id: \.self) { priority in
-                        Button(action: { priorityFilter = priority }) {
-                            HStack {
-                                Circle()
-                                    .fill(priority.color)
-                                    .frame(width: 8, height: 8)
-                                Text(priority.displayName)
-                            }
-                        }
-                    }
-                } label: {
-                    HStack(spacing: 4) {
-                        Image(symbol: AppSymbols.flag)
-                        Text(priorityFilter?.shortName ?? "Priority")
-                        Image(symbol: AppSymbols.chevronDown)
-                            .font(.caption2)
-                    }
-                    .font(.system(size: 12))
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .background(priorityFilter != nil ? Color.accentColor.opacity(0.15) : Color(NSColor.controlBackgroundColor))
-                    .cornerRadius(6)
-                }
-                .menuStyle(.borderlessButton)
-                
-                // Outcome filter
-                Menu {
-                    Button("All Outcomes") { outcomeFilter = nil }
-                    Divider()
-                    ForEach(ActivityOutcome.allCases, id: \.self) { outcome in
-                        Button(action: { outcomeFilter = outcome }) {
-                            HStack {
-                                Image(systemName: outcome.icon)
-                                Text(outcome.rawValue)
-                            }
-                        }
-                    }
-                } label: {
-                    HStack(spacing: 4) {
-                        Image(systemName: AppSymbols.outcomeAhead)
-                        Text(outcomeFilter?.rawValue ?? "Outcome")
-                        Image(symbol: AppSymbols.chevronDown)
-                            .font(.caption2)
-                    }
-                    .font(.system(size: 12))
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .background(outcomeFilter != nil ? Color.accentColor.opacity(0.15) : Color(NSColor.controlBackgroundColor))
-                    .cornerRadius(6)
-                }
-                .menuStyle(.borderlessButton)
-                
-                // Clear filters button
+
+            ToolbarItem(placement: .automatic) {
+                // Status Filter
+                StatusFilterMenu(selection: $statusFilter)
+            }
+
+            ToolbarItem(placement: .automatic) {
+                // Priority Filter
+                PriorityFilterMenu(selection: $priorityFilter)
+            }
+
+            ToolbarItem(placement: .automatic) {
+                // Outcome Filter
+                OutcomeFilterMenu(selection: $outcomeFilter)
+            }
+            ToolbarItem(placement: .automatic) {
+                // Clear
                 if statusFilter != nil || priorityFilter != nil || outcomeFilter != nil {
                     Button(action: {
-                        statusFilter = nil
-                        priorityFilter = nil
-                        outcomeFilter = nil
+                        withAnimation {
+                            statusFilter = nil
+                            priorityFilter = nil
+                            outcomeFilter = nil
+                        }
                     }) {
-                        Text("Clear")
-                            .font(.system(size: 11))
+                        Image(symbol: AppSymbols.xmarkCircleFill)
                             .foregroundColor(.secondary)
                     }
-                    .buttonStyle(.plain)
+                } else {
+                    Spacer()
                 }
-                
-                Spacer()
             }
         }
-        .padding()
-        .background(Color(NSColor.windowBackgroundColor))
     }
 }
 
@@ -302,11 +186,11 @@ struct LogEntryRow: View {
     
     var actionIcon: String {
         switch entry.action {
-        case .created: return "plus.circle.fill"
-        case .started: return "play.circle.fill"
-        case .completionRequested: return "paperplane.circle.fill"
-        case .completed: return "checkmark.circle.fill"
-        case .canceled: return "xmark.circle.fill"
+        case .created: return AppSymbols.plusCircleFill
+        case .started: return AppSymbols.running
+        case .completionRequested: return AppSymbols.paperplaneCircleFill
+        case .completed: return AppSymbols.completed
+        case .canceled: return AppSymbols.canceled
         }
     }
     
@@ -325,7 +209,7 @@ struct LogEntryRow: View {
             HStack(alignment: .top, spacing: 12) {
                 // Timeline indicator
                 VStack(spacing: 0) {
-                    Image(systemName: actionIcon)
+                    Image(symbol: actionIcon)
                         .font(.system(size: 20))
                         .foregroundColor(actionColor)
                     
@@ -389,7 +273,7 @@ struct LogEntryRow: View {
                     // Outcome for completed entries
                     if entry.action == .completed, let outcome = entry.activity.outcome {
                         HStack(spacing: 6) {
-                            Image(systemName: outcome.icon)
+                            Image(symbol: outcome.icon)
                                 .font(.system(size: 11))
                             Text("Outcome: \(outcome.rawValue)")
                                 .font(.system(size: 12))

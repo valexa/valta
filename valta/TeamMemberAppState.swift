@@ -21,9 +21,6 @@ final class TeamMemberAppState {
     private let activityService = ActivityService()
     private let logService = ActivityLogService.shared
     
-    /// Timer for refreshing time-based displays
-    let refreshTimer = RefreshTimer.shared
-    
     // Reference to DataManager for live data
     private let dataManager = DataManager.shared
     
@@ -42,23 +39,26 @@ final class TeamMemberAppState {
     var selectedTab: TeamMemberTab = .activities
     var showingCompletionSheet: Bool = false
     var selectedActivityForCompletion: Activity? = nil
+    var dataVersion: Int = 0
     
     // MARK: - Initialization
     
     init() {
-        refreshTimer.start()
+        // Observe DataManager team changes via callback
+        DataManager.shared.onTeamsChanged = { [weak self] in
+            self?.onTeamsChanged()
+        }
     }
     
-    // MARK: - Time Refresh
-    
-    /// Current refresh tick - observe this to trigger time-based UI updates
-    var refreshTick: UInt64 {
-        refreshTimer.tick
+    // Callbacks from DataManager
+    func onTeamsChanged() {
+        dataVersion &+= 1
     }
     
     // MARK: - Data Accessors (delegate to DataManager)
     
     var team: Team {
+        _ = dataVersion // depend on version to trigger refresh
         // Find the team that contains the current member
         if let member = currentMember {
             return dataManager.teams.first(where: { team in
@@ -176,33 +176,20 @@ final class TeamMemberAppState {
     // MARK: - Actions (delegate to service)
     
     func startActivity(_ activity: Activity) {
-        guard let teamIndex = dataManager.teams.firstIndex(where: { $0.id == team.id }),
-              let activityIndex = dataManager.teams[teamIndex].activities.firstIndex(where: { $0.id == activity.id }) else {
-            return
-        }
-        
-        dataManager.teams[teamIndex].activities[activityIndex].status = .running
-        dataManager.teams[teamIndex].activities[activityIndex].startedAt = Date()
-        
-        // Sync to Firebase
-        Task {
-            await dataManager.syncActivities()
+        activity.updateInBackend { mutableActivity in
+            mutableActivity.status = .running
+            mutableActivity.startedAt = Date()
         }
     }
     
-    func requestCompletion(_ activity: Activity, outcome: ActivityOutcome) {
-        guard let teamIndex = dataManager.teams.firstIndex(where: { $0.id == team.id }),
-              let activityIndex = dataManager.teams[teamIndex].activities.firstIndex(where: { $0.id == activity.id }) else {
-            return
+    func requestReview(_ activity: Activity) {
+        activity.updateInBackend { mutableActivity in
+            mutableActivity.status = .managerPending
+            mutableActivity.outcome = nil
+            mutableActivity.completedAt = Date()
         }
         
-        dataManager.teams[teamIndex].activities[activityIndex].status = .managerPending
-        dataManager.teams[teamIndex].activities[activityIndex].outcome = outcome
-        
-        // Sync to Firebase
-        Task {
-            await dataManager.syncActivities()
-        }
+        print("🔔 Notification sent to manager for activity: \(activity.name)")
     }
     
     func selectMember(_ member: TeamMember) {

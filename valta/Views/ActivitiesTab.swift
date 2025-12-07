@@ -22,24 +22,36 @@ enum MyActivitiesFilter: Equatable {
 
 struct ActivitiesTab: View {
     @Environment(TeamMemberAppState.self) private var appState
+    @State private var searchText: String = ""
     @State private var statsFilter: MyActivitiesFilter? = nil
     
     var filteredActivities: [Activity] {
-        guard let filter = statsFilter else {
-            return appState.myActivities
+        let activities: [Activity]
+        
+        // Determine base activities based on filter
+        if let filter = statsFilter {
+            switch filter {
+            case .all:
+                activities = appState.myActivities
+            case .pending:
+                activities = appState.myPendingActivities
+            case .running:
+                activities = appState.myRunningActivities
+            case .awaiting:
+                activities = appState.myAwaitingApproval
+            case .outcome(let outcome):
+                activities = appState.myCompletedActivities.filter { $0.outcome == outcome }
+            }
+        } else {
+            activities = appState.myActivities
         }
         
-        switch filter {
-        case .all:
-            return appState.myActivities
-        case .pending:
-            return appState.myPendingActivities
-        case .running:
-            return appState.myRunningActivities
-        case .awaiting:
-            return appState.myAwaitingApproval
-        case .outcome(let outcome):
-            return appState.myCompletedActivities.filter { $0.outcome == outcome }
+        if searchText.isEmpty {
+            return activities
+        }
+        
+        return activities.filter { activity in
+            activity.name.localizedCaseInsensitiveContains(searchText)
         }
     }
     
@@ -66,12 +78,12 @@ struct ActivitiesTab: View {
             // Content
             if filteredActivities.isEmpty {
                 EmptyStateView(
-                    icon: "checkmark.circle",
+                    icon: AppSymbols.checkmarkCircle,
                     title: "No Activities",
                     message: emptyStateMessage,
                     iconColor: AppColors.success
                 )
-            } else if statsFilter != nil {
+            } else if statsFilter != nil || !searchText.isEmpty {
                 // Filtered view - show flat list
                 ScrollView {
                     LazyVStack(spacing: 6) {
@@ -126,6 +138,7 @@ struct ActivitiesTab: View {
             }
         }
         .background(Color(NSColor.controlBackgroundColor))
+        .searchable(text: $searchText, placement: .toolbar, prompt: "Search activities...")
     }
     
     private func styleForActivity(_ activity: Activity) -> ActivitySectionStyle {
@@ -151,14 +164,10 @@ struct ActivitiesHeader: View {
                 if let member = appState.currentMember {
                     HStack(spacing: 12) {
                         MemberAvatar(member: member, size: 44)
-                        
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("My Activities")
-                                .font(.system(size: 22, weight: .bold, design: .rounded))
-                            
                             Text(member.name)
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
+                                .lineLimit(1)
+                                .truncationMode(.tail)
                         }
                     }
                 }
@@ -168,7 +177,7 @@ struct ActivitiesHeader: View {
                 // Stats buttons (filterable)
                 HStack(spacing: 12) {
                     StatButton(
-                        icon: "tray.full.fill",
+                        icon: AppSymbols.trayFullFill,
                         value: appState.myActivities.count,
                         label: "All",
                         color: AppColors.statTotal,
@@ -323,144 +332,15 @@ struct ActivityRowWithSheet: View {
     let activity: Activity
     let style: ActivitySectionStyle
     @Environment(TeamMemberAppState.self) private var appState
-    @State private var showingCompletionSheet = false
     
     var body: some View {
         ActivityRow(
             activity: activity,
             showAssignee: false,
             isHighlighted: false,
-            onStart: style == .pending ? { appState.startActivity(activity) } : nil,
-            onComplete: style == .running ? { showingCompletionSheet = true } : nil
+            onStart: style == .pending ? { withAnimation(.spring(response: 0.35, dampingFraction: 0.9)) { appState.startActivity(activity) } } : nil,
+            onComplete: style == .running ? { withAnimation(.spring(response: 0.35, dampingFraction: 0.9)) { appState.requestReview(activity) } } : nil
         )
-        .sheet(isPresented: $showingCompletionSheet) {
-            RequestCompletionSheet(activity: activity)
-        }
-    }
-}
-
-// MARK: - Request Completion Sheet
-
-struct RequestCompletionSheet: View {
-    let activity: Activity
-    @Environment(TeamMemberAppState.self) private var appState
-    @Environment(\.dismiss) private var dismiss
-    @State private var selectedOutcome: ActivityOutcome = .jit
-    
-    var body: some View {
-        VStack(spacing: 24) {
-            // Header
-            VStack(spacing: 8) {
-                Image(symbol: AppSymbols.flagCheckered)
-                    .font(.system(size: 48))
-                    .foregroundStyle(
-                        AppGradients.teamMemberPrimary
-                    )
-                
-                Text("Request Completion")
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
-                
-                Text(activity.name)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-            }
-            
-            Divider()
-            
-            // Outcome selection
-            VStack(alignment: .leading, spacing: 12) {
-                Text("How did it go?")
-                    .font(.headline)
-                
-                ForEach(ActivityOutcome.allCases, id: \.self) { outcome in
-                    OutcomeSelectionRow(
-                        outcome: outcome,
-                        isSelected: selectedOutcome == outcome,
-                        action: { selectedOutcome = outcome }
-                    )
-                }
-            }
-            
-            Spacer()
-            
-            // Note
-            HStack(spacing: 8) {
-                Image(symbol: AppSymbols.infoCircle)
-                    .foregroundColor(.secondary)
-                
-                Text("Your manager will review and approve this completion request")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-            
-            // Actions
-            HStack(spacing: 12) {
-                Button("Cancel") {
-                    dismiss()
-                }
-                .buttonStyle(.bordered)
-                .controlSize(.large)
-                
-                Button("Request Completion") {
-                    appState.requestCompletion(activity, outcome: selectedOutcome)
-                    dismiss()
-                }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
-            }
-        }
-        .padding(24)
-        .frame(width: 400, height: 450)
-    }
-}
-
-struct OutcomeSelectionRow: View {
-    let outcome: ActivityOutcome
-    let isSelected: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 12) {
-                Image(systemName: outcome.icon)
-                    .font(.system(size: 20))
-                    .foregroundColor(outcome.color)
-                    .frame(width: 32)
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(outcome.rawValue)
-                        .font(.system(size: 14, weight: .semibold))
-                    
-                    Text(outcomeDescription)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-                
-                Spacer()
-                
-                if isSelected {
-                    Image(symbol: AppSymbols.checkmarkCircleFill)
-                        .foregroundColor(.accentColor)
-                        .font(.system(size: 20))
-                }
-            }
-            .padding(12)
-            .background(isSelected ? Color.accentColor.opacity(0.1) : Color(NSColor.controlBackgroundColor))
-            .cornerRadius(10)
-            .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(isSelected ? Color.accentColor : Color.clear, lineWidth: 2)
-            )
-        }
-        .buttonStyle(.plain)
-    }
-    
-    var outcomeDescription: String {
-        switch outcome {
-        case .ahead: return "Finished well before the deadline"
-        case .jit: return "Finished right on time"
-        case .overrun: return "Finished after the deadline"
-        }
     }
 }
 

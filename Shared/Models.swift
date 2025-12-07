@@ -68,7 +68,16 @@ public enum ActivityPriority: Int, Codable, Equatable, Hashable, CaseIterable, C
         case .p3: return "P3"
         }
     }
-    
+
+    var icon: String {
+        switch self {
+        case .p0: return AppSymbols.flagFill
+        case .p1: return AppSymbols.flag
+        case .p2: return AppSymbols.flag
+        case .p3: return AppSymbols.flagSlash
+        }
+    }
+
     var color: Color {
         switch self {
         case .p0: return AppColors.priorityP0
@@ -205,6 +214,77 @@ struct Activity: Identifiable {
     var timeRemainingProgress: Double {
         timeCalculator.timeRemainingProgress
     }
+    
+    /// Calculates the outcome based on completion time vs deadline
+    /// - Parameter completionDate: The date of completion (defaults to now)
+    /// - Returns: The calculated outcome (Ahead, JIT, or Overrun)
+    /// 
+    /// Outcomes:
+    /// - Ahead: Completed ≥30 min before deadline
+    /// - Just In Time: Completed within ±5 min of deadline (before or after)
+    /// - Overrun: Completed >5 min after deadline
+    func calculateOutcome(completionDate: Date = Date()) -> ActivityOutcome {
+        let timeDifference = (completedAt ?? completionDate).timeIntervalSince(deadline)
+
+        // Constants for outcome thresholds
+        let aheadThreshold: TimeInterval = 30 * 60  // 30 minutes in seconds
+        let jitWindow: TimeInterval = 5 * 60        // 5 minutes in seconds
+        
+        // Overrun: completed more than 5 minutes after deadline
+        if timeDifference > jitWindow {
+            return .overrun
+        }
+        
+        // Just In Time: completed within ±5 minutes of deadline
+        if abs(timeDifference) <= jitWindow {
+            return .jit
+        }
+        
+        // Ahead: completed at least 30 minutes before deadline
+        // (timeDifference is negative when before deadline)
+        if timeDifference <= -aheadThreshold {
+            return .ahead
+        }
+        
+        // Edge case: completed between 5-30 minutes before deadline
+        // Classify as JIT since it's not explicitly Ahead (≥30 min) and not within ±5 min
+        // This ensures all cases are covered
+        return .jit
+    }
+    
+    // MARK: - Backend Updates
+    
+    /// Updates this activity in the backend (DataManager)
+    /// - Parameter mutation: Closure to modify the activity
+    @MainActor
+    func updateInBackend(_ mutation: (inout Activity) -> Void) {
+        let dataManager = DataManager.shared
+        
+        // Find the team containing this activity
+        guard let teamIndex = dataManager.teams.firstIndex(where: { team in
+            team.activities.contains(where: { $0.id == self.id })
+        }) else {
+            print("Error: Could not find team for activity \(self.name)")
+            return
+        }
+        
+        // Find the activity index
+        guard let activityIndex = dataManager.teams[teamIndex].activities.firstIndex(where: { $0.id == self.id }) else {
+            print("Error: Could not find activity \(self.name) in team")
+            return
+        }
+        
+        // Apply mutation
+        mutation(&dataManager.teams[teamIndex].activities[activityIndex])
+        
+        // Notify observers immediately
+        dataManager.notifyTeamsChanged()
+        
+        // Sync
+        Task {
+            await dataManager.syncActivities()
+        }
+    }
 }
 
 struct Team: Identifiable {
@@ -223,19 +303,6 @@ struct Team: Identifiable {
     }
 }
 
-struct CompletionRequest: Identifiable {
-    let id: UUID
-    let activity: Activity
-    let requestedAt: Date
-    let requestedOutcome: ActivityOutcome
-    
-    init(id: UUID = UUID(), activity: Activity, requestedAt: Date = Date(), requestedOutcome: ActivityOutcome) {
-        self.id = id
-        self.activity = activity
-        self.requestedAt = requestedAt
-        self.requestedOutcome = requestedOutcome
-    }
-}
 
 // MARK: - Activity Log Entry (for team member app)
 

@@ -20,10 +20,6 @@ final class AppState {
     
     private let activityService = ActivityService()
     private let teamService = TeamService()
-    private let completionRequestService = CompletionRequestService()
-    
-    /// Timer for refreshing time-based displays
-    let refreshTimer = RefreshTimer.shared
     
     // Reference to DataManager for live data
     private let dataManager = DataManager.shared
@@ -32,44 +28,26 @@ final class AppState {
     
     var hasCompletedOnboarding: Bool = false
     
-    // Completion requests are derived from activities with managerPending status
-    var completionRequests: [CompletionRequest] {
-        dataManager.teams.flatMap { $0.activities }
-            .filter { $0.status == .managerPending }
-            .map { activity in
-                CompletionRequest(
-                    activity: activity,
-                    requestedAt: activity.startedAt ?? Date(),
-                    requestedOutcome: activity.outcome ?? .jit
-                )
-            }
-    }
-    
     // MARK: - UI State
     
-    var selectedTab: AppTab = .teams
     var showingNewActivitySheet: Bool = false
-    var showingAddMemberSheet: Bool = false
     var selectedActivity: Activity? = nil
+    var dataVersion: Int = 0
     
     // MARK: - Initialization
     
     init() {
-        refreshTimer.start()
-    }
-    
-    // MARK: - Time Refresh
-    
-    /// Current refresh tick - observe this to trigger time-based UI updates
-    var refreshTick: UInt64 {
-        refreshTimer.tick
+        // Observe DataManager team changes via callback
+        DataManager.shared.onTeamsChanged = { [weak self] in
+            self?.dataVersion &+= 1
+        }
     }
     
     // MARK: - Data Accessors (delegate to DataManager)
     
     var team: Team {
-        // Return the first team from DataManager, or a placeholder if empty
-        dataManager.teams.first ?? Team(name: "Loading...", members: [])
+        _ = dataVersion
+        return dataManager.teams.first ?? Team(name: "Loading...", members: [])
     }
     
     // MARK: - Filters & Stats (computed via services)
@@ -111,56 +89,38 @@ final class AppState {
     
     // MARK: - Activity Actions (delegate to service)
     
-    func approveCompletion(_ request: CompletionRequest) {
-        // Update local team activities
-        guard let teamIndex = dataManager.teams.firstIndex(where: { $0.id == team.id }) else { return }
-        
-        // Find and complete the activity
-        if let activityIndex = dataManager.teams[teamIndex].activities.firstIndex(where: { $0.id == request.activity.id }) {
-            dataManager.teams[teamIndex].activities[activityIndex].status = .completed
-            dataManager.teams[teamIndex].activities[activityIndex].completedAt = Date()
+    func approveCompletion(_ activity: Activity) {
+        activity.updateInBackend { mutableActivity in
+            mutableActivity.status = .completed
+            // Calculate outcome based on existing completion time (if set) or now
+            let completionTime = mutableActivity.completedAt ?? Date()
+            mutableActivity.completedAt = completionTime
+            mutableActivity.outcome = mutableActivity.calculateOutcome(completionDate: completionTime)
         }
-        
-        // Sync to Firebase
         Task {
-            await dataManager.syncActivities()
         }
     }
     
-    func rejectCompletion(_ request: CompletionRequest) {
-        guard let teamIndex = dataManager.teams.firstIndex(where: { $0.id == team.id }) else { return }
-        
-        // Find and revert the activity to running
-        if let activityIndex = dataManager.teams[teamIndex].activities.firstIndex(where: { $0.id == request.activity.id }) {
-            dataManager.teams[teamIndex].activities[activityIndex].status = .running
-        }
-        
-        Task {
-            await dataManager.syncActivities()
+    func rejectCompletion(_ activity: Activity) {
+        activity.updateInBackend { mutableActivity in
+            mutableActivity.status = .running
+            mutableActivity.outcome = nil
         }
     }
     
-    func completeActivity(_ activity: Activity, outcome: ActivityOutcome) {
-        guard let teamIndex = dataManager.teams.firstIndex(where: { $0.id == team.id }) else { return }
-        
-        activityService.completeActivity(
-            id: activity.id,
-            outcome: outcome,
-            in: &dataManager.teams[teamIndex].activities
-        )
-        
-        Task {
-            await dataManager.syncActivities()
+    func completeActivity(_ activity: Activity) {
+        activity.updateInBackend { mutableActivity in
+            let now = Date()
+            mutableActivity.status = .completed
+            mutableActivity.completedAt = now
+            mutableActivity.outcome = mutableActivity.calculateOutcome(completionDate: now)
+        }
         }
     }
     
     func cancelActivity(_ activity: Activity) {
-        guard let teamIndex = dataManager.teams.firstIndex(where: { $0.id == team.id }) else { return }
-        
-        activityService.cancelActivity(id: activity.id, in: &dataManager.teams[teamIndex].activities)
-        
-        Task {
-            await dataManager.syncActivities()
+        activity.updateInBackend { mutableActivity in
+            mutableActivity.status = .canceled
         }
     }
     
@@ -177,9 +137,3 @@ final class AppState {
     }
 }
 
-// MARK: - App Tab
-
-enum AppTab: Hashable {
-    case teams
-    case requests
-}

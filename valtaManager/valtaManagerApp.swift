@@ -34,7 +34,8 @@ struct valtaManagerApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(dataManager)
+                .focusEffectDisabled()
+                .environment(dataManager)
                 .environment(authService)
                 .task {
                     do {
@@ -45,5 +46,7 @@ struct valtaManagerApp: App {
                     }
                 }
         }
+        .windowStyle(.hiddenTitleBar)
+        .windowToolbarStyle(.unified)
     }
 }

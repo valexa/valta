@@ -25,6 +25,7 @@ struct ActivityRow: View {
     @State private var isHovered = false
     
     var body: some View {
+        
         HStack(spacing: 10) {
             // Priority badge
             PriorityBadge(priority: activity.priority, compact: true)
@@ -79,6 +80,7 @@ struct ActivityRow: View {
             }
             
             // Action buttons (visible on hover, only if actions are available)
+            // Show processing state regardless of hover if processing
             if isHovered && hasAvailableActions {
                 actionButtons
                     .transition(.opacity.combined(with: .scale(scale: 0.9)))
@@ -111,7 +113,9 @@ struct ActivityRow: View {
     var actionButtons: some View {
         HStack(spacing: 6) {
             if activity.status == .teamMemberPending, let onStart = onStart {
-                Button(action: onStart) {
+                CompletionButton(action: {
+                    onStart()
+                }) {
                     HStack(spacing: 3) {
                         Image(symbol: AppSymbols.play)
                             .font(.system(size: 9))
@@ -128,7 +132,9 @@ struct ActivityRow: View {
             }
             
             if activity.status == .running, let onComplete = onComplete {
-                Button(action: onComplete) {
+                CompletionButton(action: {
+                    onComplete()
+                }) {
                     HStack(spacing: 3) {
                         Image(symbol: AppSymbols.checkmark)
                             .font(.system(size: 9))
