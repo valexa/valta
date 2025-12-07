@@ -71,7 +71,7 @@ The control center for team leaders to manage teams and activities.
 |---------|---------|-------|
 | Ahead | Completed ≥30 min before deadline | 🟢 Green |
 | Just In Time | Completed within ±5 min of deadline (before or after) | 🟡 Yellow |
-| Overrun | Completed ±5 min after deadline | 🔴 Red |
+| Overrun | Completed >5 min after deadline | 🔴 Red |
 
 > **Note:** P0 (Critical) activities with "Just In Time" outcome display red instead of yellow.
 
