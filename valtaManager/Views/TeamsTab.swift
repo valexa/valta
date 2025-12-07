@@ -35,8 +35,8 @@ struct TeamsTab: View {
     
     // Allow initializing with specific filters from the sidebar
     init(member: TeamMember? = nil, statsFilter: StatsFilter? = nil) {
-        _memberFilter = State(initialValue: member)
-        _statsFilter = State(initialValue: statsFilter)
+        _memberFilter = State(wrappedValue: member)
+        _statsFilter = State(wrappedValue: statsFilter)
     }
     
     var filteredActivities: [Activity] {
