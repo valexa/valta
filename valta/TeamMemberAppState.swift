@@ -180,7 +180,6 @@ final class TeamMemberAppState {
             mutableActivity.status = .running
             mutableActivity.startedAt = Date()
         }
-        dataManager.notifyTeamsChanged()
     }
     
     func requestReview(_ activity: Activity) {
@@ -189,7 +188,6 @@ final class TeamMemberAppState {
             mutableActivity.outcome = nil
             mutableActivity.completedAt = Date()
         }
-        dataManager.notifyTeamsChanged()
         
         print("🔔 Notification sent to manager for activity: \(activity.name)")
     }

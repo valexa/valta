@@ -97,11 +97,9 @@ final class AppState {
             mutableActivity.completedAt = completionTime
             mutableActivity.outcome = mutableActivity.calculateOutcome(completionDate: completionTime)
         }
-        dataManager.notifyTeamsChanged()
         Task {
             await dataManager.syncActivities()
         }
-        dataVersion &+= 1
     }
     
     func rejectCompletion(_ activity: Activity) {
@@ -109,8 +107,6 @@ final class AppState {
             mutableActivity.status = .running
             mutableActivity.outcome = nil
         }
-        dataManager.notifyTeamsChanged()
-        dataVersion &+= 1
     }
     
     func completeActivity(_ activity: Activity) {
@@ -120,11 +116,7 @@ final class AppState {
             mutableActivity.completedAt = now
             mutableActivity.outcome = mutableActivity.calculateOutcome(completionDate: now)
         }
-        dataManager.notifyTeamsChanged()
-        Task {
-            await dataManager.syncActivities()
         }
-        dataVersion &+= 1
     }
     
     func cancelActivity(_ activity: Activity) {

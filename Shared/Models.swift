@@ -280,6 +280,9 @@ struct Activity: Identifiable {
         // Apply mutation
         mutation(&dataManager.teams[teamIndex].activities[activityIndex])
         
+        // Notify observers immediately
+        dataManager.notifyTeamsChanged()
+        
         // Sync
         Task {
             await dataManager.syncActivities()
