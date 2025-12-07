@@ -1,5 +1,11 @@
 # Live Team Activities - Implementation Plan
 
+> [!WARNING]
+> **PERSISTENCE STRATEGY:**
+> Use **CSV/Firebase Storage** for Teams and Activities.
+> Use **Firestore** ONLY for FCM Tokens (Notifications).
+> Do not mix these strategies.
+
 ## Overview
 
 Live Team Activities is a macOS application suite consisting of two apps:
@@ -190,20 +196,18 @@ Live Team Activities is a macOS application suite consisting of two apps:
 
 ### 5.1 Setup
 - [ ] Enable Firestore in Firebase Console
-- [ ] Add `FirebaseFirestore` SDK via SPM
+- [x] Add `FirebaseFirestore` SDK via SPM
 - [ ] Configure Firestore Security Rules
 
-### 5.2 Persistence Layer Migration
-- [ ] Create `FirestoreService`
-- [ ] Implement `Activity` document mapping
-- [ ] Implement `Team` and `TeamMember` document mapping
-- [ ] Implement real-time listeners for data sync
-- [ ] Migrate FCM token storage to Firestore
+### 5.2 FCM Token Storage
+- [x] Create `FirestoreService.swift`
+  - Singleton `shared` instance
+  - Methods to save/delete FCM tokens
+- [x] Migrate `NotificationService` to store tokens in Firestore
 
 ### 5.3 Cleanup
-- [ ] Remove `CSVService`
-- [ ] Remove `FirebaseStorage` dependency (if unused)
-- [ ] Deprecate file-based sync logic
+- [ ] Ensure `CSVService` and `StorageService` remain active for data sync
+- [ ] Remove unused Firestore method stubs (if any)
 
 
 
@@ -319,7 +323,7 @@ valta/
 | Phase 2: Data Persistence | ✅ Complete | 100% |
 | Phase 3: Business Logic | ✅ Complete | 100% |
 | Phase 4: Notifications | 🔄 In Progress | 90% |
-| Phase 5: Firestore Integration | 🔲 Not Started | 0% |
+| Phase 5: Firestore Integration | � In Progress | 75% |
 | Phase 6: Testing & Polish | 🔲 Not Started | 0% |
 **Overall Progress: ~52%** (3.1 of 6 phases complete)
 

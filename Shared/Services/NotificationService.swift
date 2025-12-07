@@ -12,6 +12,7 @@ import Foundation
 import UserNotifications
 import FirebaseMessaging
 import FirebaseAuth
+import FirebaseFirestore
 import Observation
 
 @Observable
@@ -103,24 +104,28 @@ final class NotificationService: NSObject {
     }
     
     /// Uploads FCM token to Firestore/backend
+    /// Uploads FCM token to Firestore/backend
     private func uploadFCMToken(_ token: String, userId: String) async {
-        // TODO: Implement Firestore upload
-        // For now, we'll prepare the structure
-        // This will be implemented when we add Firestore dependency
-        
         print("📤 Uploading FCM token for user: \(userId)")
-        print("   Token: \(token.prefix(20))...")
         
-        // Placeholder for Firestore integration
-        // await FirestoreService.shared.saveFCMToken(token, for: userId)
+        do {
+            try await FirestoreService.shared.saveFCMToken(token, for: userId)
+            print("✅ FCM token uploaded for user: \(userId)")
+        } catch {
+            print("❌ Error uploading FCM token: \(error.localizedDescription)")
+        }
     }
     
     /// Deletes FCM token from backend (on logout)
     func deleteFCMToken(userId: String) async {
         print("🗑️ Deleting FCM token for user: \(userId)")
         
-        // Placeholder for Firestore integration
-        // await FirestoreService.shared.deleteFCMToken(for: userId)
+        do {
+            try await FirestoreService.shared.deleteFCMToken(for: userId)
+            print("✅ FCM token deleted for user: \(userId)")
+        } catch {
+            print("❌ Error deleting FCM token: \(error.localizedDescription)")
+        }
     }
     
     /// Subscribes to team-specific notification topics
@@ -168,3 +173,31 @@ import UIKit
 #elseif os(macOS)
 import AppKit
 #endif
+
+// MARK: - Firestore Service (Internal Helper)
+
+/// Helper class for Firestore operations (FCM Tokens only)
+class FirestoreService {
+    static let shared = FirestoreService()
+    private let db = Firestore.firestore()
+    
+    // MARK: - FCM Tokens
+    
+    func saveFCMToken(_ token: String, for userId: String) async throws {
+        let tokenData: [String: Any] = [
+            "token": token,
+            "updatedAt": FieldValue.serverTimestamp(),
+            "appType": Bundle.main.bundleIdentifier?.contains("Manager") == true ? "valtaManager" : "valta"
+        ]
+        try await db.collection("fcmTokens").document(userId).setData(tokenData, merge: true)
+    }
+    
+    func deleteFCMToken(for userId: String) async throws {
+        try await db.collection("fcmTokens").document(userId).delete()
+    }
+    
+    func getFCMToken(for userId: String) async throws -> String? {
+        let snapshot = try await db.collection("fcmTokens").document(userId).getDocument()
+        return snapshot.data()?["token"] as? String
+    }
+}

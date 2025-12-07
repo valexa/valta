@@ -112,7 +112,7 @@ public enum ActivityOutcome: String, Codable, Equatable, Hashable, CaseIterable 
 
 // MARK: - Models
 
-struct TeamMember: Identifiable, Hashable {
+struct TeamMember: Identifiable, Hashable, Codable {
     let id: UUID
     var name: String
     var email: String
@@ -135,7 +135,7 @@ struct TeamMember: Identifiable, Hashable {
     static let avatarColor = AppColors.avatar
 }
 
-struct Activity: Identifiable {
+struct Activity: Identifiable, Codable {
     let id: UUID
     var name: String
     var description: String
@@ -287,7 +287,7 @@ struct Activity: Identifiable {
     }
 }
 
-struct Team: Identifiable {
+struct Team: Identifiable, Codable {
     let id: UUID
     var name: String
     var members: [TeamMember]
@@ -306,14 +306,14 @@ struct Team: Identifiable {
 
 // MARK: - Activity Log Entry (for team member app)
 
-struct ActivityLogEntry: Identifiable {
+struct ActivityLogEntry: Identifiable, Codable {
     let id: UUID
     let activity: Activity
     let action: LogAction
     let timestamp: Date
     let performedBy: String
     
-    enum LogAction: String {
+    enum LogAction: String, Codable {
         case created = "Created"
         case started = "Started"
         case completionRequested = "Completion Requested"

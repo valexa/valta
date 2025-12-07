@@ -1,5 +1,12 @@
 # Live Team Activities - Implementation Summary
 
+> [!NOTE]
+> **Data Persistence Strategy:**
+> *   **Data (Teams/Activities)**: CSV Files + Firebase Storage
+> *   **Tokens (FCM)**: Firestore
+>
+> This split is intentional and must be maintained.
+
 ## Project Structure
 
 ```
