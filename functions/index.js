@@ -89,11 +89,12 @@ async function getTokensForMembers(db, memberIds) {
 exports.sendActivityAssignedNotification = functions.https.onCall(
     async (data, context) => {
       assertAuthenticated(context);
-      checkRequired(data, ["activityId", "assignedMemberId", "message"]);
+      checkRequired(data, ["activityId", "assignedMemberId", "assignedMemberName", "message"]);
 
       const {
         activityId,
         assignedMemberId,
+        assignedMemberName,
         priority,
         message,
         activityName,
@@ -123,6 +124,7 @@ exports.sendActivityAssignedNotification = functions.https.onCall(
             type: "activity_assigned",
             activityId: activityId,
             assignedMemberId: assignedMemberId,
+            assignedMemberName: assignedMemberName || "",
             priority: priority || "",
             activityName: activityName || "",
           },
