@@ -80,9 +80,6 @@ final class NotificationService: NSObject {
         #elseif os(macOS)
         await NSApplication.shared.registerForRemoteNotifications()
         #endif
-        
-        // Get FCM token
-        await retrieveFCMToken()
     }
     
     /// Retrieves the current FCM token
@@ -148,6 +145,18 @@ final class NotificationService: NSObject {
             }
         }
     }
+    
+    /// Updates the member profile (name) in Firestore for notification lookup
+    func updateMemberProfile(name: String) async {
+        guard let userId = Auth.auth().currentUser?.uid else { return }
+        
+        do {
+            try await FirestoreService.shared.updateMemberName(name, for: userId)
+            print("✅ Member profile updated with name: \(name)")
+        } catch {
+            print("❌ Error updating member profile: \(error.localizedDescription)")
+        }
+    }
 }
 
 // MARK: - MessagingDelegate
@@ -198,5 +207,9 @@ class FirestoreService {
     func getFCMToken(for userId: String) async throws -> String? {
         let snapshot = try await db.collection("fcmTokens").document(userId).getDocument()
         return snapshot.data()?["token"] as? String
+    }
+    
+    func updateMemberName(_ name: String, for userId: String) async throws {
+        try await db.collection("fcmTokens").document(userId).setData(["memberName": name], merge: true)
     }
 }

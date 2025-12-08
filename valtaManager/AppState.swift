@@ -12,6 +12,7 @@
 
 import SwiftUI
 import Observation
+import FirebaseAuth
 
 @Observable
 final class AppState {

@@ -12,7 +12,7 @@ import AppKit
 import UserNotifications
 import FirebaseMessaging
 
-class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDelegate {
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         UserDefaults.standard.register(defaults: ["NSApplicationCrashOnExceptions": true])
@@ -20,9 +20,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         
         // Setup notification center delegate
         UNUserNotificationCenter.current().delegate = self
-        
-        // Setup FCM messaging delegate
-        Messaging.messaging().delegate = self
     }
     
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
@@ -78,12 +75,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         completionHandler()
     }
     
-    // MARK: - MessagingDelegate
-    
-    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        print("🔄 FCM Token: \(fcmToken ?? "nil")")
-        // Token refresh is handled by NotificationService
-    }
+
     
     // MARK: - Notification Handling
     
@@ -109,14 +101,11 @@ import UIKit
 import UserNotifications
 import FirebaseMessaging
 
-class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate {
+class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         // Setup notification center delegate
         UNUserNotificationCenter.current().delegate = self
-        
-        // Setup FCM messaging delegate
-        Messaging.messaging().delegate = self
         
         return true
     }
@@ -162,12 +151,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         completionHandler()
     }
     
-    // MARK: - MessagingDelegate
-    
-    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        print("🔄 FCM Token: \(fcmToken ?? "nil")")
-        // Token refresh is handled by NotificationService
-    }
+
     
     // MARK: - Notification Handling
     

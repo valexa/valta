@@ -78,6 +78,7 @@ final class NotificationSender {
             "type": "activity_assigned",
             "activityId": activity.id.uuidString,
             "assignedMemberId": member.id.uuidString,
+            "assignedMemberName": member.name,
             "priority": activity.priority.shortName,
             "message": message,
             "activityName": activity.name

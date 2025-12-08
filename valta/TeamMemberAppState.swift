@@ -180,7 +180,6 @@ final class TeamMemberAppState {
             mutableActivity.status = .running
             mutableActivity.startedAt = Date()
         }
-        }
         
         // Send notification to all team members
         Task {
@@ -201,7 +200,6 @@ final class TeamMemberAppState {
             mutableActivity.outcome = nil
             mutableActivity.completedAt = Date()
         }
-        }
         
         // Send notification to manager
         Task {
@@ -219,6 +217,11 @@ final class TeamMemberAppState {
     func selectMember(_ member: TeamMember) {
         currentMember = member
         hasCompletedOnboarding = true
+        
+        // Update notification profile
+        Task {
+            await NotificationService.shared.updateMemberProfile(name: member.name)
+        }
     }
 }
 

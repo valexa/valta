@@ -13,80 +13,114 @@ admin.initializeApp();
  * Sends notification when manager assigns activity to team member
  */
 exports.sendActivityAssignedNotification = functions.https.onCall(
-  async (data, context) => {
+    async (data, context) => {
     // Verify authentication
-    if (!context.auth) {
-      throw new functions.https.HttpsError(
-        "unauthenticated",
-        "User must be authenticated",
-      );
-    }
-
-    const { activityId, assignedMemberId, priority, message, activityName } =
-      data;
-
-    // Validate input
-    if (!activityId || !assignedMemberId || !message) {
-      throw new functions.https.HttpsError(
-        "invalid-argument",
-        "Missing required fields",
-      );
-    }
-
-    try {
-      // Get FCM token for assigned member
-      const db = admin.firestore();
-      const tokenDoc = await db
-        .collection("fcmTokens")
-        .doc(assignedMemberId)
-        .get();
-
-      if (!tokenDoc.exists) {
-        console.warn(`No FCM token found for member: ${assignedMemberId}`);
-        return { success: false, error: "No FCM token found" };
+      if (!context.auth) {
+        throw new functions.https.HttpsError(
+            "unauthenticated",
+            "User must be authenticated",
+        );
       }
 
-      const tokenData = tokenDoc.data();
-      const fcmToken = tokenData.token;
+      const {
+        activityId,
+        assignedMemberId,
+        priority,
+        message,
+        activityName,
+      } = data;
 
-      // Prepare notification payload
-      const payload = {
-        notification: {
-          title: "New Activity Assigned",
-          body: message,
-        },
-        data: {
-          type: "activity_assigned",
-          activityId: activityId,
-          assignedMemberId: assignedMemberId,
-          priority: priority || "",
-          activityName: activityName || "",
-        },
-        token: fcmToken,
-        apns: {
-          payload: {
-            aps: {
-              sound: "default",
-              badge: 1,
+      // Validate input
+      if (!activityId || !assignedMemberId || !message) {
+        throw new functions.https.HttpsError(
+            "invalid-argument",
+            "Missing required fields",
+        );
+      }
+
+      try {
+      // Query FCM token by member name
+        const db = admin.firestore();
+
+        console.log(`🔍 Looking up FCM token for member: ${data.assignedMemberName} (Name lookup)`);
+
+        const memberName = data.assignedMemberName;
+        if (!memberName) {
+          throw new functions.https.HttpsError(
+              "invalid-argument",
+              "Missing assignedMemberName",
+          );
+        }
+
+        const tokensSnapshot = await db
+            .collection("fcmTokens")
+            .where("memberName", "==", memberName)
+            .limit(1)
+            .get();
+
+        if (tokensSnapshot.empty) {
+          console.warn(`No FCM token found for member: ${memberName}`);
+          return {
+            success: false,
+            error: "No FCM token found for member name",
+          };
+        }
+
+        const tokenData = tokensSnapshot.docs[0].data();
+        const fcmToken = tokenData.token;
+
+        if (!fcmToken) {
+          console.warn(`No FCM token string found in document for member: ${memberName}`);
+          return {
+            success: false,
+            error: "FCM token missing in member document",
+          };
+        }
+
+        // Prepare notification payload
+        const payload = {
+          notification: {
+            title: "New Activity Assigned",
+            body: message,
+          },
+          data: {
+            type: "activity_assigned",
+            activityId: activityId,
+            assignedMemberId: assignedMemberId,
+            priority: priority || "",
+            activityName: activityName || "",
+          },
+          token: fcmToken,
+          apns: {
+            payload: {
+              aps: {
+                sound: "default",
+                badge: 1,
+              },
             },
           },
-        },
-      };
+        };
 
-      // Send notification
-      const response = await admin.messaging().send(payload);
-      console.log(`✅ Notification sent: ${response}`);
+        // Send notification
+        const response = await admin.messaging().send(payload);
+        console.log(`✅ Notification sent: ${response}`);
 
-      return { success: true, messageId: response };
-    } catch (error) {
-      console.error("❌ Error sending notification:", error);
-      throw new functions.https.HttpsError(
-        "internal",
-        "Failed to send notification",
-        error,
-      );
-    }
-  },
+        return {
+          success: true,
+          messageId: response,
+        };
+      } catch (error) {
+        console.error("❌ Error sending notification:", error);
+        if (error.stack) {
+          console.error("Stack trace:", error.stack);
+        }
+        throw new functions.https.HttpsError(
+            "internal",
+            "Failed to send notification: " + error.message,
+            error,
+        );
+      }
+    },
 );
 
 /**
@@ -94,98 +128,114 @@ exports.sendActivityAssignedNotification = functions.https.onCall(
  * (to all team members)
  */
 exports.sendActivityStartedNotification = functions.https.onCall(
-  async (data, context) => {
-    if (!context.auth) {
-      throw new functions.https.HttpsError(
-        "unauthenticated",
-        "User must be authenticated",
-      );
-    }
+    async (data, context) => {
+      if (!context.auth) {
+        throw new functions.https.HttpsError(
+            "unauthenticated",
+            "User must be authenticated",
+        );
+      }
 
-    const { activityId, teamId, memberName, priority, message, activityName } =
+      const {
+        activityId,
+        teamId,
+        memberName,
+        priority,
+        message,
+        activityName,
+      } =
       data;
 
-    if (!activityId || !teamId || !message) {
-      throw new functions.https.HttpsError(
-        "invalid-argument",
-        "Missing required fields",
-      );
-    }
+      if (!activityId || !teamId || !message) {
+        throw new functions.https.HttpsError(
+            "invalid-argument",
+            "Missing required fields",
+        );
+      }
 
-    try {
+      try {
       // Get all team members' FCM tokens
-      const db = admin.firestore();
-      const teamDoc = await db.collection("teams").doc(teamId).get();
+        const db = admin.firestore();
+        const teamDoc = await db.collection("teams").doc(teamId).get();
 
-      if (!teamDoc.exists) {
-        throw new functions.https.HttpsError("not-found", "Team not found");
-      }
-
-      const teamData = teamDoc.data();
-      const memberIds = teamData.members || [];
-
-      // Get FCM tokens for all team members
-      const tokens = [];
-      for (const memberId of memberIds) {
-        const tokenDoc = await db.collection("fcmTokens").doc(memberId).get();
-        if (tokenDoc.exists) {
-          tokens.push(tokenDoc.data().token);
+        if (!teamDoc.exists) {
+          throw new functions.https.HttpsError("not-found", "Team not found");
         }
-      }
 
-      if (tokens.length === 0) {
-        console.warn(`No FCM tokens found for team: ${teamId}`);
-        return { success: false, error: "No FCM tokens found" };
-      }
+        const teamData = teamDoc.data();
+        const memberIds = teamData.members || [];
 
-      // Prepare multicast message
-      const multicastMessage = {
-        notification: {
-          title: "Activity Started",
-          body: message,
-        },
-        data: {
-          type: "activity_started",
-          activityId: activityId,
-          teamId: teamId,
-          memberName: memberName || "",
-          priority: priority || "",
-          activityName: activityName || "",
-        },
-        apns: {
-          payload: {
-            aps: {
-              sound: "default",
-              badge: 1,
+        // Get FCM tokens for all team members
+        const tokens = [];
+        for (const memberId of memberIds) {
+          const tokenDoc = await db.collection("fcmTokens").doc(memberId).get();
+          if (tokenDoc.exists) {
+            const t = tokenDoc.data().token;
+            if (t) {
+              tokens.push(t);
+            }
+          }
+        }
+
+        if (tokens.length === 0) {
+          console.warn(`No FCM tokens found for team: ${teamId}`);
+          return {
+            success: false,
+            error: "No FCM tokens found",
+          };
+        }
+
+        // Prepare multicast message
+        const multicastMessage = {
+          notification: {
+            title: "Activity Started",
+            body: message,
+          },
+          data: {
+            type: "activity_started",
+            activityId: activityId,
+            teamId: teamId,
+            memberName: memberName || "",
+            priority: priority || "",
+            activityName: activityName || "",
+          },
+          apns: {
+            payload: {
+              aps: {
+                sound: "default",
+                badge: 1,
+              },
             },
           },
-        },
-        tokens: tokens,
-      };
+          tokens: tokens,
+        };
 
-      // Send multicast notification
-      const response = await admin
-        .messaging()
-        .sendEachForMulticast(multicastMessage);
-      console.log(
-        `✅ Sent ${response.successCount} notifications, ` +
+        // Send multicast notification
+        const response = await admin
+            .messaging()
+            .sendEachForMulticast(multicastMessage);
+        console.log(
+            `✅ Sent ${response.successCount} notifications, ` +
         `${response.failureCount} failed`,
-      );
+        );
 
-      return {
-        success: true,
-        successCount: response.successCount,
-        failureCount: response.failureCount,
-      };
-    } catch (error) {
-      console.error("❌ Error sending notification:", error);
-      throw new functions.https.HttpsError(
-        "internal",
-        "Failed to send notification",
-        error,
-      );
-    }
-  },
+        return {
+          success: true,
+          successCount: response.successCount,
+          failureCount: response.failureCount,
+        };
+      } catch (error) {
+        console.error("❌ Error sending notification:", error);
+        if (error.stack) {
+          console.error("Stack trace:", error.stack);
+        }
+        throw new functions.https.HttpsError(
+            "internal",
+            "Failed to send notification: " + error.message,
+            error,
+        );
+      }
+    },
 );
 
 /**
@@ -193,94 +243,103 @@ exports.sendActivityStartedNotification = functions.https.onCall(
  * (to manager)
  */
 exports.sendCompletionRequestedNotification = functions.https.onCall(
-  async (data, context) => {
-    if (!context.auth) {
-      throw new functions.https.HttpsError(
-        "unauthenticated",
-        "User must be authenticated",
-      );
-    }
-
-    const {
-      activityId,
-      memberName,
-      priority,
-      message,
-      activityName,
-      managerId,
-    } = data;
-
-    if (!activityId || !message) {
-      throw new functions.https.HttpsError(
-        "invalid-argument",
-        "Missing required fields",
-      );
-    }
-
-    try {
-      let token = null;
-
-      // 1. Try targeted lookup if managerId is provided
-      if (managerId) {
-        console.log(`🔍 Looking up FCM token for manager: ${managerId}`);
-        const db = admin.firestore();
-        const tokenDoc = await db.collection("fcmTokens").doc(managerId).get();
-
-        if (tokenDoc.exists) {
-          token = tokenDoc.data().token;
-        } else {
-          console.warn(`⚠️ No FCM token found for manager: ${managerId}`);
-        }
+    async (data, context) => {
+      if (!context.auth) {
+        throw new functions.https.HttpsError(
+            "unauthenticated",
+            "User must be authenticated",
+        );
       }
 
-      // 2. Prepare payload
-      const payload = {
-        notification: {
-          title: "Completion Request",
-          body: message,
-        },
-        data: {
-          type: "completion_requested",
-          activityId: activityId,
-          memberName: memberName || "",
-          priority: priority || "",
-          activityName: activityName || "",
-        },
-        apns: {
-          payload: {
-            aps: {
-              sound: "default",
-              badge: 1,
+      const {
+        activityId,
+        memberName,
+        priority,
+        message,
+        activityName,
+        managerId,
+      } = data;
+
+      if (!activityId || !message) {
+        throw new functions.https.HttpsError(
+            "invalid-argument",
+            "Missing required fields",
+        );
+      }
+
+      try {
+        let token = null;
+
+        // 1. Try targeted lookup if managerId is provided
+        if (managerId) {
+          console.log(`🔍 Looking up FCM token for manager: ${managerId}`);
+          const db = admin.firestore();
+          const tokenDoc = await db.collection("fcmTokens").doc(managerId).get();
+
+          if (tokenDoc.exists) {
+            token = tokenDoc.data().token;
+            if (!token) {
+              console.warn(`⚠️ Manager document exists but has no token: ${managerId}`);
+            }
+          } else {
+            console.warn(`⚠️ No FCM token found for manager: ${managerId}`);
+          }
+        }
+
+        // 2. Prepare payload
+        const payload = {
+          notification: {
+            title: "Completion Request",
+            body: message,
+          },
+          data: {
+            type: "completion_requested",
+            activityId: activityId,
+            memberName: memberName || "",
+            priority: priority || "",
+            activityName: activityName || "",
+          },
+          apns: {
+            payload: {
+              aps: {
+                sound: "default",
+                badge: 1,
+              },
             },
           },
-        },
-      };
+        };
 
-      // 3. Send notification
-      let response;
-      if (token) {
+        // 3. Send notification
+        let response;
+        if (token) {
         // Send to specific device
-        payload.token = token;
-        response = await admin.messaging().send(payload);
-        console.log(`✅ Targeted notification sent to manager ${managerId}: ${response}`);
-      } else {
+          payload.token = token;
+          response = await admin.messaging().send(payload);
+          console.log(`✅ Targeted notification sent to manager ${managerId}: ${response}`);
+        } else {
         // Fallback to topic if no managerId or token found (backward compatibility)
-        console.log("⚠️ Falling back to 'managers' topic");
-        payload.topic = "managers";
-        response = await admin.messaging().send(payload);
-        console.log(`✅ Topic notification sent: ${response}`);
-      }
+          console.log("⚠️ Falling back to 'managers' topic");
+          payload.topic = "managers";
+          response = await admin.messaging().send(payload);
+          console.log(`✅ Topic notification sent: ${response}`);
+        }
 
-      return { success: true, messageId: response };
-    } catch (error) {
-      console.error("❌ Error sending notification:", error);
-      throw new functions.https.HttpsError(
-        "internal",
-        "Failed to send notification",
-        error,
-      );
-    }
-  },
+        return {
+          success: true,
+          messageId: response,
+        };
+      } catch (error) {
+        console.error("❌ Error sending notification:", error);
+        if (error.stack) {
+          console.error("Stack trace:", error.stack);
+        }
+        throw new functions.https.HttpsError(
+            "internal",
+            "Failed to send notification: " + error.message,
+            error,
+        );
+      }
+    },
 );
 
 /**
@@ -288,106 +347,115 @@ exports.sendCompletionRequestedNotification = functions.https.onCall(
  * (to all team members)
  */
 exports.sendActivityCompletedNotification = functions.https.onCall(
-  async (data, context) => {
-    if (!context.auth) {
-      throw new functions.https.HttpsError(
-        "unauthenticated",
-        "User must be authenticated",
-      );
-    }
+    async (data, context) => {
+      if (!context.auth) {
+        throw new functions.https.HttpsError(
+            "unauthenticated",
+            "User must be authenticated",
+        );
+      }
 
-    const {
-      activityId,
-      teamId,
-      memberName,
-      priority,
-      outcome,
-      statusColor,
-      message,
-      activityName,
-    } = data;
+      const {
+        activityId,
+        teamId,
+        memberName,
+        priority,
+        outcome,
+        statusColor,
+        message,
+        activityName,
+      } = data;
 
-    if (!activityId || !teamId || !message) {
-      throw new functions.https.HttpsError(
-        "invalid-argument",
-        "Missing required fields",
-      );
-    }
+      if (!activityId || !teamId || !message) {
+        throw new functions.https.HttpsError(
+            "invalid-argument",
+            "Missing required fields",
+        );
+      }
 
-    try {
+      try {
       // Get all team members' FCM tokens
-      const db = admin.firestore();
-      const teamDoc = await db.collection("teams").doc(teamId).get();
+        const db = admin.firestore();
+        const teamDoc = await db.collection("teams").doc(teamId).get();
 
-      if (!teamDoc.exists) {
-        throw new functions.https.HttpsError("not-found", "Team not found");
-      }
-
-      const teamData = teamDoc.data();
-      const memberIds = teamData.members || [];
-
-      // Get FCM tokens for all team members
-      const tokens = [];
-      for (const memberId of memberIds) {
-        const tokenDoc = await db.collection("fcmTokens").doc(memberId).get();
-        if (tokenDoc.exists) {
-          tokens.push(tokenDoc.data().token);
+        if (!teamDoc.exists) {
+          throw new functions.https.HttpsError("not-found", "Team not found");
         }
-      }
 
-      if (tokens.length === 0) {
-        console.warn(`No FCM tokens found for team: ${teamId}`);
-        return { success: false, error: "No FCM tokens found" };
-      }
+        const teamData = teamDoc.data();
+        const memberIds = teamData.members || [];
 
-      // Prepare multicast message
-      const multicastMessage = {
-        notification: {
-          title: "Activity Completed",
-          body: message,
-        },
-        data: {
-          type: "activity_completed",
-          activityId: activityId,
-          teamId: teamId,
-          memberName: memberName || "",
-          priority: priority || "",
-          outcome: outcome || "",
-          statusColor: statusColor || "",
-          activityName: activityName || "",
-        },
-        apns: {
-          payload: {
-            aps: {
-              sound: "default",
-              badge: 1,
+        // Get FCM tokens for all team members
+        const tokens = [];
+        for (const memberId of memberIds) {
+          const tokenDoc = await db.collection("fcmTokens").doc(memberId).get();
+          if (tokenDoc.exists) {
+            const t = tokenDoc.data().token;
+            if (t) {
+              tokens.push(t);
+            }
+          }
+        }
+
+        if (tokens.length === 0) {
+          console.warn(`No FCM tokens found for team: ${teamId}`);
+          return {
+            success: false,
+            error: "No FCM tokens found",
+          };
+        }
+
+        // Prepare multicast message
+        const multicastMessage = {
+          notification: {
+            title: "Activity Completed",
+            body: message,
+          },
+          data: {
+            type: "activity_completed",
+            activityId: activityId,
+            teamId: teamId,
+            memberName: memberName || "",
+            priority: priority || "",
+            outcome: outcome || "",
+            statusColor: statusColor || "",
+            activityName: activityName || "",
+          },
+          apns: {
+            payload: {
+              aps: {
+                sound: "default",
+                badge: 1,
+              },
             },
           },
-        },
-        tokens: tokens,
-      };
+          tokens: tokens,
+        };
 
-      // Send multicast notification
-      const response = await admin
-        .messaging()
-        .sendEachForMulticast(multicastMessage);
-      console.log(
-        `✅ Sent ${response.successCount} notifications, ` +
+        // Send multicast notification
+        const response = await admin
+            .messaging()
+            .sendEachForMulticast(multicastMessage);
+        console.log(
+            `✅ Sent ${response.successCount} notifications, ` +
         `${response.failureCount} failed`,
-      );
+        );
 
-      return {
-        success: true,
-        successCount: response.successCount,
-        failureCount: response.failureCount,
-      };
-    } catch (error) {
-      console.error("❌ Error sending notification:", error);
-      throw new functions.https.HttpsError(
-        "internal",
-        "Failed to send notification",
-        error,
-      );
-    }
-  },
+        return {
+          success: true,
+          successCount: response.successCount,
+          failureCount: response.failureCount,
+        };
+      } catch (error) {
+        console.error("❌ Error sending notification:", error);
+        if (error.stack) {
+          console.error("Stack trace:", error.stack);
+        }
+        throw new functions.https.HttpsError(
+            "internal",
+            "Failed to send notification: " + error.message,
+            error,
+        );
+      }
+    },
 );
