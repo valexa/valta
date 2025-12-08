@@ -10,7 +10,7 @@
 import SwiftUI
 
 struct NewActivitySheet: View {
-    @Environment(AppState.self) private var appState
+    @Environment(ManagerAppState.self) private var appState
     @Environment(\.dismiss) private var dismiss
     
     @State private var name: String = ""
@@ -293,6 +293,6 @@ struct NotificationPreview: View {
 
 #Preview {
     NewActivitySheet()
-        .environment(AppState())
+        .environment(ManagerAppState())
 }
 

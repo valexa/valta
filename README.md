@@ -134,7 +134,7 @@ valta/
 │       ├── LogTab.swift
 │       └── TeamMemberOnboardingView.swift
 ├── valtaManager/               # Manager App
-│   ├── AppState.swift
+│   ├── ManagerAppState.swift
 │   ├── ContentView.swift
 │   └── Views/
 │       ├── TeamsTab.swift

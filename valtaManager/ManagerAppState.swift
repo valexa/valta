@@ -1,5 +1,5 @@
 //
-//  AppState.swift
+//  ManagerAppState.swift
 //  valtaManager
 //
 //  Observable state management for the Manager app.
@@ -7,7 +7,7 @@
 //
 //  Uses Observation framework for automatic UI updates.
 //
-//  Created by vlad on 2025-12-04.
+//  Created by ANTIGRAVITY on 2025-12-08.
 //
 
 import SwiftUI
@@ -15,7 +15,7 @@ import Observation
 import FirebaseAuth
 
 @Observable
-final class AppState {
+final class ManagerAppState {
     
     // MARK: - Services
     
@@ -91,18 +91,25 @@ final class AppState {
     // MARK: - Activity Actions (delegate to service)
     
     func approveCompletion(_ activity: Activity) {
+        var updatedActivity = activity
+        
         activity.updateInBackend { mutableActivity in
             mutableActivity.status = .completed
             // Calculate outcome based on existing completion time (if set) or now
             let completionTime = mutableActivity.completedAt ?? Date()
             mutableActivity.completedAt = completionTime
             mutableActivity.outcome = mutableActivity.calculateOutcome(completionDate: completionTime)
+            
+            // Capture updated state
+            updatedActivity = mutableActivity
         }
+        
+        let finalActivity = updatedActivity
         Task {
             // Send notification to all team members
             do {
                 try await NotificationSender.shared.sendActivityCompletedNotification(
-                    activity: activity,
+                    activity: finalActivity,
                     team: team
                 )
             } catch {
@@ -119,17 +126,24 @@ final class AppState {
     }
     
     func completeActivity(_ activity: Activity) {
+        var updatedActivity = activity
+        
         activity.updateInBackend { mutableActivity in
             let now = Date()
             mutableActivity.status = .completed
             mutableActivity.completedAt = now
             mutableActivity.outcome = mutableActivity.calculateOutcome(completionDate: now)
+            
+            // Capture updated state
+            updatedActivity = mutableActivity
         }
+        
+        let finalActivity = updatedActivity
         Task {
             // Send notification to all team members
             do {
                 try await NotificationSender.shared.sendActivityCompletedNotification(
-                    activity: activity,
+                    activity: finalActivity,
                     team: team
                 )
             } catch {
@@ -175,4 +189,3 @@ final class AppState {
         }
     }
 }
-

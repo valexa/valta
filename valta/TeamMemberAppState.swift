@@ -176,16 +176,20 @@ final class TeamMemberAppState {
     // MARK: - Actions (delegate to service)
     
     func startActivity(_ activity: Activity) {
+        var updatedActivity = activity
+        
         activity.updateInBackend { mutableActivity in
             mutableActivity.status = .running
             mutableActivity.startedAt = Date()
+            updatedActivity = mutableActivity
         }
         
-        // Send notification to all team members
+        // Send notification to all team members using updated state
+        let finalActivity = updatedActivity
         Task {
             do {
                 try await NotificationSender.shared.sendActivityStartedNotification(
-                    activity: activity,
+                    activity: finalActivity,
                     team: team
                 )
             } catch {
@@ -195,19 +199,23 @@ final class TeamMemberAppState {
     }
     
     func requestReview(_ activity: Activity) {
+        var updatedActivity = activity
+        
         activity.updateInBackend { mutableActivity in
             mutableActivity.status = .managerPending
             mutableActivity.outcome = nil
             mutableActivity.completedAt = Date()
+            updatedActivity = mutableActivity
         }
         
-        // Send notification to manager
+        // Send notification to manager using updated state
+        let finalActivity = updatedActivity
         Task {
             do {
                 try await NotificationSender.shared.sendCompletionRequestedNotification(
-                    activity: activity
+                    activity: finalActivity
                 )
-                print("🔔 Notification sent to manager for activity: \(activity.name)")
+                print("🔔 Notification sent to manager for activity: \(finalActivity.name)")
             } catch {
                 print("⚠️ Failed to send completion requested notification: \(error.localizedDescription)")
             }
@@ -218,9 +226,13 @@ final class TeamMemberAppState {
         currentMember = member
         hasCompletedOnboarding = true
         
-        // Update notification profile
+        // Update notification profile and link token
         Task {
+            // Update the name for display purposes (optional now but good for debug)
             await NotificationService.shared.updateMemberProfile(name: member.name)
+            
+            // CRITICAL: Link the FCM token to this member's UUID so Cloud Functions can find it
+            await NotificationService.shared.registerMemberID(member.id)
         }
     }
 }

@@ -9,18 +9,87 @@ const admin = require("firebase-admin");
 
 admin.initializeApp();
 
+// MARK: - Helpers
+
+/**
+ * Asserts that the user is authenticated.
+ * @param {Object} context The callable context.
+ * @throws {functions.https.HttpsError} If not authenticated.
+ */
+function assertAuthenticated(context) {
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+        "unauthenticated",
+        "User must be authenticated",
+    );
+  }
+}
+
+/**
+ * Checks that required fields are present in data.
+ * @param {Object} data The input data.
+ * @param {Array<string>} fields List of required field names.
+ * @throws {functions.https.HttpsError} If a field is missing.
+ */
+function checkRequired(data, fields) {
+  for (const field of fields) {
+    if (!data[field]) {
+      throw new functions.https.HttpsError(
+          "invalid-argument",
+          "Missing required fields",
+      );
+    }
+  }
+}
+
+/**
+ * Standardized error handling.
+ * @param {Error} error The error object.
+ * @throws {functions.https.HttpsError} Always throws internal error.
+ */
+function handleError(error) {
+  console.error("❌ Error sending notification:", error);
+  if (error.stack) {
+    console.error("Stack trace:", error.stack);
+  }
+  throw new functions.https.HttpsError(
+      "internal",
+      "Failed to send notification: " + error.message,
+      error,
+  );
+}
+
+/**
+ * Fetches and filters valid FCM tokens for a list of member IDs.
+ * @param {admin.firestore.Firestore} db Firestore instance.
+ * @param {Array<string>} memberIds Array of member IDs.
+ * @return {Promise<Array<string>>} Array of valid tokens.
+ */
+async function getTokensForMembers(db, memberIds) {
+  const tokens = [];
+  for (const memberId of memberIds) {
+    try {
+      const tokenDoc = await db.collection("fcmTokens").doc(memberId).get();
+      if (tokenDoc.exists) {
+        const t = tokenDoc.data().token;
+        if (t) {
+          tokens.push(t);
+        }
+      }
+    } catch (e) {
+      console.warn(`Failed to fetch token for member ${memberId}:`, e);
+    }
+  }
+  return tokens;
+}
+
 /**
  * Sends notification when manager assigns activity to team member
  */
 exports.sendActivityAssignedNotification = functions.https.onCall(
     async (data, context) => {
-    // Verify authentication
-      if (!context.auth) {
-        throw new functions.https.HttpsError(
-            "unauthenticated",
-            "User must be authenticated",
-        );
-      }
+      assertAuthenticated(context);
+      checkRequired(data, ["activityId", "assignedMemberId", "message"]);
 
       const {
         activityId,
@@ -30,50 +99,17 @@ exports.sendActivityAssignedNotification = functions.https.onCall(
         activityName,
       } = data;
 
-      // Validate input
-      if (!activityId || !assignedMemberId || !message) {
-        throw new functions.https.HttpsError(
-            "invalid-argument",
-            "Missing required fields",
-        );
-      }
-
       try {
-      // Query FCM token by member name
         const db = admin.firestore();
+        console.log(`🔍 Looking up FCM token for member ID: ${assignedMemberId}`);
 
-        console.log(`🔍 Looking up FCM token for member: ${data.assignedMemberName} (Name lookup)`);
+        const tokens = await getTokensForMembers(db, [assignedMemberId]);
 
-        const memberName = data.assignedMemberName;
-        if (!memberName) {
-          throw new functions.https.HttpsError(
-              "invalid-argument",
-              "Missing assignedMemberName",
-          );
-        }
-
-        const tokensSnapshot = await db
-            .collection("fcmTokens")
-            .where("memberName", "==", memberName)
-            .limit(1)
-            .get();
-
-        if (tokensSnapshot.empty) {
-          console.warn(`No FCM token found for member: ${memberName}`);
+        if (tokens.length === 0) {
+          console.warn(`No FCM token found for member: ${assignedMemberId}`);
           return {
             success: false,
-            error: "No FCM token found for member name",
-          };
-        }
-
-        const tokenData = tokensSnapshot.docs[0].data();
-        const fcmToken = tokenData.token;
-
-        if (!fcmToken) {
-          console.warn(`No FCM token string found in document for member: ${memberName}`);
-          return {
-            success: false,
-            error: "FCM token missing in member document",
+            error: "No FCM token found for member",
           };
         }
 
@@ -90,7 +126,7 @@ exports.sendActivityAssignedNotification = functions.https.onCall(
             priority: priority || "",
             activityName: activityName || "",
           },
-          token: fcmToken,
+          token: tokens[0],
           apns: {
             payload: {
               aps: {
@@ -110,15 +146,7 @@ exports.sendActivityAssignedNotification = functions.https.onCall(
           messageId: response,
         };
       } catch (error) {
-        console.error("❌ Error sending notification:", error);
-        if (error.stack) {
-          console.error("Stack trace:", error.stack);
-        }
-        throw new functions.https.HttpsError(
-            "internal",
-            "Failed to send notification: " + error.message,
-            error,
-        );
+        handleError(error);
       }
     },
 );
@@ -129,12 +157,8 @@ exports.sendActivityAssignedNotification = functions.https.onCall(
  */
 exports.sendActivityStartedNotification = functions.https.onCall(
     async (data, context) => {
-      if (!context.auth) {
-        throw new functions.https.HttpsError(
-            "unauthenticated",
-            "User must be authenticated",
-        );
-      }
+      assertAuthenticated(context);
+      checkRequired(data, ["activityId", "teamId", "message"]);
 
       const {
         activityId,
@@ -143,18 +167,9 @@ exports.sendActivityStartedNotification = functions.https.onCall(
         priority,
         message,
         activityName,
-      } =
-      data;
-
-      if (!activityId || !teamId || !message) {
-        throw new functions.https.HttpsError(
-            "invalid-argument",
-            "Missing required fields",
-        );
-      }
+      } = data;
 
       try {
-      // Get all team members' FCM tokens
         const db = admin.firestore();
         const teamDoc = await db.collection("teams").doc(teamId).get();
 
@@ -165,17 +180,7 @@ exports.sendActivityStartedNotification = functions.https.onCall(
         const teamData = teamDoc.data();
         const memberIds = teamData.members || [];
 
-        // Get FCM tokens for all team members
-        const tokens = [];
-        for (const memberId of memberIds) {
-          const tokenDoc = await db.collection("fcmTokens").doc(memberId).get();
-          if (tokenDoc.exists) {
-            const t = tokenDoc.data().token;
-            if (t) {
-              tokens.push(t);
-            }
-          }
-        }
+        const tokens = await getTokensForMembers(db, memberIds);
 
         if (tokens.length === 0) {
           console.warn(`No FCM tokens found for team: ${teamId}`);
@@ -225,15 +230,7 @@ exports.sendActivityStartedNotification = functions.https.onCall(
           failureCount: response.failureCount,
         };
       } catch (error) {
-        console.error("❌ Error sending notification:", error);
-        if (error.stack) {
-          console.error("Stack trace:", error.stack);
-        }
-        throw new functions.https.HttpsError(
-            "internal",
-            "Failed to send notification: " + error.message,
-            error,
-        );
+        handleError(error);
       }
     },
 );
@@ -244,12 +241,8 @@ exports.sendActivityStartedNotification = functions.https.onCall(
  */
 exports.sendCompletionRequestedNotification = functions.https.onCall(
     async (data, context) => {
-      if (!context.auth) {
-        throw new functions.https.HttpsError(
-            "unauthenticated",
-            "User must be authenticated",
-        );
-      }
+      assertAuthenticated(context);
+      checkRequired(data, ["activityId", "message"]);
 
       const {
         activityId,
@@ -260,13 +253,6 @@ exports.sendCompletionRequestedNotification = functions.https.onCall(
         managerId,
       } = data;
 
-      if (!activityId || !message) {
-        throw new functions.https.HttpsError(
-            "invalid-argument",
-            "Missing required fields",
-        );
-      }
-
       try {
         let token = null;
 
@@ -274,13 +260,9 @@ exports.sendCompletionRequestedNotification = functions.https.onCall(
         if (managerId) {
           console.log(`🔍 Looking up FCM token for manager: ${managerId}`);
           const db = admin.firestore();
-          const tokenDoc = await db.collection("fcmTokens").doc(managerId).get();
-
-          if (tokenDoc.exists) {
-            token = tokenDoc.data().token;
-            if (!token) {
-              console.warn(`⚠️ Manager document exists but has no token: ${managerId}`);
-            }
+          const tokens = await getTokensForMembers(db, [managerId]);
+          if (tokens.length > 0) {
+            token = tokens[0];
           } else {
             console.warn(`⚠️ No FCM token found for manager: ${managerId}`);
           }
@@ -317,7 +299,7 @@ exports.sendCompletionRequestedNotification = functions.https.onCall(
           response = await admin.messaging().send(payload);
           console.log(`✅ Targeted notification sent to manager ${managerId}: ${response}`);
         } else {
-        // Fallback to topic if no managerId or token found (backward compatibility)
+        // Fallback to topic if no managerId or token found
           console.log("⚠️ Falling back to 'managers' topic");
           payload.topic = "managers";
           response = await admin.messaging().send(payload);
@@ -329,15 +311,7 @@ exports.sendCompletionRequestedNotification = functions.https.onCall(
           messageId: response,
         };
       } catch (error) {
-        console.error("❌ Error sending notification:", error);
-        if (error.stack) {
-          console.error("Stack trace:", error.stack);
-        }
-        throw new functions.https.HttpsError(
-            "internal",
-            "Failed to send notification: " + error.message,
-            error,
-        );
+        handleError(error);
       }
     },
 );
@@ -348,12 +322,8 @@ exports.sendCompletionRequestedNotification = functions.https.onCall(
  */
 exports.sendActivityCompletedNotification = functions.https.onCall(
     async (data, context) => {
-      if (!context.auth) {
-        throw new functions.https.HttpsError(
-            "unauthenticated",
-            "User must be authenticated",
-        );
-      }
+      assertAuthenticated(context);
+      checkRequired(data, ["activityId", "teamId", "message"]);
 
       const {
         activityId,
@@ -366,15 +336,7 @@ exports.sendActivityCompletedNotification = functions.https.onCall(
         activityName,
       } = data;
 
-      if (!activityId || !teamId || !message) {
-        throw new functions.https.HttpsError(
-            "invalid-argument",
-            "Missing required fields",
-        );
-      }
-
       try {
-      // Get all team members' FCM tokens
         const db = admin.firestore();
         const teamDoc = await db.collection("teams").doc(teamId).get();
 
@@ -385,17 +347,7 @@ exports.sendActivityCompletedNotification = functions.https.onCall(
         const teamData = teamDoc.data();
         const memberIds = teamData.members || [];
 
-        // Get FCM tokens for all team members
-        const tokens = [];
-        for (const memberId of memberIds) {
-          const tokenDoc = await db.collection("fcmTokens").doc(memberId).get();
-          if (tokenDoc.exists) {
-            const t = tokenDoc.data().token;
-            if (t) {
-              tokens.push(t);
-            }
-          }
-        }
+        const tokens = await getTokensForMembers(db, memberIds);
 
         if (tokens.length === 0) {
           console.warn(`No FCM tokens found for team: ${teamId}`);
@@ -447,15 +399,7 @@ exports.sendActivityCompletedNotification = functions.https.onCall(
           failureCount: response.failureCount,
         };
       } catch (error) {
-        console.error("❌ Error sending notification:", error);
-        if (error.stack) {
-          console.error("Stack trace:", error.stack);
-        }
-        throw new functions.https.HttpsError(
-            "internal",
-            "Failed to send notification: " + error.message,
-            error,
-        );
+        handleError(error);
       }
     },
 );

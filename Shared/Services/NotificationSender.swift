@@ -188,7 +188,7 @@ final class NotificationSender {
 
 // MARK: - Errors
 
-enum NotificationError: LocalizedError {
+enum NotificationError: LocalizedError, Equatable {
     case notAuthenticated
     case missingOutcome
     case cloudFunctionError(String)

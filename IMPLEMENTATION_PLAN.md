@@ -24,7 +24,7 @@ Live Team Activities is a macOS application suite consisting of two apps:
   - `DataManager` provides `onTeamsChanged: (() -> Void)?` to notify state containers.
 
 - State container invalidation
-  - `AppState` and `TeamMemberAppState` each expose `dataVersion: Int`.
+  - `ManagerAppState` and `TeamMemberAppState` each expose `dataVersion: Int`.
   - Derived/computed properties depend on `dataVersion` to re-evaluate when changes occur.
 
 - UI animation strategy
@@ -63,7 +63,7 @@ Live Team Activities is a macOS application suite consisting of two apps:
   - [x] `AppSymbols.swift` - Centralized SF Symbols
 
 ### 1.2 Manager App UI ✅
-- [x] App entry point and state management (`AppState.swift`)
+- [x] App entry point and state management (`ManagerAppState.swift`)
 - [x] Main tab structure (Teams, Requests)
 - [x] Onboarding flow
   - [x] Welcome step with manager name
@@ -176,28 +176,28 @@ Live Team Activities is a macOS application suite consisting of two apps:
 
 ---
 
-## Phase 4: Notifications (FCM) 🔄 IN PROGRESS
+## Phase 4: Notifications (FCM) ✅ COMPLETED
 
 ### 4.1 Configuration
-- [ ] Configure APNs keys in Firebase Console
-- [ ] Add Push Notification capability in Xcode
-- [ ] Implement `AppDelegate` for notification handling (SwiftUI adapter)
+- [x] Configure APNs keys in Firebase Console
+- [x] Add Push Notification capability in Xcode
+- [x] Implement `AppDelegate` for notification handling (SwiftUI adapter)
 
 ### 4.2 Implementation
-- [ ] Request notification permissions
-- [ ] Handle FCM token registration
-- [ ] Implement local notification triggers for immediate feedback
-- [ ] Test remote notifications via Firebase Console
+- [x] Request notification permissions
+- [x] Handle FCM token registration
+- [x] Implement local notification triggers for immediate feedback
+- [x] Test remote notifications via Firebase Console
 
 
 ---
 
-## Phase 5: Firestore Integration (Replacing CSV) 🔲 TODO
+## Phase 5: Firestore Integration ✅ COMPLETED
 
 ### 5.1 Setup
-- [ ] Enable Firestore in Firebase Console
+- [x] Enable Firestore in Firebase Console
 - [x] Add `FirebaseFirestore` SDK via SPM
-- [ ] Configure Firestore Security Rules
+- [x] Configure Firestore Security Rules
 
 ### 5.2 FCM Token Storage
 - [x] Create `FirestoreService.swift`
@@ -206,14 +206,14 @@ Live Team Activities is a macOS application suite consisting of two apps:
 - [x] Migrate `NotificationService` to store tokens in Firestore
 
 ### 5.3 Cleanup
-- [ ] Ensure `CSVService` and `StorageService` remain active for data sync
-- [ ] Remove unused Firestore method stubs (if any)
+- [x] Ensure `CSVService` and `StorageService` remain active for data sync
+- [x] Remove unused Firestore method stubs (if any)
 
 
 
 ---
 
-## Phase 6: Unit Testing, Polish, and Integration Testing 🔲 TODO
+## Phase 6: Unit Testing, Polish, and Integration Testing 🔄 IN PROGRESS
 
 ### 6.1 UI Polish
 - [ ] Add loading states
@@ -301,7 +301,7 @@ valta/
 ├── valtaManager/                    # ✅ Manager App
 │   ├── valtaManagerApp.swift
 │   ├── ContentView.swift
-│   ├── AppState.swift
+│   ├── ManagerAppState.swift
 │   └── Views/
 │       ├── OnboardingView.swift
 │       ├── TeamsTab.swift
@@ -322,10 +322,10 @@ valta/
 | Phase 1: UI Foundation | ✅ Complete | 100% |
 | Phase 2: Data Persistence | ✅ Complete | 100% |
 | Phase 3: Business Logic | ✅ Complete | 100% |
-| Phase 4: Notifications | 🔄 In Progress | 90% |
-| Phase 5: Firestore Integration | � In Progress | 75% |
-| Phase 6: Testing & Polish | 🔲 Not Started | 0% |
-**Overall Progress: ~52%** (3.1 of 6 phases complete)
+| Phase 4: Notifications | ✅ Complete | 100% |
+| Phase 5: Firestore Integration | ✅ Complete | 100% |
+| Phase 6: Testing & Polish | 🔄 In Progress | 50% |
+**Overall Progress: ~92%** (5.5 of 6 phases complete)
 
 ---
 

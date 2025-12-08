@@ -26,6 +26,9 @@ final class NotificationService: NSObject {
     var isPermissionGranted: Bool = false
     var notificationPermissionStatus: UNAuthorizationStatus = .notDetermined
     
+    // Track the member ID we are currently registered as (in addition to Auth UID)
+    private var registeredMemberID: String?
+    
     private override init() {
         super.init()
         // Setup FCM token delegate
@@ -146,6 +149,20 @@ final class NotificationService: NSObject {
         }
     }
     
+    /// Registers the current FCM token for a specific Team Member ID (UUID).
+    /// This is crucial because Cloud Functions look up tokens by this UUID, not the Auth UID.
+    func registerMemberID(_ id: UUID) async {
+        let uuidString = id.uuidString
+        await MainActor.run {
+            self.registeredMemberID = uuidString
+        }
+        
+        if let token = fcmToken {
+            print("🔗 Linking FCM token to Member ID: \(uuidString)")
+            await uploadFCMToken(token, userId: uuidString)
+        }
+    }
+    
     /// Updates the member profile (name) in Firestore for notification lookup
     func updateMemberProfile(name: String) async {
         guard let userId = Auth.auth().currentUser?.uid else { return }
@@ -171,6 +188,11 @@ extension NotificationService: MessagingDelegate {
             // Upload new token if user is authenticated
             if let userId = Auth.auth().currentUser?.uid {
                 await uploadFCMToken(token, userId: userId)
+            }
+            
+            // Also upload for registered member ID if set
+            if let memberId = self.registeredMemberID {
+                await uploadFCMToken(token, userId: memberId)
             }
         }
     }
