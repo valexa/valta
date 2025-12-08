@@ -35,7 +35,7 @@ struct ActivityService: ActivityServiceProtocol {
     /// Starts an activity (changes status from teamMemberPending to running)
     @discardableResult
     func startActivity(id: UUID, in activities: inout [Activity]) -> Activity? {
-        guard let idx = activities.firstIndex(where: { $0.id == id }) else { return nil }
+        guard let idx = activities.findActivityIndex(byId: id) else { return nil }
         guard activities[idx].status == .teamMemberPending else { return nil }
         
         activities[idx].status = .running
@@ -49,7 +49,7 @@ struct ActivityService: ActivityServiceProtocol {
     /// Completes an activity directly (manager action)
     @discardableResult
     func completeActivity(id: UUID, outcome: ActivityOutcome, in activities: inout [Activity]) -> Activity? {
-        guard let idx = activities.firstIndex(where: { $0.id == id }) else { return nil }
+        guard let idx = activities.findActivityIndex(byId: id) else { return nil }
         
         activities[idx].status = .completed
         activities[idx].outcome = outcome
@@ -63,7 +63,7 @@ struct ActivityService: ActivityServiceProtocol {
     /// Cancels an activity
     @discardableResult
     func cancelActivity(id: UUID, in activities: inout [Activity]) -> Activity? {
-        guard let idx = activities.firstIndex(where: { $0.id == id }) else { return nil }
+        guard let idx = activities.findActivityIndex(byId: id) else { return nil }
         guard activities[idx].status != .completed else { return nil }
         
         activities[idx].status = .canceled
@@ -76,7 +76,7 @@ struct ActivityService: ActivityServiceProtocol {
     /// Requests completion approval (team member action)
     @discardableResult
     func requestCompletion(id: UUID, outcome: ActivityOutcome, in activities: inout [Activity]) -> Activity? {
-        guard let idx = activities.firstIndex(where: { $0.id == id }) else { return nil }
+        guard let idx = activities.findActivityIndex(byId: id) else { return nil }
         guard activities[idx].status == .running else { return nil }
         
         activities[idx].status = .managerPending
@@ -90,7 +90,7 @@ struct ActivityService: ActivityServiceProtocol {
     /// Approves a completion request (manager action)
     @discardableResult
     func approveCompletion(id: UUID, in activities: inout [Activity]) -> Activity? {
-        guard let idx = activities.firstIndex(where: { $0.id == id }) else { return nil }
+        guard let idx = activities.findActivityIndex(byId: id) else { return nil }
         guard activities[idx].status == .managerPending else { return nil }
         
         activities[idx].status = .completed
@@ -104,7 +104,7 @@ struct ActivityService: ActivityServiceProtocol {
     /// Rejects a completion request, returning activity to running state
     @discardableResult
     func rejectCompletion(id: UUID, in activities: inout [Activity]) -> Activity? {
-        guard let idx = activities.firstIndex(where: { $0.id == id }) else { return nil }
+        guard let idx = activities.findActivityIndex(byId: id) else { return nil }
         guard activities[idx].status == .managerPending else { return nil }
         
         activities[idx].status = .running

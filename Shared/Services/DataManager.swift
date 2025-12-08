@@ -20,13 +20,13 @@ class DataManager {
     var currentUser: TeamMember?
     var isLoading = false
     var errorMessage: String?
-    var onTeamsChanged: (() -> Void)?
+    static let dataChangedNotification = Notification.Name("DataManagerDataChanged")
     
     // Force observers to refresh when nested mutations occur
     func notifyTeamsChanged() {
         // Reassign to trigger Observation write and invoke callback
         teams = teams
-        onTeamsChanged?()
+        NotificationCenter.default.post(name: Self.dataChangedNotification, object: nil)
     }
     
     private let storage = StorageService.shared
@@ -34,7 +34,10 @@ class DataManager {
     
     // MARK: - Initialization
     
+    @MainActor
     func loadData() async {
+        guard !isLoading else { return }
+        
         isLoading = true
         errorMessage = nil
         
@@ -52,18 +55,22 @@ class DataManager {
             let loadedActivities = csv.parseActivities(csvString: activitiesCSV, teamMembers: allMembers)
             
             // 3. Assign activities to teams
-            self.teams = grouped.map { (name, members) in
-                let teamMembers = members.map { $0.member }
+            self.teams = grouped.map { (name, memberData) in
+                let teamMembers = memberData.map { $0.member }
+                let managerEmail = memberData.first?.managerEmail // All members in same team should have same manager
                 let teamActivities = loadedActivities.filter { activity in
                     teamMembers.contains(where: { $0.id == activity.assignedMember.id })
                 }
-                return Team(name: name, members: teamMembers, activities: teamActivities)
+                return Team(name: name, members: teamMembers, activities: teamActivities, managerEmail: managerEmail)
             }.sorted(by: { $0.name < $1.name })
             
             // Store all activities for global access
             self.activities = loadedActivities
             
             print("Successfully loaded \(self.teams.count) teams and \(activities.count) activities")
+            
+            // Notify listeners (e.g. ManagerAppState)
+            NotificationCenter.default.post(name: Self.dataChangedNotification, object: nil)
             
         } catch {
             print("Error loading data: \(error.localizedDescription)")
@@ -77,7 +84,7 @@ class DataManager {
     
     func saveActivity(_ activity: Activity) async {
         // Update local state
-        if let index = activities.firstIndex(where: { $0.id == activity.id }) {
+        if let index = activities.findActivityIndex(byId: activity.id) {
             activities[index] = activity
         } else {
             activities.append(activity)

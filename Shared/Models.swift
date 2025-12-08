@@ -147,7 +147,7 @@ struct Activity: Identifiable, Codable {
     var deadline: Date
     var startedAt: Date?
     var completedAt: Date?
-    var managerID: String?
+    var managerEmail: String?
     
     init(
         id: UUID = UUID(),
@@ -161,7 +161,7 @@ struct Activity: Identifiable, Codable {
         deadline: Date,
         startedAt: Date? = nil,
         completedAt: Date? = nil,
-        managerID: String? = nil
+        managerEmail: String? = nil
     ) {
         self.id = id
         self.name = name
@@ -174,7 +174,7 @@ struct Activity: Identifiable, Codable {
         self.deadline = deadline
         self.startedAt = startedAt
         self.completedAt = completedAt
-        self.managerID = managerID
+        self.managerEmail = managerEmail
     }
     
     /// Returns the display color based on status, priority, outcome, and special rules
@@ -264,15 +264,13 @@ struct Activity: Identifiable, Codable {
         let dataManager = DataManager.shared
         
         // Find the team containing this activity
-        guard let teamIndex = dataManager.teams.firstIndex(where: { team in
-            team.activities.contains(where: { $0.id == self.id })
-        }) else {
+        guard let teamIndex = dataManager.teams.findTeamIndex(containingActivityId: self.id) else {
             print("Error: Could not find team for activity \(self.name)")
             return
         }
         
         // Find the activity index
-        guard let activityIndex = dataManager.teams[teamIndex].activities.firstIndex(where: { $0.id == self.id }) else {
+        guard let activityIndex = dataManager.teams[teamIndex].activities.findActivityIndex(byId: self.id) else {
             print("Error: Could not find activity \(self.name) in team")
             return
         }
@@ -296,13 +294,15 @@ struct Team: Identifiable, Codable {
     var members: [TeamMember]
     var activities: [Activity]
     var createdAt: Date
+    var managerEmail: String?
     
-    init(id: UUID = UUID(), name: String, members: [TeamMember] = [], activities: [Activity] = [], createdAt: Date = Date()) {
+    init(id: UUID = UUID(), name: String, members: [TeamMember] = [], activities: [Activity] = [], createdAt: Date = Date(), managerEmail: String? = nil) {
         self.id = id
         self.name = name
         self.members = members
         self.activities = activities
         self.createdAt = createdAt
+        self.managerEmail = managerEmail
     }
 }
 

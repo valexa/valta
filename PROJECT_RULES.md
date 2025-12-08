@@ -19,6 +19,43 @@ The project uses a hybrid persistence strategy. This is a deliberate architectur
 *   **Logic**: Managed by `FirestoreService`.
 *   **Rationale**: Firestore allows efficient looking up of individual user tokens without downloading a massive CSV file.
 *   **Rule**: Firestore is **ONLY** for FCM tokens. Do not add functional data logic here.
+*   **Platform Specific**: On macOS, the `didReceiveRegistrationToken` delegate method does not verifyably fire. You **must** manually retrieve the FCM token via `Messaging.messaging().token()` after successful APNs registration to ensure the token is generated and uploaded.
+
+### 1.3 CSV Format Requirements
+
+The implementation must strictly match the CSV file formats. Any changes to CSV schema require corresponding updates to `CSVService.swift`.
+
+#### Activities CSV Format
+```csv
+id,name,description,memberName,priority,status,outcome,createdAt,deadline,startedAt,completedAt,manager
+```
+
+**Required columns:**
+- `id`: Activity UUID
+- `name`: Activity title
+- `description`: Detailed description
+- `memberName`: Team member assigned (matched by name)
+- `priority`: One of: `p0`, `p1`, `p2`, `p3`
+- `status`: One of: `Team Member Pending`, `Running`, `Completed`, `Canceled`, `Manager Pending`
+- `outcome`: One of: `Ahead`, `Just In Time`, `Overrun` (optional)
+- `createdAt`: ISO8601 timestamp
+- `deadline`: ISO8601 timestamp
+- `startedAt`: ISO8601 timestamp (optional)
+- `completedAt`: ISO8601 timestamp (optional)
+- `manager`: Manager's email address for notifications (optional, parsed as `managerEmail` in code)
+
+#### Teams CSV Format
+```csv
+name,team,email,manager
+```
+
+**Required columns:**
+- `name`: Team member name
+- `team`: Team name (members are grouped by this)
+- `email`: Team member email (used for notifications)
+- `manager`: Manager's email address (optional, 4th column, parsed as `managerEmail` in code)
+
+**Rule**: Before modifying CSV parsing logic in `CSVService.swift`, verify the actual CSV files (`activities.csv`, `teams.csv`) in the repository match the implementation. Column names and order must be exact.
 
 ---
 

@@ -26,8 +26,8 @@ final class NotificationService: NSObject {
     var isPermissionGranted: Bool = false
     var notificationPermissionStatus: UNAuthorizationStatus = .notDetermined
     
-    // Track the member ID we are currently registered as (in addition to Auth UID)
-    private var registeredMemberID: String?
+    // Track the member email we are currently registered as (in addition to Auth UID)
+    private var registeredMemberEmail: String?
     
     private override init() {
         super.init()
@@ -85,31 +85,27 @@ final class NotificationService: NSObject {
         #endif
     }
     
-    /// Retrieves the current FCM token
+    /// Retrieves the current FCM token (manual fetch)
     func retrieveFCMToken() async {
         do {
             let token = try await Messaging.messaging().token()
             await MainActor.run {
                 self.fcmToken = token
             }
-            print("FCM Token: \(token)")
             
-            // Upload token to backend if user is authenticated
-            if let userId = Auth.auth().currentUser?.uid {
-                await uploadFCMToken(token, userId: userId)
+            // Upload token only if member email is registered
+            if let memberEmail = self.registeredMemberEmail {
+                await uploadFCMToken(token, userId: memberEmail)
             }
         } catch {
-            print("Error retrieving FCM token: \(error.localizedDescription)")
+            print("❌ Error retrieving FCM token: \(error.localizedDescription)")
         }
     }
 
     /// Uploads FCM token to Firestore/backend
     private func uploadFCMToken(_ token: String, userId: String) async {
-        print("📤 Uploading FCM token for user: \(userId)")
-        
         do {
             try await FirestoreService.shared.saveFCMToken(token, for: userId)
-            print("✅ FCM token uploaded for user: \(userId)")
         } catch {
             print("❌ Error uploading FCM token: \(error.localizedDescription)")
         }
@@ -149,27 +145,24 @@ final class NotificationService: NSObject {
         }
     }
     
-    /// Registers the current FCM token for a specific Team Member ID (UUID).
-    /// This is crucial because Cloud Functions look up tokens by this UUID, not the Auth UID.
-    func registerMemberID(_ id: UUID) async {
-        let uuidString = id.uuidString
+    /// Registers the current FCM token for a specific Member Email.
+    /// This is crucial because Cloud Functions look up tokens by email, not Auth UID.
+    func registerMemberEmail(_ email: String) async {
         await MainActor.run {
-            self.registeredMemberID = uuidString
+            self.registeredMemberEmail = email
         }
         
         if let token = fcmToken {
-            print("🔗 Linking FCM token to Member ID: \(uuidString)")
-            await uploadFCMToken(token, userId: uuidString)
+            await uploadFCMToken(token, userId: email)
         }
     }
     
     /// Updates the member profile (name) in Firestore for notification lookup
     func updateMemberProfile(name: String) async {
-        guard let userId = Auth.auth().currentUser?.uid else { return }
+        guard let memberEmail = self.registeredMemberEmail else { return }
         
         do {
-            try await FirestoreService.shared.updateMemberName(name, for: userId)
-            print("✅ Member profile updated with name: \(name)")
+            try await FirestoreService.shared.updateMemberName(name, for: memberEmail)
         } catch {
             print("❌ Error updating member profile: \(error.localizedDescription)")
         }
@@ -183,16 +176,10 @@ extension NotificationService: MessagingDelegate {
         Task { @MainActor in
             guard let token = fcmToken else { return }
             self.fcmToken = token
-            print("🔄 FCM Token refreshed: \(token.prefix(20))...")
             
-            // Upload new token if user is authenticated
-            if let userId = Auth.auth().currentUser?.uid {
-                await uploadFCMToken(token, userId: userId)
-            }
-            
-            // Also upload for registered member ID if set
-            if let memberId = self.registeredMemberID {
-                await uploadFCMToken(token, userId: memberId)
+            // Only upload for registered member email (not Auth UID)
+            if let memberEmail = self.registeredMemberEmail {
+                await uploadFCMToken(token, userId: memberEmail)
             }
         }
     }

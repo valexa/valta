@@ -88,7 +88,7 @@ final class NotificationSenderTests: XCTestCase {
         let data = call.data
         XCTAssertEqual(data["type"] as? String, "activity_assigned")
         XCTAssertEqual(data["activityId"] as? String, activity.id.uuidString)
-        XCTAssertEqual(data["assignedMemberId"] as? String, testMember.id.uuidString)
+        XCTAssertEqual(data["assignedMemberEmail"] as? String, testMember.email)
         XCTAssertEqual(data["assignedMemberName"] as? String, testMember.name)
         XCTAssertEqual(data["priority"] as? String, "P0")
         XCTAssertEqual(data["activityName"] as? String, "Test Activity")
@@ -141,9 +141,9 @@ final class NotificationSenderTests: XCTestCase {
     
     // MARK: - Completion Requested Tests
     
-    func testSendCompletionRequested_WithManagerID() async throws {
+    func testSendCompletionRequested_WithManagerEmail() async throws {
         // Given
-        let managerID = "manager-123"
+        let managerEmail = "manager@example.com"
         let activity = Activity(
             name: "Important Task",
             description: "Desc",
@@ -151,7 +151,7 @@ final class NotificationSenderTests: XCTestCase {
             priority: .p2,
             status: .managerPending,
             deadline: Date(),
-            managerID: managerID
+            managerEmail: managerEmail
         )
         
         // When
@@ -164,7 +164,7 @@ final class NotificationSenderTests: XCTestCase {
         let data = call.data
         XCTAssertEqual(data["type"] as? String, "completion_requested")
         XCTAssertEqual(data["activityId"] as? String, activity.id.uuidString)
-        XCTAssertEqual(data["managerId"] as? String, managerID) // Check managerId is passed
+        XCTAssertEqual(data["managerEmail"] as? String, managerEmail) // Check managerEmail is passed
         XCTAssertEqual(data["memberName"] as? String, testMember.name)
         XCTAssertEqual(data["activityName"] as? String, "Important Task")
         
@@ -173,7 +173,7 @@ final class NotificationSenderTests: XCTestCase {
         XCTAssertTrue(message!.contains("Important Task"))
     }
     
-    func testSendCompletionRequested_WithoutManagerID() async throws {
+    func testSendCompletionRequested_WithoutManagerEmail() async throws {
         // Given
         let activity = Activity(
             name: "Important Task",
@@ -182,7 +182,7 @@ final class NotificationSenderTests: XCTestCase {
             priority: .p2,
             status: .managerPending,
             deadline: Date(),
-            managerID: nil
+            managerEmail: nil
         )
         
         // When
@@ -191,7 +191,7 @@ final class NotificationSenderTests: XCTestCase {
         // Then
         let call = mockProvider.calls[0]
         let data = call.data
-        XCTAssertNil(data["managerId"])
+        XCTAssertNil(data["managerEmail"])
     }
     
     // MARK: - Activity Completed Tests

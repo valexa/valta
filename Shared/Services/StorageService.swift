@@ -36,6 +36,9 @@ struct FirebaseStorageProvider: StorageProvider {
         if let contentType = metadata?["contentType"] {
             storageMetadata.contentType = contentType
         }
+        if let cacheControl = metadata?["cacheControl"] {
+            storageMetadata.cacheControl = cacheControl
+        }
         _ = try await ref.putDataAsync(data, metadata: storageMetadata)
     }
 }
@@ -79,6 +82,9 @@ class StorageService: ObservableObject {
     
     func uploadActivities(_ csvString: String) async throws {
         guard let data = csvString.data(using: .utf8) else { return }
-        try await provider.uploadData(path: activitiesPath, data: data, metadata: ["contentType": "text/csv"])
+        try await provider.uploadData(path: activitiesPath, data: data, metadata: [
+            "contentType": "text/csv",
+            "cacheControl": "no-cache"
+        ])
     }
 }

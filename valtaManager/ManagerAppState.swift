@@ -36,12 +36,16 @@ final class ManagerAppState {
     var dataVersion: Int = 0
     
     // MARK: - Initialization
-    
+
     init() {
-        // Observe DataManager team changes via callback
-        DataManager.shared.onTeamsChanged = { [weak self] in
+        // Observe DataManager team changes
+        NotificationCenter.default.addObserver(forName: DataManager.dataChangedNotification, object: nil, queue: .main) { [weak self] _ in
             self?.dataVersion &+= 1
         }
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     // MARK: - Data Accessors (delegate to DataManager)
@@ -161,12 +165,12 @@ final class ManagerAppState {
     // MARK: - Team Actions (delegate to service)
     
     func addActivity(_ activity: Activity) {
-        guard let teamIndex = dataManager.teams.firstIndex(where: { $0.id == team.id }) else { return }
+        guard let teamIndex = dataManager.teams.findTeamIndex(byId: team.id) else { return }
         
-        // Inject current user (manager) ID
+        // Inject manager email from team data
         var newActivity = activity
-        if let managerID = Auth.auth().currentUser?.uid {
-            newActivity.managerID = managerID
+        if let team = dataManager.teams.findTeam(byId: team.id) {
+            newActivity.managerEmail = team.managerEmail
         }
         
         teamService.addActivity(newActivity, to: &dataManager.teams[teamIndex])
@@ -176,8 +180,8 @@ final class ManagerAppState {
             
             // Send notification to assigned team member
             do {
-                // Use "Manager" as default name (can be enhanced later with actual manager name)
-                let managerName = "Manager"
+                // Use manager email from team data
+                let managerName = newActivity.managerEmail ?? "Manager"
                 try await NotificationSender.shared.sendActivityAssignedNotification(
                     activity: newActivity,
                     assignedTo: newActivity.assignedMember,

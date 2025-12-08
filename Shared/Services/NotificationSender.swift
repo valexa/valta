@@ -77,12 +77,16 @@ final class NotificationSender {
         let data: [String: Any] = [
             "type": "activity_assigned",
             "activityId": activity.id.uuidString,
-            "assignedMemberId": member.id.uuidString,
+            "assignedMemberEmail": member.email,
             "assignedMemberName": member.name,
             "priority": activity.priority.shortName,
             "message": message,
-            "activityName": activity.name
+            "activityName": activity.name,
         ]
+        
+        print("📤 Sending notification for member: \(member.name)")
+        print("   Member Email: \(member.email)")
+        print("   This is the email that Cloud Function will use to look up the FCM token")
         
         try await callCloudFunction(name: "sendActivityAssignedNotification", data: data)
     }
@@ -97,10 +101,13 @@ final class NotificationSender {
         
         let message = "\(activity.assignedMember.name)'s \(activity.priority.shortName) activity has started on \(startedDate) with deadline \(deadlineDate)."
         
+        // Send member emails for notification lookup
+        let memberEmails = team.members.map { $0.email }
+        
         let data: [String: Any] = [
             "type": "activity_started",
             "activityId": activity.id.uuidString,
-            "teamId": team.id.uuidString,
+            "memberEmails": memberEmails,
             "memberName": activity.assignedMember.name,
             "priority": activity.priority.shortName,
             "message": message,
@@ -125,8 +132,8 @@ final class NotificationSender {
             "activityName": activity.name
         ]
         
-        if let managerID = activity.managerID {
-            data["managerId"] = managerID
+        if let managerEmail = activity.managerEmail {
+            data["managerEmail"] = managerEmail
         }
         
         try await callCloudFunction(name: "sendCompletionRequestedNotification", data: data)
@@ -154,10 +161,14 @@ final class NotificationSender {
         
         let message = "\(activity.assignedMember.name)'s \(activity.priority.shortName) activity has completed \(outcomeText) with status \(statusColor)"
         
+        // Send member emails for notification lookup
+        let memberEmails = team.members.map { $0.email }
+        
         let data: [String: Any] = [
             "type": "activity_completed",
             "activityId": activity.id.uuidString,
             "teamId": team.id.uuidString,
+            "memberEmails": memberEmails,
             "memberName": activity.assignedMember.name,
             "priority": activity.priority.shortName,
             "outcome": outcome.rawValue,

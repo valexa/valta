@@ -51,6 +51,12 @@ struct valtaApp: App {
                         } else {
                             print("⚠️ Notification permissions denied")
                         }
+                        
+                        // Start periodic refresh every 60 seconds
+                        while true {
+                            try? await Task.sleep(nanoseconds: 60 * 1_000_000_000) // 60 seconds
+                            await dataManager.loadData()
+                        }
                     } catch {
                         print("Authentication error: \(error.localizedDescription)")
                     }

@@ -89,11 +89,11 @@ async function getTokensForMembers(db, memberIds) {
 exports.sendActivityAssignedNotification = functions.https.onCall(
     async (data, context) => {
       assertAuthenticated(context);
-      checkRequired(data, ["activityId", "assignedMemberId", "assignedMemberName", "message"]);
+      checkRequired(data, ["activityId", "assignedMemberEmail", "assignedMemberName", "message"]);
 
       const {
         activityId,
-        assignedMemberId,
+        assignedMemberEmail,
         assignedMemberName,
         priority,
         message,
@@ -102,12 +102,12 @@ exports.sendActivityAssignedNotification = functions.https.onCall(
 
       try {
         const db = admin.firestore();
-        console.log(`🔍 Looking up FCM token for member ID: ${assignedMemberId}`);
+        console.log(`🔍 Looking up FCM token for member email: ${assignedMemberEmail}`);
 
-        const tokens = await getTokensForMembers(db, [assignedMemberId]);
+        const tokens = await getTokensForMembers(db, [assignedMemberEmail]);
 
         if (tokens.length === 0) {
-          console.warn(`No FCM token found for member: ${assignedMemberId}`);
+          console.warn(`No FCM token found for member: ${assignedMemberEmail}`);
           return {
             success: false,
             error: "No FCM token found for member",
@@ -123,7 +123,7 @@ exports.sendActivityAssignedNotification = functions.https.onCall(
           data: {
             type: "activity_assigned",
             activityId: activityId,
-            assignedMemberId: assignedMemberId,
+            assignedMemberEmail: assignedMemberEmail,
             assignedMemberName: assignedMemberName || "",
             priority: priority || "",
             activityName: activityName || "",
@@ -155,16 +155,16 @@ exports.sendActivityAssignedNotification = functions.https.onCall(
 
 /**
  * Sends notification when team member starts activity
- * (to all team members)
+ * (to all team members via their emails)
  */
 exports.sendActivityStartedNotification = functions.https.onCall(
     async (data, context) => {
       assertAuthenticated(context);
-      checkRequired(data, ["activityId", "teamId", "message"]);
+      checkRequired(data, ["activityId", "memberEmails", "message"]);
 
       const {
         activityId,
-        teamId,
+        memberEmails, // Expect list of emails
         memberName,
         priority,
         message,
@@ -173,19 +173,12 @@ exports.sendActivityStartedNotification = functions.https.onCall(
 
       try {
         const db = admin.firestore();
-        const teamDoc = await db.collection("teams").doc(teamId).get();
+        console.log(`🔍 Looking up FCM tokens for ${memberEmails.length} team members`);
 
-        if (!teamDoc.exists) {
-          throw new functions.https.HttpsError("not-found", "Team not found");
-        }
-
-        const teamData = teamDoc.data();
-        const memberIds = teamData.members || [];
-
-        const tokens = await getTokensForMembers(db, memberIds);
+        const tokens = await getTokensForMembers(db, memberEmails);
 
         if (tokens.length === 0) {
-          console.warn(`No FCM tokens found for team: ${teamId}`);
+          console.warn(`No FCM tokens found for team members: ${memberEmails.join(", ")}`);
           return {
             success: false,
             error: "No FCM tokens found",
@@ -201,7 +194,6 @@ exports.sendActivityStartedNotification = functions.https.onCall(
           data: {
             type: "activity_started",
             activityId: activityId,
-            teamId: teamId,
             memberName: memberName || "",
             priority: priority || "",
             activityName: activityName || "",
@@ -252,21 +244,21 @@ exports.sendCompletionRequestedNotification = functions.https.onCall(
         priority,
         message,
         activityName,
-        managerId,
+        managerEmail,
       } = data;
 
       try {
         let token = null;
 
-        // 1. Try targeted lookup if managerId is provided
-        if (managerId) {
-          console.log(`🔍 Looking up FCM token for manager: ${managerId}`);
+        // 1. Try targeted lookup if managerEmail is provided
+        if (managerEmail) {
+          console.log(`🔍 Looking up FCM token for manager: ${managerEmail}`);
           const db = admin.firestore();
-          const tokens = await getTokensForMembers(db, [managerId]);
+          const tokens = await getTokensForMembers(db, [managerEmail]);
           if (tokens.length > 0) {
             token = tokens[0];
           } else {
-            console.warn(`⚠️ No FCM token found for manager: ${managerId}`);
+            console.warn(`⚠️ No FCM token found for manager: ${managerEmail}`);
           }
         }
 
@@ -299,7 +291,7 @@ exports.sendCompletionRequestedNotification = functions.https.onCall(
         // Send to specific device
           payload.token = token;
           response = await admin.messaging().send(payload);
-          console.log(`✅ Targeted notification sent to manager ${managerId}: ${response}`);
+          console.log(`✅ Targeted notification sent to manager ${managerEmail}: ${response}`);
         } else {
         // Fallback to topic if no managerId or token found
           console.log("⚠️ Falling back to 'managers' topic");
@@ -325,11 +317,12 @@ exports.sendCompletionRequestedNotification = functions.https.onCall(
 exports.sendActivityCompletedNotification = functions.https.onCall(
     async (data, context) => {
       assertAuthenticated(context);
-      checkRequired(data, ["activityId", "teamId", "message"]);
+      checkRequired(data, ["activityId", "teamId", "memberEmails", "message"]);
 
       const {
         activityId,
         teamId,
+        memberEmails, // Expect list of emails
         memberName,
         priority,
         outcome,
@@ -340,16 +333,9 @@ exports.sendActivityCompletedNotification = functions.https.onCall(
 
       try {
         const db = admin.firestore();
-        const teamDoc = await db.collection("teams").doc(teamId).get();
-
-        if (!teamDoc.exists) {
-          throw new functions.https.HttpsError("not-found", "Team not found");
-        }
-
-        const teamData = teamDoc.data();
-        const memberIds = teamData.members || [];
-
-        const tokens = await getTokensForMembers(db, memberIds);
+        let tokens = [];
+        console.log(`🔍 Looking up FCM tokens for ${memberEmails.length} team members`);
+        tokens = await getTokensForMembers(db, memberEmails);
 
         if (tokens.length === 0) {
           console.warn(`No FCM tokens found for team: ${teamId}`);

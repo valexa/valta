@@ -29,8 +29,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
     // MARK: - Remote Notification Registration
     
     func application(_ application: NSApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        print("✅ Registered for remote notifications")
         Messaging.messaging().apnsToken = deviceToken
+        
+        // Manually fetch FCM token (workaround for macOS where delegate doesn't always fire)
+        Task {
+            try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+            await NotificationService.shared.retrieveFCMToken()
+        }
     }
     
     func application(_ application: NSApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
@@ -46,7 +51,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
         let userInfo = notification.request.content.userInfo
-        print("📬 Received notification in foreground: \(userInfo)")
+        
+        // Reload data when notification arrives
+        handleNotificationData(userInfo: userInfo)
         
         // Show notification even when app is in foreground
         #if os(macOS)
@@ -67,9 +74,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
         let userInfo = response.notification.request.content.userInfo
-        print("👆 User tapped notification: \(userInfo)")
         
-        // Handle notification tap - navigate to relevant screen
+        // Reload data and handle notification tap
+        handleNotificationData(userInfo: userInfo)
         handleNotificationTap(userInfo: userInfo)
         
         completionHandler()
@@ -89,9 +96,20 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         
         print("📱 Handling notification tap - Type: \(type), Activity ID: \(activityId)")
         
-        // TODO: Navigate to relevant screen based on notification type
-        // This will be implemented when we have navigation infrastructure
-        // For now, we'll just log the action
+    }
+    
+    private func handleNotificationData(userInfo: [AnyHashable: Any]) {
+        // Trigger data reload for activity-related notifications
+        if let notificationType = userInfo["type"] as? String {
+            switch notificationType {
+            case "activity_assigned", "activity_started", "completion_requested", "completion_approved", "completion_rejected":
+                Task {
+                    await DataManager.shared.loadData()
+                }
+            default:
+                break
+            }
+        }
     }
 }
 #endif
@@ -132,6 +150,9 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         let userInfo = notification.request.content.userInfo
         print("📬 Received notification in foreground: \(userInfo)")
         
+        // Reload data when notification arrives
+        handleNotificationData(userInfo: userInfo)
+        
         // Show notification even when app is in foreground
         completionHandler([.banner, .sound, .badge])
     }
@@ -145,7 +166,8 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         let userInfo = response.notification.request.content.userInfo
         print("👆 User tapped notification: \(userInfo)")
         
-        // Handle notification tap - navigate to relevant screen
+        // Reload data and handle notification tap
+        handleNotificationData(userInfo: userInfo)
         handleNotificationTap(userInfo: userInfo)
         
         completionHandler()
@@ -164,10 +186,20 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         }
         
         print("📱 Handling notification tap - Type: \(type), Activity ID: \(activityId)")
-        
-        // TODO: Navigate to relevant screen based on notification type
-        // This will be implemented when we have navigation infrastructure
-        // For now, we'll just log the action
+    }
+    
+    private func handleNotificationData(userInfo: [AnyHashable: Any]) {
+        // Trigger data reload for activity-related notifications
+        if let notificationType = userInfo["type"] as? String {
+            switch notificationType {
+            case "activity_assigned", "activity_started", "completion_requested", "completion_approved", "completion_rejected":
+                Task {
+                    await DataManager.shared.loadData()
+                }
+            default:
+                break
+            }
+        }
     }
 }
 #endif

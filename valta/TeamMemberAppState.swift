@@ -44,10 +44,14 @@ final class TeamMemberAppState {
     // MARK: - Initialization
     
     init() {
-        // Observe DataManager team changes via callback
-        DataManager.shared.onTeamsChanged = { [weak self] in
+        // Observe DataManager team changes
+        NotificationCenter.default.addObserver(forName: DataManager.dataChangedNotification, object: nil, queue: .main) { [weak self] _ in
             self?.onTeamsChanged()
         }
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     // Callbacks from DataManager
@@ -61,9 +65,7 @@ final class TeamMemberAppState {
         _ = dataVersion // depend on version to trigger refresh
         // Find the team that contains the current member
         if let member = currentMember {
-            return dataManager.teams.first(where: { team in
-                team.members.contains(where: { $0.id == member.id })
-            }) ?? Team(name: "Loading...", members: [])
+            return dataManager.teams.findTeam(containingMemberId: member.id) ?? Team(name: "Loading...", members: [])
         }
         return dataManager.teams.first ?? Team(name: "Loading...", members: [])
     }
@@ -228,11 +230,11 @@ final class TeamMemberAppState {
         
         // Update notification profile and link token
         Task {
-            // Update the name for display purposes (optional now but good for debug)
-            await NotificationService.shared.updateMemberProfile(name: member.name)
+            // CRITICAL: Link the FCM token to this member's email so Cloud Functions can find it
+            await NotificationService.shared.registerMemberEmail(member.email)
             
-            // CRITICAL: Link the FCM token to this member's UUID so Cloud Functions can find it
-            await NotificationService.shared.registerMemberID(member.id)
+            // Update the name for display purposes (optional but useful for debugging)
+            await NotificationService.shared.updateMemberProfile(name: member.name)
         }
     }
 }
