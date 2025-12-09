@@ -130,4 +130,14 @@ name,team,email,manager
 ## 5. Coding Standards
 
 *   **Async/Await**: Use Swift Concurrency (`Task`, `async/await`) over GCD (`DispatchQueue`).
-*   **Models**: Data models (e.g., `Activity`) should be value types (`struct`) where possible to play nicely with Observation and simple mutation flows.
+
+---
+
+## 6. Testing Framework
+
+*   **Framework**: Use **Swift Testing** (`import Testing`) for all new unit tests.
+*   **Prohibited**: `XCTest` is not allowed for unit tests. Migrate legacy tests to the new framework.
+*   **Syntax**:
+    *   Use `@Test` macro for test functions.
+    *   Use `#expect(...)` macros for assertions.
+    *   Use `struct` or `final class` for test suites.

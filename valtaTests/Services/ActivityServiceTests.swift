@@ -7,15 +7,16 @@
 //  Created by vlad on 2025-12-05.
 //
 
-import XCTest
+import Testing
+import Foundation
 @testable import valta
 
-final class ActivityServiceTests: XCTestCase {
-    var activityService: ActivityService!
-    var mockActivities: [Activity]!
-    var mockMember: TeamMember!
+struct ActivityServiceTests {
+    var activityService: ActivityService
+    var mockActivities: [Activity]
+    var mockMember: TeamMember
     
-    override func setUpWithError() throws {
+    init() {
         activityService = ActivityService()
         mockMember = TeamMember(name: "Test User", email: "test@example.com")
         
@@ -42,40 +43,34 @@ final class ActivityServiceTests: XCTestCase {
         ]
     }
     
-    override func tearDownWithError() throws {
-        activityService = nil
-        mockActivities = nil
-        mockMember = nil
-    }
-    
     // MARK: - Start Activity Tests
     
-    func testStartActivity_Success() throws {
+    @Test func testStartActivity_Success() {
         let activityId = mockActivities[0].id
-        var activities = mockActivities!
+        var activities = mockActivities
         
         let updatedActivity = activityService.startActivity(id: activityId, in: &activities)
         
-        XCTAssertNotNil(updatedActivity)
-        XCTAssertEqual(updatedActivity?.status, .running)
-        XCTAssertNotNil(updatedActivity?.startedAt)
-        XCTAssertEqual(activities[0].status, .running)
+        #expect(updatedActivity != nil)
+        #expect(updatedActivity?.status == .running)
+        #expect(updatedActivity?.startedAt != nil)
+        #expect(activities[0].status == .running)
     }
     
-    func testStartActivity_NonExistentID() throws {
+    @Test func testStartActivity_NonExistentID() {
         let nonExistentId = UUID()
-        var activities = mockActivities!
+        var activities = mockActivities
         
         let updatedActivity = activityService.startActivity(id: nonExistentId, in: &activities)
         
-        XCTAssertNil(updatedActivity)
+        #expect(updatedActivity == nil)
     }
     
     // MARK: - Request Completion Tests
     
-    func testRequestCompletion_Success() throws {
+    @Test func testRequestCompletion_Success() {
         let activityId = mockActivities[1].id
-        var activities = mockActivities!
+        var activities = mockActivities
         
         let updatedActivity = activityService.requestCompletion(
             id: activityId,
@@ -83,15 +78,15 @@ final class ActivityServiceTests: XCTestCase {
             in: &activities
         )
         
-        XCTAssertNotNil(updatedActivity)
-        XCTAssertEqual(updatedActivity?.status, .managerPending)
-        XCTAssertEqual(updatedActivity?.outcome, .ahead)
-        XCTAssertEqual(activities[1].status, .managerPending)
+        #expect(updatedActivity != nil)
+        #expect(updatedActivity?.status == .managerPending)
+        #expect(updatedActivity?.outcome == .ahead)
+        #expect(activities[1].status == .managerPending)
     }
     
-    func testRequestCompletion_NonExistentID() throws {
+    @Test func testRequestCompletion_NonExistentID() {
         let nonExistentId = UUID()
-        var activities = mockActivities!
+        var activities = mockActivities
         
         let updatedActivity = activityService.requestCompletion(
             id: nonExistentId,
@@ -99,50 +94,50 @@ final class ActivityServiceTests: XCTestCase {
             in: &activities
         )
         
-        XCTAssertNil(updatedActivity)
+        #expect(updatedActivity == nil)
     }
     
     // MARK: - Complete Activity Tests
     
-    func testCompleteActivity_Success() throws {
+    @Test func testCompleteActivity_Success() {
         let activityId = mockActivities[1].id
-        var activities = mockActivities!
+        var activities = mockActivities
         
         activityService.completeActivity(id: activityId, outcome: .jit, in: &activities)
         
-        XCTAssertEqual(activities[1].status, .completed)
-        XCTAssertEqual(activities[1].outcome, .jit)
-        XCTAssertNotNil(activities[1].completedAt)
+        #expect(activities[1].status == .completed)
+        #expect(activities[1].outcome == .jit)
+        #expect(activities[1].completedAt != nil)
     }
     
-    func testCompleteActivity_NonExistentID() throws {
+    @Test func testCompleteActivity_NonExistentID() {
         let nonExistentId = UUID()
-        var activities = mockActivities!
+        var activities = mockActivities
         let originalCount = activities.count
         
         activityService.completeActivity(id: nonExistentId, outcome: .ahead, in: &activities)
         
-        XCTAssertEqual(activities.count, originalCount)
+        #expect(activities.count == originalCount)
     }
     
     // MARK: - Cancel Activity Tests
     
-    func testCancelActivity_Success() throws {
+    @Test func testCancelActivity_Success() {
         let activityId = mockActivities[0].id
-        var activities = mockActivities!
+        var activities = mockActivities
         
         activityService.cancelActivity(id: activityId, in: &activities)
         
-        XCTAssertEqual(activities[0].status, .canceled)
+        #expect(activities[0].status == .canceled)
     }
     
-    func testCancelActivity_NonExistentID() throws {
+    @Test func testCancelActivity_NonExistentID() {
         let nonExistentId = UUID()
-        var activities = mockActivities!
+        var activities = mockActivities
         let originalStatuses = activities.map { $0.status }
         
         activityService.cancelActivity(id: nonExistentId, in: &activities)
         
-        XCTAssertEqual(activities.map { $0.status }, originalStatuses)
+        #expect(activities.map { $0.status } == originalStatuses)
     }
 }

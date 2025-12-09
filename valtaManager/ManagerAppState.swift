@@ -41,6 +41,13 @@ final class ManagerAppState {
         // Observe DataManager team changes
         NotificationCenter.default.addObserver(forName: DataManager.dataChangedNotification, object: nil, queue: .main) { [weak self] _ in
             self?.dataVersion &+= 1
+            
+            // Register manager email for notifications once data is loaded
+            if let team = self?.dataManager.teams.first, let managerEmail = team.managerEmail {
+                Task {
+                    await NotificationService.shared.registerMemberEmail(managerEmail)
+                }
+            }
         }
     }
     

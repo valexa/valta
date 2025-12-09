@@ -7,14 +7,15 @@
 //  Created by ANTIGRAVITY on 2025-12-08.
 //
 
-import XCTest
+import Testing
+import Foundation
 @testable import valta
 
-final class ActivityModelTests: XCTestCase {
+struct ActivityModelTests {
     
     // MARK: - Outcome Calculation Tests
     
-    func testCalculateOutcome_Ahead() {
+    @Test func testCalculateOutcome_Ahead() {
         // Given
         let deadline = Date()
         // Completed 40 minutes before deadline (threshold is 30m)
@@ -27,10 +28,10 @@ final class ActivityModelTests: XCTestCase {
         let outcome = activity.calculateOutcome(completionDate: completionDate)
         
         // Then
-        XCTAssertEqual(outcome, .ahead)
+        #expect(outcome == .ahead)
     }
     
-    func testCalculateOutcome_JustInTime_Before() {
+    @Test func testCalculateOutcome_JustInTime_Before() {
         // Given
         let deadline = Date()
         // Completed 4 minutes before deadline (within 5m window)
@@ -43,10 +44,10 @@ final class ActivityModelTests: XCTestCase {
         let outcome = activity.calculateOutcome(completionDate: completionDate)
         
         // Then
-        XCTAssertEqual(outcome, .jit)
+        #expect(outcome == .jit)
     }
     
-    func testCalculateOutcome_JustInTime_After() {
+    @Test func testCalculateOutcome_JustInTime_After() {
         // Given
         let deadline = Date()
         // Completed 4 minutes after deadline (within 5m window)
@@ -59,10 +60,10 @@ final class ActivityModelTests: XCTestCase {
         let outcome = activity.calculateOutcome(completionDate: completionDate)
         
         // Then
-        XCTAssertEqual(outcome, .jit)
+        #expect(outcome == .jit)
     }
     
-    func testCalculateOutcome_Overrun() {
+    @Test func testCalculateOutcome_Overrun() {
         // Given
         let deadline = Date()
         // Completed 10 minutes after deadline (outside 5m window)
@@ -75,10 +76,10 @@ final class ActivityModelTests: XCTestCase {
         let outcome = activity.calculateOutcome(completionDate: completionDate)
         
         // Then
-        XCTAssertEqual(outcome, .overrun)
+        #expect(outcome == .overrun)
     }
     
-    func testCalculateOutcome_EdgeCase_BetweenAheadAndJIT() {
+    @Test func testCalculateOutcome_EdgeCase_BetweenAheadAndJIT() {
         // Given
         let deadline = Date()
         // Completed 20 minutes before deadline
@@ -93,7 +94,7 @@ final class ActivityModelTests: XCTestCase {
         let outcome = activity.calculateOutcome(completionDate: completionDate)
         
         // Then
-        XCTAssertEqual(outcome, .jit)
+        #expect(outcome == .jit)
     }
     
     // MARK: - Helper

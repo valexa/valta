@@ -331,7 +331,7 @@ valta/
 
 ## Next Steps
 
-1. **Immediate**: Implement push notifications using Firebase Cloud Messaging
-2. **Short-term**: Migrate data persistence to Firestore
+1. **Immediate**: Implement Data Persistence and sync using Firebase Storage.
+2. **Short-term**: Implement push notifications using Firebase Cloud Messaging, Firestore for token management.
 3. **Medium-term**: Comprehensive Unit & Integration Testing
 4. **Long-term**: Final UI Polish and Release

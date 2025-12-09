@@ -107,6 +107,7 @@ final class NotificationSender {
         let data: [String: Any] = [
             "type": "activity_started",
             "activityId": activity.id.uuidString,
+            "teamId": team.id.uuidString,
             "memberEmails": memberEmails,
             "memberName": activity.assignedMember.name,
             "priority": activity.priority.shortName,
