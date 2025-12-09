@@ -10,7 +10,7 @@
 import SwiftUI
 
 struct RequestsTab: View {
-    @Environment(AppState.self) private var appState
+    @Environment(ManagerAppState.self) private var appState
 
     var body: some View {
         // Content
@@ -60,7 +60,7 @@ struct RequestsTab: View {
 
 struct RequestCard: View {
     let activity: Activity
-    @Environment(AppState.self) private var appState
+    @Environment(ManagerAppState.self) private var appState
     @State private var isHovered = false
 
     var body: some View {
@@ -219,7 +219,7 @@ struct EmptyRequestsView: View {
 
 #Preview {
     RequestsTab()
-        .environment(AppState())
+        .environment(ManagerAppState())
         .frame(width: 800, height: 600)
 }
 

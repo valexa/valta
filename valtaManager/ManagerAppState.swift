@@ -1,5 +1,5 @@
 //
-//  AppState.swift
+//  ManagerAppState.swift
 //  valtaManager
 //
 //  Observable state management for the Manager app.
@@ -7,14 +7,15 @@
 //
 //  Uses Observation framework for automatic UI updates.
 //
-//  Created by vlad on 2025-12-04.
+//  Created by ANTIGRAVITY on 2025-12-08.
 //
 
 import SwiftUI
 import Observation
+import FirebaseAuth
 
 @Observable
-final class AppState {
+final class ManagerAppState {
     
     // MARK: - Services
     
@@ -35,12 +36,16 @@ final class AppState {
     var dataVersion: Int = 0
     
     // MARK: - Initialization
-    
+
     init() {
-        // Observe DataManager team changes via callback
-        DataManager.shared.onTeamsChanged = { [weak self] in
+        // Observe DataManager team changes
+        NotificationCenter.default.addObserver(forName: DataManager.dataChangedNotification, object: nil, queue: .main) { [weak self] _ in
             self?.dataVersion &+= 1
         }
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     // MARK: - Data Accessors (delegate to DataManager)
@@ -90,14 +95,30 @@ final class AppState {
     // MARK: - Activity Actions (delegate to service)
     
     func approveCompletion(_ activity: Activity) {
+        var updatedActivity = activity
+        
         activity.updateInBackend { mutableActivity in
             mutableActivity.status = .completed
             // Calculate outcome based on existing completion time (if set) or now
             let completionTime = mutableActivity.completedAt ?? Date()
             mutableActivity.completedAt = completionTime
             mutableActivity.outcome = mutableActivity.calculateOutcome(completionDate: completionTime)
+            
+            // Capture updated state
+            updatedActivity = mutableActivity
         }
+        
+        let finalActivity = updatedActivity
         Task {
+            // Send notification to all team members
+            do {
+                try await NotificationSender.shared.sendActivityCompletedNotification(
+                    activity: finalActivity,
+                    team: team
+                )
+            } catch {
+                print("⚠️ Failed to send activity completed notification: \(error.localizedDescription)")
+            }
         }
     }
     
@@ -109,12 +130,29 @@ final class AppState {
     }
     
     func completeActivity(_ activity: Activity) {
+        var updatedActivity = activity
+        
         activity.updateInBackend { mutableActivity in
             let now = Date()
             mutableActivity.status = .completed
             mutableActivity.completedAt = now
             mutableActivity.outcome = mutableActivity.calculateOutcome(completionDate: now)
+            
+            // Capture updated state
+            updatedActivity = mutableActivity
         }
+        
+        let finalActivity = updatedActivity
+        Task {
+            // Send notification to all team members
+            do {
+                try await NotificationSender.shared.sendActivityCompletedNotification(
+                    activity: finalActivity,
+                    team: team
+                )
+            } catch {
+                print("⚠️ Failed to send activity completed notification: \(error.localizedDescription)")
+            }
         }
     }
     
@@ -127,13 +165,31 @@ final class AppState {
     // MARK: - Team Actions (delegate to service)
     
     func addActivity(_ activity: Activity) {
-        guard let teamIndex = dataManager.teams.firstIndex(where: { $0.id == team.id }) else { return }
+        guard let teamIndex = dataManager.teams.findTeamIndex(byId: team.id) else { return }
         
-        teamService.addActivity(activity, to: &dataManager.teams[teamIndex])
+        // Inject manager email from team data
+        var newActivity = activity
+        if let team = dataManager.teams.findTeam(byId: team.id) {
+            newActivity.managerEmail = team.managerEmail
+        }
+        
+        teamService.addActivity(newActivity, to: &dataManager.teams[teamIndex])
         
         Task {
             await dataManager.syncActivities()
+            
+            // Send notification to assigned team member
+            do {
+                // Use manager email from team data
+                let managerName = newActivity.managerEmail ?? "Manager"
+                try await NotificationSender.shared.sendActivityAssignedNotification(
+                    activity: newActivity,
+                    assignedTo: newActivity.assignedMember,
+                    managerName: managerName
+                )
+            } catch {
+                print("⚠️ Failed to send activity assigned notification: \(error.localizedDescription)")
+            }
         }
     }
 }
-

@@ -11,7 +11,7 @@
 import SwiftUI
 
 struct OnboardingView: View {
-    @Environment(AppState.self) private var appState
+    @Environment(ManagerAppState.self) private var appState
     @Environment(DataManager.self) private var dataManager
     @State private var selectedTeam: Team?
     
@@ -215,6 +215,6 @@ struct TeamSelectionCard: View {
 
 #Preview {
     OnboardingView()
-        .environment(AppState())
+        .environment(ManagerAppState())
         .environment(DataManager.shared)
 }

@@ -25,7 +25,7 @@ enum StatsFilter: Equatable {
 }
 
 struct TeamsTab: View {
-    @Environment(AppState.self) private var appState
+    @Environment(ManagerAppState.self) private var appState
     @State private var searchText: String = ""
     @State private var statusFilter: ActivityStatus? = nil
     @State private var statsFilter: StatsFilter? = nil
@@ -120,7 +120,7 @@ struct TeamsTab: View {
 // MARK: - Empty State
 
 struct EmptyActivityView: View {
-    @Environment(AppState.self) private var appState
+    @Environment(ManagerAppState.self) private var appState
     
     var body: some View {
         VStack(spacing: 16) {
@@ -151,7 +151,7 @@ struct EmptyActivityView: View {
 
 #Preview {
     TeamsTab()
-        .environment(AppState())
+        .environment(ManagerAppState())
         .frame(width: 1000, height: 700)
 }
 

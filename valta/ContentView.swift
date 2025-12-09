@@ -27,6 +27,16 @@ struct ContentView: View {
         }
         .onAppear {
             updateDockBadge(count: appState.myPendingActivities.count)
+            
+            // Register token if member is already selected
+            if let member = appState.currentMember {
+                print("🔄 App launched with member: \(member.name) (\(member.email))")
+                Task {
+                    await NotificationService.shared.registerMemberEmail(member.email)
+                }
+            } else {
+                print("⚠️ App launched but no member selected yet")
+            }
         }
     }
     

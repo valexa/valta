@@ -11,7 +11,7 @@ import SwiftUI
 
 struct ActivityCard: View {
     let activity: Activity
-    @Environment(AppState.self) private var appState
+    @Environment(ManagerAppState.self) private var appState
     @State private var isHovered = false
     @State private var showingCompleteSheet = false
     @State private var isExpanded = false
@@ -151,7 +151,7 @@ struct ActivityCard: View {
 
 struct CompleteActivitySheet: View {
     let activity: Activity
-    @Environment(AppState.self) private var appState
+    @Environment(ManagerAppState.self) private var appState
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -212,6 +212,6 @@ struct CompleteActivitySheet: View {
         ActivityCard(activity: Activity.mockActivities[4])
     }
     .padding()
-    .environment(AppState())
+    .environment(ManagerAppState())
 }
 

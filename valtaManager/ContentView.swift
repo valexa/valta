@@ -10,7 +10,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var appState = AppState()
+    @State private var appState = ManagerAppState()
     
     var body: some View {
         Group {
@@ -45,7 +45,7 @@ struct ContentView: View {
 // MARK: - Main Tab View
 
 struct MainTabView: View {
-    @Environment(AppState.self) private var appState
+    @Environment(ManagerAppState.self) private var appState
     
     var body: some View {
         TabView {

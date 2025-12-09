@@ -1,5 +1,13 @@
 # Live Team Activities
 
+> [!IMPORTANT]
+> **CRITICAL ARCHITECTURE NOTE:**
+> This project uses a hybrid persistence strategy:
+> *   **Activities & Teams Data**: Persisted via **CSV files** in **Firebase Storage**.
+> *   **Notifications (FCM Tokens)**: Persisted via **Firestore**.
+> 
+> Firestore is strictly for token management. Do not use it for core data persistence.
+
 A macOS application suite for real-time team activity management, consisting of two companion apps for managers and team members.
 
 ## Overview
@@ -126,7 +134,7 @@ valta/
 │       ├── LogTab.swift
 │       └── TeamMemberOnboardingView.swift
 ├── valtaManager/               # Manager App
-│   ├── AppState.swift
+│   ├── ManagerAppState.swift
 │   ├── ContentView.swift
 │   └── Views/
 │       ├── TeamsTab.swift

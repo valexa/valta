@@ -44,10 +44,14 @@ final class TeamMemberAppState {
     // MARK: - Initialization
     
     init() {
-        // Observe DataManager team changes via callback
-        DataManager.shared.onTeamsChanged = { [weak self] in
+        // Observe DataManager team changes
+        NotificationCenter.default.addObserver(forName: DataManager.dataChangedNotification, object: nil, queue: .main) { [weak self] _ in
             self?.onTeamsChanged()
         }
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     // Callbacks from DataManager
@@ -61,9 +65,7 @@ final class TeamMemberAppState {
         _ = dataVersion // depend on version to trigger refresh
         // Find the team that contains the current member
         if let member = currentMember {
-            return dataManager.teams.first(where: { team in
-                team.members.contains(where: { $0.id == member.id })
-            }) ?? Team(name: "Loading...", members: [])
+            return dataManager.teams.findTeam(containingMemberId: member.id) ?? Team(name: "Loading...", members: [])
         }
         return dataManager.teams.first ?? Team(name: "Loading...", members: [])
     }
@@ -176,25 +178,64 @@ final class TeamMemberAppState {
     // MARK: - Actions (delegate to service)
     
     func startActivity(_ activity: Activity) {
+        var updatedActivity = activity
+        
         activity.updateInBackend { mutableActivity in
             mutableActivity.status = .running
             mutableActivity.startedAt = Date()
+            updatedActivity = mutableActivity
+        }
+        
+        // Send notification to all team members using updated state
+        let finalActivity = updatedActivity
+        Task {
+            do {
+                try await NotificationSender.shared.sendActivityStartedNotification(
+                    activity: finalActivity,
+                    team: team
+                )
+            } catch {
+                print("⚠️ Failed to send activity started notification: \(error.localizedDescription)")
+            }
         }
     }
     
     func requestReview(_ activity: Activity) {
+        var updatedActivity = activity
+        
         activity.updateInBackend { mutableActivity in
             mutableActivity.status = .managerPending
             mutableActivity.outcome = nil
             mutableActivity.completedAt = Date()
+            updatedActivity = mutableActivity
         }
         
-        print("🔔 Notification sent to manager for activity: \(activity.name)")
+        // Send notification to manager using updated state
+        let finalActivity = updatedActivity
+        Task {
+            do {
+                try await NotificationSender.shared.sendCompletionRequestedNotification(
+                    activity: finalActivity
+                )
+                print("🔔 Notification sent to manager for activity: \(finalActivity.name)")
+            } catch {
+                print("⚠️ Failed to send completion requested notification: \(error.localizedDescription)")
+            }
+        }
     }
     
     func selectMember(_ member: TeamMember) {
         currentMember = member
         hasCompletedOnboarding = true
+        
+        // Update notification profile and link token
+        Task {
+            // CRITICAL: Link the FCM token to this member's email so Cloud Functions can find it
+            await NotificationService.shared.registerMemberEmail(member.email)
+            
+            // Update the name for display purposes (optional but useful for debugging)
+            await NotificationService.shared.updateMemberProfile(name: member.name)
+        }
     }
 }
 

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F51414532EE5A436001609BF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = F51414522EE5A436001609BF /* FirebaseFirestore */; };
+		F51414552EE5A43F001609BF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = F51414542EE5A43F001609BF /* FirebaseFirestore */; };
 		F51CBB212EE170D800615E23 /* FULL_SPECIFICATION.md in Resources */ = {isa = PBXBuildFile; fileRef = F51CBB202EE170D800615E23 /* FULL_SPECIFICATION.md */; };
 		F51CBB4E2EE17E6E00615E23 /* IMPLEMENTATION_PLAN.md in Resources */ = {isa = PBXBuildFile; fileRef = F51CBB4D2EE17E6E00615E23 /* IMPLEMENTATION_PLAN.md */; };
 		F559C3AA2EE240B4004EB3E0 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = F559C3A92EE240B4004EB3E0 /* FirebaseCrashlytics */; };
@@ -19,6 +21,10 @@
 		F559C3D02EE24CA2004EB3E0 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = F559C3CF2EE24CA2004EB3E0 /* FirebaseAuth */; };
 		F5A10C172EE43C68006A8DFD /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = F5A10C162EE43C68006A8DFD /* AppIcon.icon */; };
 		F5A10C192EE441C3006A8DFD /* AppIconManager.icon in Resources */ = {isa = PBXBuildFile; fileRef = F5A10C182EE441C3006A8DFD /* AppIconManager.icon */; };
+		F5F030FF2EE4FFB400C5CA50 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = F5F030FE2EE4FFB400C5CA50 /* FirebaseFunctions */; };
+		F5F031012EE4FFBC00C5CA50 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = F5F031002EE4FFBC00C5CA50 /* FirebaseMessaging */; };
+		F5F031032EE4FFC800C5CA50 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = F5F031022EE4FFC800C5CA50 /* FirebaseFunctions */; };
+		F5F031052EE4FFCE00C5CA50 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = F5F031042EE4FFCE00C5CA50 /* FirebaseMessaging */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -132,10 +138,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F5F031052EE4FFCE00C5CA50 /* FirebaseMessaging in Frameworks */,
 				F559C3CE2EE24C9B004EB3E0 /* FirebaseAuth in Frameworks */,
 				F559C3C42EE2482D004EB3E0 /* FirebaseStorage in Frameworks */,
+				F5F031032EE4FFC800C5CA50 /* FirebaseFunctions in Frameworks */,
 				F559C3C02EE2482D004EB3E0 /* FirebaseCrashlytics in Frameworks */,
 				F559C3C22EE2482D004EB3E0 /* FirebasePerformance in Frameworks */,
+				F51414552EE5A43F001609BF /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -157,10 +166,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F5F031012EE4FFBC00C5CA50 /* FirebaseMessaging in Frameworks */,
 				F559C3D02EE24CA2004EB3E0 /* FirebaseAuth in Frameworks */,
 				F559C3AE2EE240B4004EB3E0 /* FirebaseStorage in Frameworks */,
+				F5F030FF2EE4FFB400C5CA50 /* FirebaseFunctions in Frameworks */,
 				F559C3AA2EE240B4004EB3E0 /* FirebaseCrashlytics in Frameworks */,
 				F559C3AC2EE240B4004EB3E0 /* FirebasePerformance in Frameworks */,
+				F51414532EE5A436001609BF /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -246,6 +258,9 @@
 				F559C3C12EE2482D004EB3E0 /* FirebasePerformance */,
 				F559C3C32EE2482D004EB3E0 /* FirebaseStorage */,
 				F559C3CD2EE24C9B004EB3E0 /* FirebaseAuth */,
+				F5F031022EE4FFC800C5CA50 /* FirebaseFunctions */,
+				F5F031042EE4FFCE00C5CA50 /* FirebaseMessaging */,
+				F51414542EE5A43F001609BF /* FirebaseFirestore */,
 			);
 			productName = valtaManager;
 			productReference = F51CBB262EE17C8F00615E23 /* valtaManager.app */;
@@ -319,6 +334,9 @@
 				F559C3AB2EE240B4004EB3E0 /* FirebasePerformance */,
 				F559C3AD2EE240B4004EB3E0 /* FirebaseStorage */,
 				F559C3CF2EE24CA2004EB3E0 /* FirebaseAuth */,
+				F5F030FE2EE4FFB400C5CA50 /* FirebaseFunctions */,
+				F5F031002EE4FFBC00C5CA50 /* FirebaseMessaging */,
+				F51414522EE5A436001609BF /* FirebaseFirestore */,
 			);
 			productName = valta;
 			productReference = F5338F872EE16BA300619943 /* valta.app */;
@@ -555,6 +573,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconManager;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = valtaManager/valtaManager.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6P6BQ65AWN;
@@ -591,6 +610,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.valexa.valtaManager;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -611,6 +631,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconManager;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = valtaManager/valtaManager.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6P6BQ65AWN;
@@ -647,6 +668,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.valexa.valtaManager;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -886,6 +908,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = valta/valta.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6P6BQ65AWN;
@@ -922,6 +945,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.valexa.valta;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -943,6 +967,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = valta/valta.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6P6BQ65AWN;
@@ -979,6 +1004,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.valexa.valta;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -1175,6 +1201,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		F51414522EE5A436001609BF /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F559C3A62EE240B4004EB3E0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		F51414542EE5A43F001609BF /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F559C3A62EE240B4004EB3E0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
 		F559C3A92EE240B4004EB3E0 /* FirebaseCrashlytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = F559C3A62EE240B4004EB3E0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
@@ -1214,6 +1250,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F559C3A62EE240B4004EB3E0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAuth;
+		};
+		F5F030FE2EE4FFB400C5CA50 /* FirebaseFunctions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F559C3A62EE240B4004EB3E0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFunctions;
+		};
+		F5F031002EE4FFBC00C5CA50 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F559C3A62EE240B4004EB3E0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+		F5F031022EE4FFC800C5CA50 /* FirebaseFunctions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F559C3A62EE240B4004EB3E0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFunctions;
+		};
+		F5F031042EE4FFCE00C5CA50 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F559C3A62EE240B4004EB3E0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -1,5 +1,12 @@
 # Live Team Activities - Implementation Summary
 
+> [!NOTE]
+> **Data Persistence Strategy:**
+> *   **Data (Teams/Activities)**: CSV Files + Firebase Storage
+> *   **Tokens (FCM)**: Firestore
+>
+> This split is intentional and must be maintained.
+
 ## Project Structure
 
 ```
@@ -32,7 +39,7 @@ valta/
 ├── valtaManager/                    # Manager App
 │   ├── valtaManagerApp.swift       # App entry point
 │   ├── ContentView.swift           # Main view with tabs
-│   ├── AppState.swift              # State management
+│   ├── ManagerAppState.swift              # State management
 │   └── Views/
 │       ├── OnboardingView.swift
 │       ├── TeamsTab.swift
@@ -53,14 +60,14 @@ Both apps use Swift's Observation framework for reactive state management:
 ```swift
 // State class with @Observable macro
 @Observable
-final class AppState {
+final class ManagerAppState {
     var team: Team = ...
     var selectedTab: AppTab = .teams
 }
 
 // Root view owns state with @State
 struct ContentView: View {
-    @State private var appState = AppState()
+    @State private var appState = ManagerAppState()
     
     var body: some View {
         MainView()
@@ -70,7 +77,7 @@ struct ContentView: View {
 
 // Child views access via @Environment
 struct ChildView: View {
-    @Environment(AppState.self) private var appState
+    @Environment(ManagerAppState.self) private var appState
     
     var body: some View {
         @Bindable var state = appState  // For two-way bindings
@@ -274,7 +281,7 @@ Handles activity mutations following Command pattern.
 - `approve(_:activities:requests:)` - Approves and removes request
 - `reject(_:activities:requests:)` - Rejects and removes request
 
-> **Note:** Services are injectable and testable via `now` closure. AppState delegates to services.
+> **Note:** Services are injectable and testable via `now` closure. ManagerAppState delegates to services.
 
 ### SharedComponents.swift
 Reusable UI components used throughout both apps:
@@ -491,6 +498,6 @@ Reusable UI components used throughout both apps:
 - Both apps use same data structures for seamless future integration
 
 ### State Management
-- `@Observable` pattern with `AppState` / `TeamMemberAppState`
+- `@Observable` pattern with `ManagerAppState` / `TeamMemberAppState`
 - Centralized state for each app with computed properties
 - Actions for modifying activities, approvals, etc.

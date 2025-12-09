@@ -112,7 +112,7 @@ public enum ActivityOutcome: String, Codable, Equatable, Hashable, CaseIterable 
 
 // MARK: - Models
 
-struct TeamMember: Identifiable, Hashable {
+struct TeamMember: Identifiable, Hashable, Codable {
     let id: UUID
     var name: String
     var email: String
@@ -135,7 +135,7 @@ struct TeamMember: Identifiable, Hashable {
     static let avatarColor = AppColors.avatar
 }
 
-struct Activity: Identifiable {
+struct Activity: Identifiable, Codable {
     let id: UUID
     var name: String
     var description: String
@@ -147,6 +147,7 @@ struct Activity: Identifiable {
     var deadline: Date
     var startedAt: Date?
     var completedAt: Date?
+    var managerEmail: String?
     
     init(
         id: UUID = UUID(),
@@ -159,7 +160,8 @@ struct Activity: Identifiable {
         createdAt: Date = Date(),
         deadline: Date,
         startedAt: Date? = nil,
-        completedAt: Date? = nil
+        completedAt: Date? = nil,
+        managerEmail: String? = nil
     ) {
         self.id = id
         self.name = name
@@ -172,6 +174,7 @@ struct Activity: Identifiable {
         self.deadline = deadline
         self.startedAt = startedAt
         self.completedAt = completedAt
+        self.managerEmail = managerEmail
     }
     
     /// Returns the display color based on status, priority, outcome, and special rules
@@ -261,15 +264,13 @@ struct Activity: Identifiable {
         let dataManager = DataManager.shared
         
         // Find the team containing this activity
-        guard let teamIndex = dataManager.teams.firstIndex(where: { team in
-            team.activities.contains(where: { $0.id == self.id })
-        }) else {
+        guard let teamIndex = dataManager.teams.findTeamIndex(containingActivityId: self.id) else {
             print("Error: Could not find team for activity \(self.name)")
             return
         }
         
         // Find the activity index
-        guard let activityIndex = dataManager.teams[teamIndex].activities.firstIndex(where: { $0.id == self.id }) else {
+        guard let activityIndex = dataManager.teams[teamIndex].activities.findActivityIndex(byId: self.id) else {
             print("Error: Could not find activity \(self.name) in team")
             return
         }
@@ -287,33 +288,35 @@ struct Activity: Identifiable {
     }
 }
 
-struct Team: Identifiable {
+struct Team: Identifiable, Codable {
     let id: UUID
     var name: String
     var members: [TeamMember]
     var activities: [Activity]
     var createdAt: Date
+    var managerEmail: String?
     
-    init(id: UUID = UUID(), name: String, members: [TeamMember] = [], activities: [Activity] = [], createdAt: Date = Date()) {
+    init(id: UUID = UUID(), name: String, members: [TeamMember] = [], activities: [Activity] = [], createdAt: Date = Date(), managerEmail: String? = nil) {
         self.id = id
         self.name = name
         self.members = members
         self.activities = activities
         self.createdAt = createdAt
+        self.managerEmail = managerEmail
     }
 }
 
 
 // MARK: - Activity Log Entry (for team member app)
 
-struct ActivityLogEntry: Identifiable {
+struct ActivityLogEntry: Identifiable, Codable {
     let id: UUID
     let activity: Activity
     let action: LogAction
     let timestamp: Date
     let performedBy: String
     
-    enum LogAction: String {
+    enum LogAction: String, Codable {
         case created = "Created"
         case started = "Started"
         case completionRequested = "Completion Requested"

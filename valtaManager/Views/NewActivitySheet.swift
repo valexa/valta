@@ -10,7 +10,7 @@
 import SwiftUI
 
 struct NewActivitySheet: View {
-    @Environment(AppState.self) private var appState
+    @Environment(ManagerAppState.self) private var appState
     @Environment(\.dismiss) private var dismiss
     
     @State private var name: String = ""
@@ -82,6 +82,12 @@ struct NewActivitySheet: View {
                     // Activity name
                     TextField("Activity name", text: $name)
                         .focusEffectDisabled()
+                        .onChange(of: name) { oldValue, newValue in
+                            let sanitized = newValue.sanitizedForCSV
+                            if sanitized != newValue {
+                                name = sanitized
+                            }
+                        }
                     // Description
                     ZStack(alignment: .topLeading) {
                         if description.isEmpty {
@@ -97,6 +103,12 @@ struct NewActivitySheet: View {
                             .padding(4)
                             .background(Color.clear)
                             .scrollContentBackground(.hidden) 
+                            .onChange(of: description) { oldValue, newValue in
+                                let sanitized = newValue.sanitizedForCSV
+                                if sanitized != newValue {
+                                    description = sanitized
+                                }
+                            } 
                     }
                     .background(Color(NSColor.textBackgroundColor))
                     .cornerRadius(6)
@@ -281,6 +293,6 @@ struct NotificationPreview: View {
 
 #Preview {
     NewActivitySheet()
-        .environment(AppState())
+        .environment(ManagerAppState())
 }
 
