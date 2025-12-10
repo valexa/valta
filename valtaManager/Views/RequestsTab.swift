@@ -15,17 +15,17 @@ struct RequestsTab: View {
     var body: some View {
         // Content
         Group {
-            if appState.pendingActivities.isEmpty {
+            if appState.managerPendingActivities.isEmpty {
                 EmptyRequestsView()
             } else {
                 ScrollView {
                     LazyVStack(spacing: 16) {
-                        ForEach(appState.pendingActivities) { activity in
+                        ForEach(appState.managerPendingActivities) { activity in
                             RequestCard(activity: activity)
                         }
                     }
                     .padding()
-                    .animation(.spring(response: 0.35, dampingFraction: 0.9), value: appState.pendingActivities.map(\.id))
+                    .animation(.spring(response: 0.35, dampingFraction: 0.9), value: appState.managerPendingActivities.map(\.id))
                 }
             }
         }
@@ -34,7 +34,7 @@ struct RequestsTab: View {
                 Spacer()
             }
             ToolbarItem {
-                if !appState.pendingActivities.isEmpty {
+                if !appState.managerPendingActivities.isEmpty {
                     CompletionButton(role: .confirm, action: {
                         withAnimation(.spring(response: 0.35, dampingFraction: 0.9)) {
                             approveAll()
@@ -49,7 +49,7 @@ struct RequestsTab: View {
     }
 
     private func approveAll() {
-        for activity in appState.pendingActivities {
+        for activity in appState.managerPendingActivities {
             appState.approveCompletion(activity)
         }
     }

@@ -4,7 +4,7 @@
 //
 //  Unit tests for Activity model logic, specifically outcome calculation.
 //
-//  Created by ANTIGRAVITY on 2025-12-08.
+//  Created by Vlad on 2025-12-08.
 //
 
 import Testing

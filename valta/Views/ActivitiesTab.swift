@@ -34,13 +34,13 @@ struct ActivitiesTab: View {
             case .all:
                 activities = appState.myActivities
             case .pending:
-                activities = appState.myPendingActivities
+                activities = appState.myActivities.teamMemberPending
             case .running:
-                activities = appState.myRunningActivities
+                activities = appState.myActivities.running
             case .awaiting:
-                activities = appState.myAwaitingApproval
+                activities = appState.myActivities.managerPending
             case .outcome(let outcome):
-                activities = appState.myCompletedActivities.filter { $0.outcome == outcome }
+                activities = appState.myActivities.completed.filter { $0.outcome == outcome }
             }
         } else {
             activities = appState.myActivities
@@ -98,37 +98,37 @@ struct ActivitiesTab: View {
                 ScrollView {
                     VStack(spacing: 20) {
                         // Pending activities that need to be started
-                        if !appState.myPendingActivities.isEmpty {
+                        if !appState.myActivities.teamMemberPending.isEmpty {
                             ActivitySection(
                                 title: "Needs Your Attention",
-                                activities: appState.myPendingActivities,
+                                activities: appState.myActivities.teamMemberPending,
                                 style: .pending
                             )
                         }
                         
                         // Running activities
-                        if !appState.myRunningActivities.isEmpty {
+                        if !appState.myActivities.running.isEmpty {
                             ActivitySection(
                                 title: "In Progress",
-                                activities: appState.myRunningActivities,
+                                activities: appState.myActivities.running,
                                 style: .running
                             )
                         }
                         
                         // Awaiting manager approval
-                        if !appState.myAwaitingApproval.isEmpty {
+                        if !appState.myActivities.managerPending.isEmpty {
                             ActivitySection(
                                 title: "Awaiting Approval",
-                                activities: appState.myAwaitingApproval,
+                                activities: appState.myActivities.managerPending,
                                 style: .awaitingApproval
                             )
                         }
                         
                         // Completed activities
-                        if !appState.myCompletedActivities.isEmpty {
+                        if !appState.myActivities.completed.isEmpty {
                             ActivitySection(
                                 title: "Completed",
-                                activities: appState.myCompletedActivities,
+                                activities: appState.myActivities.completed,
                                 style: .completed
                             )
                         }
@@ -187,7 +187,7 @@ struct ActivitiesHeader: View {
                     
                     StatButton(
                         icon: AppSymbols.clock,
-                        value: appState.myPendingActivities.count,
+                        value: appState.myActivities.teamMemberPending.count,
                         label: "Pending",
                         color: AppColors.statusTeamMemberPending,
                         isSelected: statsFilter == .pending,
@@ -196,7 +196,7 @@ struct ActivitiesHeader: View {
                     
                     StatButton(
                         icon: AppSymbols.running,
-                        value: appState.myRunningActivities.count,
+                        value: appState.myActivities.running.count,
                         label: "Running",
                         color: AppColors.statusRunning,
                         isSelected: statsFilter == .running,
@@ -205,7 +205,7 @@ struct ActivitiesHeader: View {
                     
                     StatButton(
                         icon: AppSymbols.managerPending,
-                        value: appState.myAwaitingApproval.count,
+                        value: appState.myActivities.managerPending.count,
                         label: "Awaiting",
                         color: AppColors.statusManagerPending,
                         isSelected: statsFilter == .awaiting,
@@ -217,7 +217,7 @@ struct ActivitiesHeader: View {
                     
                     StatButton(
                         icon: AppSymbols.outcomeAhead,
-                        value: appState.myAheadCount,
+                        value: appState.myActivities.completedAhead.count,
                         label: "Ahead",
                         color: AppColors.outcomeAhead,
                         isSelected: statsFilter == .outcome(.ahead),
@@ -226,7 +226,7 @@ struct ActivitiesHeader: View {
                     
                     StatButton(
                         icon: AppSymbols.outcomeJIT,
-                        value: appState.myJITCount,
+                        value: appState.myActivities.completedJIT.count,
                         label: "On Time",
                         color: AppColors.outcomeJIT,
                         isSelected: statsFilter == .outcome(.jit),
@@ -235,7 +235,7 @@ struct ActivitiesHeader: View {
                     
                     StatButton(
                         icon: AppSymbols.outcomeOverrun,
-                        value: appState.myOverrunCount,
+                        value: appState.myActivities.completedOverrun.count,
                         label: "Overrun",
                         color: AppColors.outcomeOverrun,
                         isSelected: statsFilter == .outcome(.overrun),

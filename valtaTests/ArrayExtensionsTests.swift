@@ -7,15 +7,6 @@
 //  Created by vlad on 2025-12-08.
 //
 
-//
-//  ArrayExtensionsTests.swift
-//  valtaTests
-//
-//  Unit tests for Array extension helper methods
-//
-//  Created by vlad on 2025-12-08.
-//
-
 import Testing
 import Foundation
 @testable import valta

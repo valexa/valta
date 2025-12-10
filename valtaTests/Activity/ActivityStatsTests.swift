@@ -2,7 +2,7 @@
 //  ActivityStatsTests.swift
 //  valtaTests
 //
-//  Created by ANTIGRAVITY on 2025-12-08.
+//  Created by Vlad on 2025-12-08.
 //
 
 import Testing

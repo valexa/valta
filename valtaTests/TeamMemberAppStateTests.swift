@@ -2,7 +2,7 @@
 //  TeamMemberAppStateTests.swift
 //  valtaTests
 //
-//  Created by ANTIGRAVITY on 2025-12-08.
+//  Created by Vlad on 2025-12-08.
 //
 
 import Testing
@@ -11,6 +11,7 @@ import Foundation
 @testable import valta
 
 @MainActor
+@Suite(.serialized)
 struct TeamMemberAppStateTests {
     
     private let baseDate = Date(timeIntervalSince1970: 1_700_000_000) // Fixed date for deterministic tests
@@ -56,7 +57,7 @@ struct TeamMemberAppStateTests {
         #expect(appState.myActivities.first?.id == aliceActivity.id)
         
         // Check "Team" filters
-        #expect(appState.teamActiveActivities.count == 2)
+        #expect(appState.activeActivities.count == 2)
     }
     
     // MARK: - Specific Status Filters
@@ -76,10 +77,10 @@ struct TeamMemberAppStateTests {
         DataManager.shared.teams = [team]
         DataManager.shared.notifyTeamsChanged()
         
-        #expect(appState.myPendingActivities.count == 1)
-        #expect(appState.myRunningActivities.count == 1)
-        #expect(appState.myAwaitingApproval.count == 1)
-        #expect(appState.myCompletedActivities.count == 1)
+        #expect(appState.myActivities.teamMemberPending.count == 1)
+        #expect(appState.myActivities.running.count == 1)
+        #expect(appState.myActivities.managerPending.count == 1)
+        #expect(appState.myActivities.completed.count == 1)
     }
     
     // MARK: - Stats Tests
@@ -108,7 +109,6 @@ struct TeamMemberAppStateTests {
         let team = TestDataFactory.makeTeam(members: [alice], activities: [activity])
         
         DataManager.shared.teams = [team]
-        // DataManager.shared.activityService = ActivityService(now: { Date() }) // Inject predictable date provider if needed, simpler to rely on default
         DataManager.shared.notifyTeamsChanged()
         
         // Act
@@ -117,11 +117,15 @@ struct TeamMemberAppStateTests {
         // Verify (wait for async update propagation)
         try await Task.sleep(nanoseconds: 500_000_000)
         
-        // Check local state in DataManager
-        let updated = DataManager.shared.activities.first(where: { $0.id == activity.id })
-        // Again, direct assertion on singleton state is tricky without mocks,
-        // but this verifies the code path executes.
-        // #expect(updated?.status == .running) // Requires real backend connection or mocked service which we don't have easily here
+        // Verify status change
+        let updatedTeam = DataManager.shared.teams.first(where: { $0.id == team.id })
+        let updatedActivity = updatedTeam?.activities.first(where: { $0.id == activity.id })
+        
+        #expect(updatedActivity != nil, "Activity not found in DataManager teams")
+        if let updatedActivity {
+            #expect(updatedActivity.status == .running, "Status was \(updatedActivity.status), expected running")
+            #expect(updatedActivity.startedAt != nil, "startedAt was nil")
+        }
     }
     
     @Test func testRequestReview() async throws {
@@ -141,7 +145,14 @@ struct TeamMemberAppStateTests {
         // Verify execution path
         try await Task.sleep(nanoseconds: 500_000_000)
         
-        // Ideally verify status change 
+        // Verify status change
+        let updatedTeam = DataManager.shared.teams.first(where: { $0.id == team.id })
+        let updatedActivity = updatedTeam?.activities.first(where: { $0.id == activity.id })
+        
+        #expect(updatedActivity != nil, "Activity not found in DataManager teams")
+        if let updatedActivity {
+             #expect(updatedActivity.status == .managerPending, "Status was \(updatedActivity.status), expected managerPending")
+        }
     }
     
     // MARK: - Notification Observation Test

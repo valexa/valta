@@ -3,7 +3,7 @@
 //  Shared
 //
 //  Handles Firebase Storage operations for CSV files.
-//  exposed provider for testing.
+//  Exposes provider for testing.
 //
 //  Created by vlad on 2025-12-04.
 //

@@ -12,7 +12,8 @@ extension String {
     /// This ensures CSV integrity by removing potential delimiters like commas, quotes, and newlines.
     var sanitizedForCSV: String {
         return self.filter { char in
-            char.isLetter || char.isNumber || char.isWhitespace
+            let isInvalid = char == "," || char == "\"" || char.isNewline
+            return !isInvalid
         }
     }
 }
