@@ -55,7 +55,6 @@ struct RequestsTab: View {
     }
 }
 
-
 // MARK: - Request Card
 
 struct RequestCard: View {
@@ -65,7 +64,7 @@ struct RequestCard: View {
 
     var body: some View {
         let outcome = activity.calculateOutcome()
-        
+
         return VStack(spacing: 0) {
             HStack(alignment: .top, spacing: 16) {
                 // Requester avatar
@@ -82,7 +81,7 @@ struct RequestCard: View {
                             .foregroundColor(.secondary)
 
                         Spacer()
-                        
+
                         // Use completedAt or a default date
                         if let completedAt = activity.completedAt {
                             Text(completedAt.formatted(.relative(presentation: .named)))
@@ -222,4 +221,3 @@ struct EmptyRequestsView: View {
         .environment(ManagerAppState())
         .frame(width: 800, height: 600)
 }
-

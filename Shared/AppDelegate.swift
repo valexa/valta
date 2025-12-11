@@ -13,37 +13,37 @@ import UserNotifications
 import FirebaseMessaging
 
 class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDelegate {
-    
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         UserDefaults.standard.register(defaults: ["NSApplicationCrashOnExceptions": true])
         UserDefaults.standard.set(-1, forKey: "AppleAccentColor")
-        
+
         // Setup notification center delegate
         UNUserNotificationCenter.current().delegate = self
     }
-    
+
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         return true
     }
-    
+
     // MARK: - Remote Notification Registration
-    
+
     func application(_ application: NSApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         Messaging.messaging().apnsToken = deviceToken
-        
+
         // Manually fetch FCM token (workaround for macOS where delegate doesn't always fire)
         Task {
             try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
             await NotificationService.shared.retrieveFCMToken()
         }
     }
-    
+
     func application(_ application: NSApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         print("❌ Failed to register for remote notifications: \(error.localizedDescription)")
     }
-    
+
     // MARK: - UNUserNotificationCenterDelegate
-    
+
     // Handle notification when app is in foreground
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
@@ -51,10 +51,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
         let userInfo = notification.request.content.userInfo
-        
+
         // Reload data when notification arrives
         handleNotificationData(userInfo: userInfo)
-        
+
         // Show notification even when app is in foreground
         #if os(macOS)
         if #available(macOS 11.0, *) {
@@ -66,7 +66,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         completionHandler([.banner, .sound, .badge])
         #endif
     }
-    
+
     // Handle notification tap
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
@@ -74,18 +74,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
         let userInfo = response.notification.request.content.userInfo
-        
+
         // Reload data and handle notification tap
         handleNotificationData(userInfo: userInfo)
         handleNotificationTap(userInfo: userInfo)
-        
+
         completionHandler()
     }
-    
 
-    
     // MARK: - Notification Handling
-    
+
     private func handleNotificationTap(userInfo: [AnyHashable: Any]) {
         // Extract notification data
         guard let type = userInfo["type"] as? String,
@@ -93,11 +91,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
               let activityId = UUID(uuidString: activityIdString) else {
             return
         }
-        
+
         print("📱 Handling notification tap - Type: \(type), Activity ID: \(activityId)")
-        
+
     }
-    
+
     private func handleNotificationData(userInfo: [AnyHashable: Any]) {
         // Trigger data reload for activity-related notifications
         if let notificationType = userInfo["type"] as? String {
@@ -120,27 +118,27 @@ import UserNotifications
 import FirebaseMessaging
 
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
-    
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         // Setup notification center delegate
         UNUserNotificationCenter.current().delegate = self
-        
+
         return true
     }
-    
+
     // MARK: - Remote Notification Registration
-    
+
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         print("✅ Registered for remote notifications")
         Messaging.messaging().apnsToken = deviceToken
     }
-    
+
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         print("❌ Failed to register for remote notifications: \(error.localizedDescription)")
     }
-    
+
     // MARK: - UNUserNotificationCenterDelegate
-    
+
     // Handle notification when app is in foreground
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
@@ -149,14 +147,14 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     ) {
         let userInfo = notification.request.content.userInfo
         print("📬 Received notification in foreground: \(userInfo)")
-        
+
         // Reload data when notification arrives
         handleNotificationData(userInfo: userInfo)
-        
+
         // Show notification even when app is in foreground
         completionHandler([.banner, .sound, .badge])
     }
-    
+
     // Handle notification tap
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
@@ -165,18 +163,16 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     ) {
         let userInfo = response.notification.request.content.userInfo
         print("👆 User tapped notification: \(userInfo)")
-        
+
         // Reload data and handle notification tap
         handleNotificationData(userInfo: userInfo)
         handleNotificationTap(userInfo: userInfo)
-        
+
         completionHandler()
     }
-    
 
-    
     // MARK: - Notification Handling
-    
+
     private func handleNotificationTap(userInfo: [AnyHashable: Any]) {
         // Extract notification data
         guard let type = userInfo["type"] as? String,
@@ -184,10 +180,10 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
               let activityId = UUID(uuidString: activityIdString) else {
             return
         }
-        
+
         print("📱 Handling notification tap - Type: \(type), Activity ID: \(activityId)")
     }
-    
+
     private func handleNotificationData(userInfo: [AnyHashable: Any]) {
         // Trigger data reload for activity-related notifications
         if let notificationType = userInfo["type"] as? String {
@@ -203,5 +199,3 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     }
 }
 #endif
-
-

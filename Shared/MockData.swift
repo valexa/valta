@@ -10,6 +10,36 @@
 
 import Foundation
 
+// MARK: - Mockable
+
+extension Activity: Mockable {
+    static func mock() -> Activity {
+        Activity.mockActivities.first!
+    }
+}
+
+extension TeamMember: Mockable {
+    static func mock() -> TeamMember {
+        TeamMember.mockMembers.first!
+    }
+}
+
+extension Team: Mockable {
+    static func mock() -> Team {
+        Team(
+            name: "Platform Engineering",
+            members: TeamMember.mockMembers,
+            activities: Activity.mockActivities
+        )
+    }
+}
+
+extension ActivityLogEntry: Mockable {
+    static func mock() -> ActivityLogEntry {
+        ActivityLogEntry.mockLogEntries.first!
+    }
+}
+
 // MARK: - Mock Team Members
 
 extension TeamMember {
@@ -19,7 +49,7 @@ extension TeamMember {
         TeamMember(name: "Elena Rodriguez", email: "elena.r@company.com"),
         TeamMember(name: "Alex Kim", email: "alex.kim@company.com"),
         TeamMember(name: "Jordan Taylor", email: "jordan.t@company.com"),
-        TeamMember(name: "Priya Patel", email: "priya.p@company.com"),
+        TeamMember(name: "Priya Patel", email: "priya.p@company.com")
     ]
 }
 
@@ -30,7 +60,7 @@ extension Activity {
         let members = TeamMember.mockMembers
         let now = Date()
         let calendar = Calendar.current
-        
+
         return [
             // Sarah Chen - Running Activity 1
             Activity(
@@ -157,20 +187,15 @@ extension Activity {
                 deadline: calendar.date(byAdding: .day, value: -2, to: now)!,
                 startedAt: calendar.date(byAdding: .day, value: -4, to: now)!,
                 completedAt: calendar.date(byAdding: .hour, value: 18, to: calendar.date(byAdding: .day, value: -2, to: now)!)!
-            ),
+            )
         ]
     }()
 }
 
-
 // MARK: - Mock Team
 
 extension Team {
-    static let mockTeam = Team(
-        name: "Platform Engineering",
-        members: TeamMember.mockMembers,
-        activities: Activity.mockActivities
-    )
+    static let mockTeam = Team.mock
 }
 
 // MARK: - Mock Activity Log Entries
@@ -180,7 +205,7 @@ extension ActivityLogEntry {
         let activities = Activity.mockActivities
         let now = Date()
         let calendar = Calendar.current
-        
+
         return [
             // Recent: Sarah's completion request for API Rate Limiting
             ActivityLogEntry(
@@ -258,8 +283,7 @@ extension ActivityLogEntry {
                 action: .created,
                 timestamp: calendar.date(byAdding: .day, value: -5, to: now)!,
                 performedBy: "Victoria Lane"
-            ),
+            )
         ]
     }()
 }
-

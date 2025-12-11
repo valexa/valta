@@ -12,13 +12,13 @@ import Foundation
 
 class ActivityLogService {
     static let shared = ActivityLogService()
-    
+
     private init() {}
-    
+
     /// Generate log entries from activities based on their state
     func generateLogEntries(from activities: [Activity]) -> [ActivityLogEntry] {
         var entries: [ActivityLogEntry] = []
-        
+
         for activity in activities {
             // Create log entry for creation
             entries.append(ActivityLogEntry(
@@ -27,7 +27,7 @@ class ActivityLogService {
                 timestamp: activity.createdAt,
                 performedBy: "System"
             ))
-            
+
             // Create log entry for started (if started)
             if let startedAt = activity.startedAt {
                 entries.append(ActivityLogEntry(
@@ -37,7 +37,7 @@ class ActivityLogService {
                     performedBy: activity.assignedMember.name
                 ))
             }
-            
+
             // Create log entry for completion request (if pending manager approval)
             if activity.status == .managerPending {
                 // Use startedAt or createdAt as a proxy for when the request was made
@@ -49,7 +49,7 @@ class ActivityLogService {
                     performedBy: activity.assignedMember.name
                 ))
             }
-            
+
             // Create log entry for completed (if completed)
             if activity.status == .completed, let completedAt = activity.completedAt {
                 entries.append(ActivityLogEntry(
@@ -59,7 +59,7 @@ class ActivityLogService {
                     performedBy: activity.assignedMember.name
                 ))
             }
-            
+
             // Create log entry for canceled (if canceled)
             if activity.status == .canceled {
                 // Use completedAt or createdAt as a proxy for when it was canceled
@@ -72,7 +72,7 @@ class ActivityLogService {
                 ))
             }
         }
-        
+
         // Sort by timestamp, most recent first
         return entries.sorted { $0.timestamp > $1.timestamp }
     }

@@ -13,7 +13,7 @@ struct TeamCard: View {
     let team: Team
     let isSelected: Bool
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             VStack(alignment: .leading, spacing: 12) {
@@ -23,25 +23,21 @@ struct TeamCard: View {
                     Spacer()
                     CheckmarkButton(isSelected: isSelected)
                 }
-                
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text(team.name)
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(.white)
-                    
+
                     Text("\(team.members.count) members")
                         .font(.system(size: 14))
                         .foregroundColor(.white.opacity(0.6))
                 }
-                
+
                 // Member preview avatars
-                HStack(spacing: -8) {
+                HStack(spacing: -4) {
                     ForEach(Array(team.members.prefix(10))) { member in
-                        MemberAvatar(member: member, size: 24)
-                            .overlay(
-                                Circle()
-                                    .stroke(Color.black.opacity(0.2), lineWidth: 1)
-                            )
+                        MemberAvatar(member: member, size: 36)
                     }
                     if team.members.count > 10 {
                         Text("+\(team.members.count - 10)")
@@ -65,5 +61,10 @@ struct TeamCard: View {
         .buttonStyle(.plain)
     }
 
+}
 
+// MARK: - Preview
+
+#Preview {
+    TeamCard(team: .mock, isSelected: false) {}
 }

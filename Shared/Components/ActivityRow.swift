@@ -15,27 +15,27 @@ import SwiftUI
 /// Unified activity row component used across all tabs in both apps
 struct ActivityRow: View {
     @Environment(\.theme) private var theme
-    
+
     let activity: Activity
     var showAssignee: Bool = false
     var isHighlighted: Bool = false
-    var onStart: (() -> Void)? = nil
-    var onComplete: (() -> Void)? = nil
-    
+    var onStart: (() -> Void)?
+    var onComplete: (() -> Void)?
+
     @State private var isHovered = false
-    
+
     var body: some View {
-        
+
         HStack(spacing: 10) {
             // Priority badge
             PriorityBadge(priority: activity.priority, compact: true)
-            
+
             // Activity name
             Text(activity.name)
                 .font(.system(size: 13, weight: .medium))
                 .lineLimit(1)
                 .frame(minWidth: 100, alignment: .leading)
-            
+
             // Assignee (optional)
             if showAssignee {
                 HStack(spacing: 4) {
@@ -47,26 +47,26 @@ struct ActivityRow: View {
                 }
                 .frame(width: 80, alignment: .leading)
             }
-            
+
             Spacer()
-            
+
             // Time remaining with progress bar (for non-completed activities)
             if activity.status != .completed && activity.status != .canceled {
                 TimeRemainingLabel(activity: activity, compact: true, showProgressBar: true)
             }
-            
+
             // Overdue indicator
             if activity.isOverdue {
                 Image(symbol: AppSymbols.exclamationTriangle)
                     .foregroundColor(theme.destructive)
                     .font(.system(size: 11))
             }
-            
+
             // Time delta for completed activities (shows how much ahead/overrun)
             if activity.status == .completed {
                 CompletionTimeDelta(activity: activity)
             }
-            
+
             // Status/Outcome badge
             if activity.status == .completed, let outcome = activity.outcome {
                 OutcomeBadge(outcome: outcome)
@@ -78,7 +78,7 @@ struct ActivityRow: View {
                     compact: true
                 )
             }
-            
+
             // Action buttons (visible on hover, only if actions are available)
             // Show processing state regardless of hover if processing
             if isHovered && hasAvailableActions {
@@ -102,13 +102,13 @@ struct ActivityRow: View {
             }
         }
     }
-    
+
     /// Check if there are any actions that can be shown
     private var hasAvailableActions: Bool {
         (activity.status == .teamMemberPending && onStart != nil) ||
         (activity.status == .running && onComplete != nil)
     }
-    
+
     @ViewBuilder
     var actionButtons: some View {
         HStack(spacing: 6) {
@@ -130,7 +130,7 @@ struct ActivityRow: View {
                 }
                 .buttonStyle(.plain)
             }
-            
+
             if activity.status == .running, let onComplete = onComplete {
                 CompletionButton(action: {
                     onComplete()
@@ -158,11 +158,11 @@ struct ActivityRow: View {
 /// Shows how much time ahead or overrun the activity was completed
 struct CompletionTimeDelta: View {
     let activity: Activity
-    
+
     private var deltaText: String {
         activity.timeCalculator.completionDeltaFormatted ?? "-"
     }
-    
+
     var body: some View {
         Text(deltaText)
             .font(.system(size: 10, weight: .medium, design: .monospaced))
@@ -176,26 +176,25 @@ struct CompletionTimeDelta: View {
     VStack(spacing: 8) {
         // Running activity
         ActivityRow(
-            activity: Activity.mockActivities[0],
+            activity: .mock,
             showAssignee: true
         )
-        
+
         // Pending activity
         ActivityRow(
-            activity: Activity.mockActivities[2],
-            onStart: {}
+            activity: Activity.mockActivities[2]
         )
-        
+
         // Completed activity (ahead)
         ActivityRow(
             activity: Activity.mockActivities[4]
         )
-        
+
         // Completed activity (JIT)
         ActivityRow(
             activity: Activity.mockActivities[9]
         )
-        
+
         // Completed activity (overrun)
         ActivityRow(
             activity: Activity.mockActivities[10]
@@ -204,4 +203,3 @@ struct CompletionTimeDelta: View {
     .padding()
     .frame(width: 700)
 }
-

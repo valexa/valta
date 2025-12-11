@@ -16,7 +16,7 @@ import SwiftUI
 /// Optimized scale: 10, 14, 18, 22, 26, 32, 40, 48 (min 4pt steps)
 enum AppFontSize {
     // MARK: - Icon Sizes
-    
+
     /// Extra large icons (onboarding, empty states) - 48pt
     static let iconXL: CGFloat = 48
     /// Large icons (onboarding headers) - 40pt
@@ -39,9 +39,9 @@ enum AppFontSize {
     static let iconBadgeCompact: CGFloat = 10
     /// Badge icons - 10pt
     static let iconBadge: CGFloat = 10
-    
+
     // MARK: - Header Sizes
-    
+
     /// Extra large headers (onboarding) - 32pt
     static let headerXL: CGFloat = 32
     /// Large headers (onboarding) - 26pt
@@ -54,9 +54,9 @@ enum AppFontSize {
     static let statLarge: CGFloat = 22
     /// Medium stat values - 18pt
     static let statMedium: CGFloat = 18
-    
+
     // MARK: - Body Text Sizes
-    
+
     /// Subtitle text - 18pt
     static let subtitle: CGFloat = 18
     /// Large body/section titles - 18pt
@@ -79,9 +79,9 @@ enum AppFontSize {
 
 /// Pre-configured font styles for common use cases
 enum AppFont {
-    
+
     // MARK: - Headers
-    
+
     /// Extra large header (onboarding main title)
     static let headerXL = Font.system(size: AppFontSize.headerXL, weight: .bold, design: .rounded)
     /// Large header (section titles)
@@ -90,9 +90,9 @@ enum AppFont {
     static let headerPage = Font.system(size: AppFontSize.headerPage, weight: .bold, design: .rounded)
     /// Section header
     static let headerSection = Font.system(size: AppFontSize.headerSection, weight: .bold, design: .rounded)
-    
+
     // MARK: - Body Text
-    
+
     /// Subtitle
     static let subtitle = Font.system(size: AppFontSize.subtitle)
     /// Large body (section titles)
@@ -115,9 +115,9 @@ enum AppFont {
     static let bodyStandardMedium = Font.system(size: AppFontSize.bodyStandard, weight: .medium)
     /// Standard body semibold
     static let bodyStandardSemibold = Font.system(size: AppFontSize.bodyStandard, weight: .semibold)
-    
+
     // MARK: - Captions
-    
+
     /// Caption text
     static let caption = Font.system(size: AppFontSize.caption)
     /// Caption medium
@@ -134,9 +134,9 @@ enum AppFont {
     static let captionTiny = Font.system(size: AppFontSize.captionTiny)
     /// Tiny caption semibold
     static let captionTinySemibold = Font.system(size: AppFontSize.captionTiny, weight: .semibold)
-    
+
     // MARK: - Badges
-    
+
     /// Badge text (normal)
     static let badge = Font.system(size: AppFontSize.captionSmall, weight: .medium)
     /// Badge text (compact)
@@ -145,18 +145,18 @@ enum AppFont {
     static let priorityBadge = Font.system(size: AppFontSize.captionSmall, weight: .bold, design: .rounded)
     /// Priority badge (compact)
     static let priorityBadgeCompact = Font.system(size: AppFontSize.captionTiny, weight: .bold, design: .rounded)
-    
+
     // MARK: - Buttons
-    
+
     /// Button text large
     static let buttonLarge = Font.system(size: AppFontSize.bodyLarge, weight: .semibold)
     /// Button text standard
     static let buttonStandard = Font.system(size: AppFontSize.bodyStandard, weight: .semibold)
     /// Button text small
     static let buttonSmall = Font.system(size: AppFontSize.captionTiny, weight: .semibold)
-    
+
     // MARK: - Stats
-    
+
     /// Large stat value
     static let statLarge = Font.system(size: AppFontSize.statLarge, weight: .bold, design: .rounded)
     /// Medium stat value

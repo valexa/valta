@@ -10,12 +10,12 @@ import Foundation
 @testable import valta
 
 struct TeamServiceTests {
-    
+
     // Helpers
     func makeMember(id: UUID = UUID(), name: String = "Bob") -> TeamMember {
         TeamMember(id: id, name: name, email: "bob@example.com")
     }
-    
+
     func makeActivity(id: UUID = UUID()) -> Activity {
         Activity(
             id: id,
@@ -28,7 +28,7 @@ struct TeamServiceTests {
             deadline: Date()
         )
     }
-    
+
     func makeTeam() -> Team {
         Team(
             id: UUID(),
@@ -38,36 +38,36 @@ struct TeamServiceTests {
             managerEmail: "manager@example.com"
         )
     }
-    
+
     @Test func testAddMember() {
         var team = makeTeam()
         let service = TeamService()
         let member = makeMember()
-        
+
         service.addMember(member, to: &team)
-        
+
         #expect(team.members.count == 1)
         #expect(team.members.first?.id == member.id)
     }
-    
+
     @Test func testRemoveMember() {
         var team = makeTeam()
         let service = TeamService()
         let member = makeMember()
         team.members = [member]
-        
+
         service.removeMember(id: member.id, from: &team)
-        
+
         #expect(team.members.isEmpty)
     }
-    
+
     @Test func testAddActivity() {
         var team = makeTeam()
         let service = TeamService()
         let activity = makeActivity()
-        
+
         service.addActivity(activity, to: &team)
-        
+
         #expect(team.activities.count == 1)
         #expect(team.activities.first?.id == activity.id)
         // Verify new activities are inserted at position 0 (newest first)
@@ -75,15 +75,15 @@ struct TeamServiceTests {
         service.addActivity(activity2, to: &team)
         #expect(team.activities.first?.id == activity2.id, "Newest activity should be at index 0")
     }
-    
+
     @Test func testRemoveActivity() {
         var team = makeTeam()
         let service = TeamService()
         let activity = makeActivity()
         team.activities = [activity]
-        
+
         service.removeActivity(id: activity.id, from: &team)
-        
+
         #expect(team.activities.isEmpty)
     }
 }

@@ -12,17 +12,17 @@ import SwiftUI
 struct NewActivitySheet: View {
     @Environment(ManagerAppState.self) private var appState
     @Environment(\.dismiss) private var dismiss
-    
+
     @State private var name: String = ""
     @State private var description: String = ""
     @State private var selectedMember: TeamMember?
     @State private var priority: ActivityPriority = .p2
     @State private var deadline: Date = Date().addingTimeInterval(3600 * 4) // 4 hours from now
-    
+
     private var isValid: Bool {
         !name.isEmpty && !description.isEmpty && selectedMember != nil
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             // Header
@@ -32,14 +32,14 @@ struct NewActivitySheet: View {
                 }
                 .buttonStyle(.plain)
                 .foregroundColor(.secondary)
-                
+
                 Spacer()
-                
+
                 Text("New Activity")
                     .font(.system(size: 16, weight: .semibold))
-                
+
                 Spacer()
-                
+
                 Button("Create", role: .confirm) {
                     createActivity()
                 }
@@ -49,7 +49,6 @@ struct NewActivitySheet: View {
             }
             .padding()
 
-            
             // Form
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
@@ -67,14 +66,13 @@ struct NewActivitySheet: View {
 
                         // Quick deadline buttons
                         HStack(spacing: 8) {
-                            QuickDeadlineButton(label: "1h", action: { deadline = Date().addingTimeInterval(3600) })
-                            QuickDeadlineButton(label: "4h", action: { deadline = Date().addingTimeInterval(3600 * 4) })
-                            QuickDeadlineButton(label: "1d", action: { deadline = Date().addingTimeInterval(86400) })
-                            QuickDeadlineButton(label: "3d", action: { deadline = Date().addingTimeInterval(86400 * 3) })
-                            QuickDeadlineButton(label: "1w", action: { deadline = Date().addingTimeInterval(86400 * 7) })
+                            QuickDeadlineButton(label: "1h") { deadline = Date().addingTimeInterval(3600) }
+                            QuickDeadlineButton(label: "4h") { deadline = Date().addingTimeInterval(3600 * 4) }
+                            QuickDeadlineButton(label: "1d") { deadline = Date().addingTimeInterval(86400) }
+                            QuickDeadlineButton(label: "3d") { deadline = Date().addingTimeInterval(86400 * 3) }
+                            QuickDeadlineButton(label: "1w") { deadline = Date().addingTimeInterval(86400 * 7) }
                         }
                     }
-
 
                     // Assigned member
                     memberSelectionView
@@ -82,7 +80,7 @@ struct NewActivitySheet: View {
                     // Activity name
                     TextField("Activity name", text: $name)
                         .focusEffectDisabled()
-                        .onChange(of: name) { oldValue, newValue in
+                        .onChange(of: name) { _, newValue in
                             let sanitized = newValue.sanitizedForCSV
                             if sanitized != newValue {
                                 name = sanitized
@@ -96,19 +94,19 @@ struct NewActivitySheet: View {
                                 .padding(.top, 8)
                                 .padding(.leading, 8)
                         }
-                        
+
                         TextEditor(text: $description)
                             .font(.body)
                             .frame(minHeight: 80)
                             .padding(4)
                             .background(Color.clear)
-                            .scrollContentBackground(.hidden) 
-                            .onChange(of: description) { oldValue, newValue in
+                            .scrollContentBackground(.hidden)
+                            .onChange(of: description) { _, newValue in
                                 let sanitized = newValue.sanitizedForCSV
                                 if sanitized != newValue {
                                     description = sanitized
                                 }
-                            } 
+                            }
                     }
                     .background(Color(NSColor.textBackgroundColor))
                     .cornerRadius(6)
@@ -116,15 +114,14 @@ struct NewActivitySheet: View {
                         RoundedRectangle(cornerRadius: 6)
                             .stroke(Color(NSColor.separatorColor), lineWidth: 1)
                     )
-                    
+
                     // Priority
                     HStack(spacing: 8) {
                         ForEach(ActivityPriority.allCases, id: \.self) { p in
                             PriorityOption(
                                 priority: p,
-                                isSelected: priority == p,
-                                action: { priority = p }
-                            )
+                                isSelected: priority == p
+                            ) { priority = p }
                         }
                     }
                     .frame(height: 40)
@@ -133,14 +130,14 @@ struct NewActivitySheet: View {
             .padding(.all)
 
             Divider()
-            
+
             // Preview
             if isValid {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Preview")
                         .font(.caption)
                         .foregroundColor(.secondary)
-                    
+
                     NotificationPreview(
                         priority: priority,
                         deadline: deadline,
@@ -153,10 +150,10 @@ struct NewActivitySheet: View {
         }
         .frame(width: 520, height: 520)
     }
-    
+
     private func createActivity() {
         guard let member = selectedMember else { return }
-        
+
         let activity = Activity(
             name: name,
             description: description,
@@ -165,10 +162,11 @@ struct NewActivitySheet: View {
             status: .teamMemberPending,
             deadline: deadline
         )
-        
+
         appState.addActivity(activity)
         dismiss()
     }
+
     private var memberSelectionView: some View {
         Menu {
             ForEach(appState.team.members) { member in
@@ -198,21 +196,19 @@ struct NewActivitySheet: View {
     }
 }
 
-
-
 // MARK: - Priority Option
 
 struct PriorityOption: View {
     let priority: ActivityPriority
     let isSelected: Bool
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             VStack(spacing: 4) {
                 Text(priority.shortName)
                     .font(.system(size: 13, weight: .bold, design: .rounded))
-                
+
                 Text(priorityLabel)
                     .font(.system(size: 10))
             }
@@ -228,7 +224,7 @@ struct PriorityOption: View {
         }
         .buttonStyle(.plain)
     }
-    
+
     private var priorityLabel: String {
         switch priority {
         case .p0: return "Critical"
@@ -244,7 +240,7 @@ struct PriorityOption: View {
 struct QuickDeadlineButton: View {
     let label: String
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             Text(label)
@@ -265,17 +261,17 @@ struct NotificationPreview: View {
     let priority: ActivityPriority
     let deadline: Date
     let memberName: String
-    
+
     var body: some View {
         HStack(spacing: 12) {
             Image(symbol: AppSymbols.bellBadge)
                 .font(.system(size: 24))
                 .foregroundColor(AppColors.warning)
-            
+
             VStack(alignment: .leading, spacing: 4) {
                 Text("Notification to \(memberName)")
                     .font(.system(size: 12, weight: .semibold))
-                
+
                 Text("Your manager has assigned \(priority.shortName) activity on \(Date().formatted(date: .abbreviated, time: .shortened)) with deadline \(deadline.formatted(date: .abbreviated, time: .shortened)) to you, please start the activity.")
                     .font(.system(size: 11))
                     .foregroundColor(.secondary)
@@ -295,4 +291,3 @@ struct NotificationPreview: View {
     NewActivitySheet()
         .environment(ManagerAppState())
 }
-

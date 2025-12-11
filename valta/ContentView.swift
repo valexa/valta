@@ -12,7 +12,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var appState = TeamMemberAppState()
-    
+
     var body: some View {
         Group {
             if appState.hasCompletedOnboarding {
@@ -39,7 +39,7 @@ struct ContentView: View {
             }
         }
     }
-    
+
     private func updateDockBadge(count: Int) {
         #if os(macOS)
         DispatchQueue.main.async {
@@ -57,10 +57,10 @@ struct ContentView: View {
 
 struct MainTabView: View {
     @Environment(TeamMemberAppState.self) private var appState
-    
+
     var body: some View {
         @Bindable var state = appState
-        
+
         TabView(selection: $state.selectedTab) {
             ActivitiesTab()
                 .tabItem {
@@ -68,13 +68,13 @@ struct MainTabView: View {
                 }
                 .tag(TeamMemberTab.activities)
                 .badge(appState.myActiveCount)
-            
+
             TeamTab()
                 .tabItem {
                     Label("Team", systemImage: "person.3.fill")
                 }
                 .tag(TeamMemberTab.team)
-            
+
             LogTab()
                 .tabItem {
                     Label("Log", systemImage: "list.bullet.clipboard.fill")

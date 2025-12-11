@@ -14,15 +14,15 @@ import SwiftUI
 
 struct StatusFilterMenu: View {
     @Binding var selection: ActivityStatus?
-    
+
     var body: some View {
         Menu {
             Button("All Statuses") {
                 selection = nil
             }
-            
+
             Divider()
-            
+
             ForEach(ActivityStatus.allCases, id: \.self) { status in
                 Button(action: {
                     selection = status
@@ -50,7 +50,7 @@ struct StatusFilterMenu: View {
 
 struct PriorityFilterMenu: View {
     @Binding var selection: ActivityPriority?
-    
+
     var body: some View {
         Menu {
             Button("All Priorities") {
@@ -58,7 +58,7 @@ struct PriorityFilterMenu: View {
             }
 
             Divider()
-            
+
             ForEach(ActivityPriority.allCases, id: \.self) { priority in
                 Button(action: { selection = priority }) {
                     HStack {
@@ -82,7 +82,7 @@ struct PriorityFilterMenu: View {
 
 struct OutcomeFilterMenu: View {
     @Binding var selection: ActivityOutcome?
-    
+
     var body: some View {
         Menu {
             Button("All Outcomes") {
@@ -90,7 +90,7 @@ struct OutcomeFilterMenu: View {
             }
 
             Divider()
-            
+
             ForEach(ActivityOutcome.allCases, id: \.self) { outcome in
                 Button(action: { selection = outcome }) {
                     HStack {

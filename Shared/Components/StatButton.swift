@@ -20,19 +20,19 @@ struct StatButton: View {
     var color: Color = .accentColor
     var isSelected: Bool = false
     var action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             HStack(spacing: 6) {
                 Image(symbol: icon)
                     .font(.system(size: 12))
                     .foregroundColor(isSelected ? .white : color)
-                
+
                 VStack(alignment: .leading, spacing: 0) {
                     Text("\(value)")
                         .font(.system(size: 14, weight: .bold, design: .rounded))
                         .foregroundColor(isSelected ? .white : color)
-                    
+
                     Text(label)
                         .font(.system(size: 9))
                         .foregroundColor(isSelected ? .white.opacity(0.8) : .secondary)
@@ -63,28 +63,24 @@ struct StatButton: View {
             value: 3,
             label: "Pending",
             color: AppColors.statusTeamMemberPending,
-            isSelected: false,
-            action: {}
-        )
-        
+            isSelected: false
+        ) {}
+
         StatButton(
             icon: AppSymbols.running,
             value: 5,
             label: "Running",
             color: AppColors.statusRunning,
-            isSelected: true,
-            action: {}
-        )
-        
+            isSelected: true
+        ) {}
+
         StatButton(
             icon: AppSymbols.outcomeAhead,
             value: 2,
             label: "Ahead",
             color: AppColors.outcomeAhead,
-            isSelected: false,
-            action: {}
-        )
+            isSelected: false
+        ) {}
     }
     .padding()
 }
-

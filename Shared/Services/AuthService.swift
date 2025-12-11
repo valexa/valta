@@ -15,15 +15,15 @@ import Observation
 @MainActor
 final class AuthService {
     static let shared = AuthService()
-    
+
     var isAuthenticated = false
     var currentUser: User?
-    
+
     private init() {
         // Initialization happens before FirebaseApp.configure()
         // Check auth state in signInAnonymously() instead
     }
-    
+
     func signInAnonymously() async throws {
         // Check if already signed in
         if let user = Auth.auth().currentUser {
@@ -32,7 +32,7 @@ final class AuthService {
             print("Already signed in with user ID: \(user.uid)")
             return
         }
-        
+
         // Sign in anonymously
         let result = try await Auth.auth().signInAnonymously()
         self.currentUser = result.user

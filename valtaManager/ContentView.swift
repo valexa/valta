@@ -11,7 +11,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var appState = ManagerAppState()
-    
+
     var body: some View {
         Group {
             if appState.hasCompletedOnboarding {
@@ -28,7 +28,7 @@ struct ContentView: View {
             updateDockBadge(count: appState.managerPendingActivities.count)
         }
     }
-    
+
     private func updateDockBadge(count: Int) {
         #if os(macOS)
         DispatchQueue.main.async {
@@ -46,7 +46,7 @@ struct ContentView: View {
 
 struct MainTabView: View {
     @Environment(ManagerAppState.self) private var appState
-    
+
     var body: some View {
         TabView {
             TabSection("Status") {
@@ -54,28 +54,28 @@ struct MainTabView: View {
                     TeamsTab()
                 }
                 .badge(appState.totalActivities)
-                
+
                 Tab("Running", systemImage: "play.fill") {
                     TeamsTab(statsFilter: .status(.running))
                 }
                 .badge(appState.runningCount)
-                
+
                 Tab("Pending", systemImage: "clock.fill") {
                     TeamsTab(statsFilter: .pending)
                 }
                 .badge(appState.pendingCount)
-                
+
                 Tab("Completed", systemImage: "checkmark.circle.fill") {
                     TeamsTab(statsFilter: .status(.completed))
                 }
                 .badge(appState.completedCount)
             }
-            
+
             Tab("Requests", systemImage: "checkmark.rectangle.stack") {
                 RequestsTab()
             }
             .badge(appState.managerPendingActivities.count)
-            
+
             TabSection("Team Members") {
                 ForEach(appState.team.members) { member in
                     Tab(member.name, systemImage: "person") {

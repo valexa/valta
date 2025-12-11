@@ -17,22 +17,22 @@ struct TeamMemberOnboardingView: View {
     @State private var selectedMember: TeamMember?
     @State private var currentStep: OnboardingStep = .selectTeam
     @State private var loggedInEmails: Set<String> = []
-    
+
     enum OnboardingStep {
         case selectTeam
         case selectMember
     }
-    
+
     var body: some View {
         ZStack {
             // Background gradient - teal/cyan theme for team member app
             AppGradients.teamMemberBackground
                 .ignoresSafeArea()
-            
+
             // Animated background elements
             GeometryReader { geometry in
                 ZStack {
-                    ForEach(0..<5) { i in
+                    ForEach(0..<5) { _ in
                         Circle()
                             .fill(
                                 LinearGradient(
@@ -53,7 +53,7 @@ struct TeamMemberOnboardingView: View {
                     }
                 }
             }
-            
+
             if dataManager.isLoading {
                 VStack(spacing: 16) {
                     ProgressView()
@@ -86,20 +86,20 @@ struct TeamMemberOnboardingView: View {
                 .padding()
             } else {
                 VStack(spacing: 40) {
-                    
+
                     VStack(spacing: 12) {
                         Text(currentStep == .selectTeam ? "Select Your Team" : "Select Your Name")
                             .font(.system(size: 28, weight: .bold, design: .rounded))
                             .foregroundColor(.white)
                     }
-                    
+
                     // Content based on step
                     if currentStep == .selectTeam {
                         TeamSelectionView(selectedTeam: $selectedTeam)
                     } else {
                         MemberSelectionView(team: selectedTeam!, selectedMember: $selectedMember, loggedInEmails: loggedInEmails)
                     }
-                    
+
                     // Navigation buttons
                     HStack(spacing: 16) {
                         if currentStep == .selectMember {
@@ -119,12 +119,12 @@ struct TeamMemberOnboardingView: View {
                             }
                             .onboardingButton()
                         }
-                        
+
                         Button(action: handleContinue) {
                             HStack(spacing: 8) {
                                 Text("Continue")
                                     .font(.system(size: 16, weight: .semibold))
-                                
+
                                 Image(symbol: AppSymbols.arrowRight)
                                     .font(.system(size: 14, weight: .semibold))
                             }
@@ -147,7 +147,7 @@ struct TeamMemberOnboardingView: View {
             loggedInEmails = await NotificationService.shared.getLoggedInMemberEmails()
         }
     }
-    
+
     private var canContinue: Bool {
         switch currentStep {
         case .selectTeam:
@@ -156,7 +156,7 @@ struct TeamMemberOnboardingView: View {
             return selectedMember != nil
         }
     }
-    
+
     private func handleContinue() {
         switch currentStep {
         case .selectTeam:
@@ -178,23 +178,22 @@ struct TeamMemberOnboardingView: View {
 struct TeamSelectionView: View {
     @Environment(DataManager.self) private var dataManager
     @Binding var selectedTeam: Team?
-    
+
     var body: some View {
         ScrollView {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 200), spacing: 20)], spacing: 20) {
                 ForEach(dataManager.teams) { team in
                     TeamCard(
                         team: team,
-                        isSelected: selectedTeam?.id == team.id,
-                        action: {
+                        isSelected: selectedTeam?.id == team.id
+                    ) {
                             withAnimation(.spring(duration: 0.3)) {
                                 selectedTeam = team
                             }
                         }
-                    )
                 }
             }
-            .padding(.horizontal)
+            .padding()
             .frame(maxWidth: 800)
         }
     }
@@ -206,30 +205,27 @@ struct MemberSelectionView: View {
     let team: Team
     @Binding var selectedMember: TeamMember?
     var loggedInEmails: Set<String> = []
-    
+
     var body: some View {
         VStack(spacing: 16) {
             Text("Team: \(team.name)")
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(.white.opacity(0.6))
-            
+
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 200))], spacing: 20) {
                 ForEach(team.members) { member in
                     let isLoggedIn = loggedInEmails.contains(member.email)
                     MemberSelectionCard(
                         member: member,
                         isSelected: selectedMember?.id == member.id,
-                        isDisabled: isLoggedIn,
-                        action: { selectedMember = member }
-                    )
+                        isDisabled: isLoggedIn
+                    ) { selectedMember = member }
                 }
             }
             .frame(maxWidth: 600)
         }
     }
 }
-
-
 
 // MARK: - Preview
 

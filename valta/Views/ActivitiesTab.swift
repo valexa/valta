@@ -9,6 +9,7 @@
 //
 
 import SwiftUI
+import TipKit
 
 // MARK: - My Activities Filter
 
@@ -23,11 +24,11 @@ enum MyActivitiesFilter: Equatable {
 struct ActivitiesTab: View {
     @Environment(TeamMemberAppState.self) private var appState
     @State private var searchText: String = ""
-    @State private var statsFilter: MyActivitiesFilter? = nil
-    
+    @State private var statsFilter: MyActivitiesFilter?
+
     var filteredActivities: [Activity] {
         let activities: [Activity]
-        
+
         // Determine base activities based on filter
         if let filter = statsFilter {
             switch filter {
@@ -45,16 +46,16 @@ struct ActivitiesTab: View {
         } else {
             activities = appState.myActivities
         }
-        
+
         if searchText.isEmpty {
             return activities
         }
-        
+
         return activities.filter { activity in
             activity.name.localizedCaseInsensitiveContains(searchText)
         }
     }
-    
+
     var emptyStateMessage: String {
         if let filter = statsFilter {
             switch filter {
@@ -67,14 +68,14 @@ struct ActivitiesTab: View {
         }
         return "You don't have any activities assigned yet"
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             // Header
             ActivitiesHeader(statsFilter: $statsFilter)
-            
+
             Divider()
-            
+
             // Content
             if filteredActivities.isEmpty {
                 EmptyStateView(
@@ -105,7 +106,7 @@ struct ActivitiesTab: View {
                                 style: .pending
                             )
                         }
-                        
+
                         // Running activities
                         if !appState.myActivities.running.isEmpty {
                             ActivitySection(
@@ -114,7 +115,7 @@ struct ActivitiesTab: View {
                                 style: .running
                             )
                         }
-                        
+
                         // Awaiting manager approval
                         if !appState.myActivities.managerPending.isEmpty {
                             ActivitySection(
@@ -123,7 +124,7 @@ struct ActivitiesTab: View {
                                 style: .awaitingApproval
                             )
                         }
-                        
+
                         // Completed activities
                         if !appState.myActivities.completed.isEmpty {
                             ActivitySection(
@@ -139,8 +140,17 @@ struct ActivitiesTab: View {
         }
         .background(Color(NSColor.controlBackgroundColor))
         .searchable(text: $searchText, placement: .toolbar, prompt: "Search activities...")
+        .task {
+#if os(iOS) || os(macOS) || os(visionOS)
+            try? Tips.configure([
+                .displayFrequency(.immediate),
+                .datastoreLocation(.applicationDefault)
+            ])
+#endif
+
+        }
     }
-    
+
     private func styleForActivity(_ activity: Activity) -> ActivitySectionStyle {
         switch activity.status {
         case .teamMemberPending: return .pending
@@ -156,7 +166,8 @@ struct ActivitiesTab: View {
 struct ActivitiesHeader: View {
     @Environment(TeamMemberAppState.self) private var appState
     @Binding var statsFilter: MyActivitiesFilter?
-    
+    private let avatarTip = AvatarTip()
+
     var body: some View {
         VStack(spacing: 12) {
             HStack(spacing: 20) {
@@ -164,6 +175,7 @@ struct ActivitiesHeader: View {
                 if let member = appState.currentMember {
                     HStack(spacing: 12) {
                         MemberAvatar(member: member, size: 44)
+                            .popoverTip(avatarTip, arrowEdge: .top)
                         VStack(alignment: .leading, spacing: 2) {
                             Text(member.name)
                                 .lineLimit(1)
@@ -171,9 +183,9 @@ struct ActivitiesHeader: View {
                         }
                     }
                 }
-                
+
                 Spacer()
-                
+
                 // Stats buttons (filterable)
                 HStack(spacing: 12) {
                     StatButton(
@@ -181,69 +193,62 @@ struct ActivitiesHeader: View {
                         value: appState.myActivities.count,
                         label: "All",
                         color: AppColors.statTotal,
-                        isSelected: statsFilter == .all,
-                        action: { toggleFilter(.all) }
-                    )
-                    
+                        isSelected: statsFilter == .all
+                    ) { toggleFilter(.all) }
+
                     StatButton(
                         icon: AppSymbols.clock,
                         value: appState.myActivities.teamMemberPending.count,
                         label: "Pending",
                         color: AppColors.statusTeamMemberPending,
-                        isSelected: statsFilter == .pending,
-                        action: { toggleFilter(.pending) }
-                    )
-                    
+                        isSelected: statsFilter == .pending
+                    ) { toggleFilter(.pending) }
+
                     StatButton(
                         icon: AppSymbols.running,
                         value: appState.myActivities.running.count,
                         label: "Running",
                         color: AppColors.statusRunning,
-                        isSelected: statsFilter == .running,
-                        action: { toggleFilter(.running) }
-                    )
-                    
+                        isSelected: statsFilter == .running
+                    ) { toggleFilter(.running) }
+
                     StatButton(
                         icon: AppSymbols.managerPending,
                         value: appState.myActivities.managerPending.count,
                         label: "Awaiting",
                         color: AppColors.statusManagerPending,
-                        isSelected: statsFilter == .awaiting,
-                        action: { toggleFilter(.awaiting) }
-                    )
-                    
+                        isSelected: statsFilter == .awaiting
+                    ) { toggleFilter(.awaiting) }
+
                     Divider()
                         .frame(height: 30)
-                    
+
                     StatButton(
                         icon: AppSymbols.outcomeAhead,
                         value: appState.myActivities.completedAhead.count,
                         label: "Ahead",
                         color: AppColors.outcomeAhead,
-                        isSelected: statsFilter == .outcome(.ahead),
-                        action: { toggleFilter(.outcome(.ahead)) }
-                    )
-                    
+                        isSelected: statsFilter == .outcome(.ahead)
+                    ) { toggleFilter(.outcome(.ahead)) }
+
                     StatButton(
                         icon: AppSymbols.outcomeJIT,
                         value: appState.myActivities.completedJIT.count,
                         label: "On Time",
                         color: AppColors.outcomeJIT,
-                        isSelected: statsFilter == .outcome(.jit),
-                        action: { toggleFilter(.outcome(.jit)) }
-                    )
-                    
+                        isSelected: statsFilter == .outcome(.jit)
+                    ) { toggleFilter(.outcome(.jit)) }
+
                     StatButton(
                         icon: AppSymbols.outcomeOverrun,
                         value: appState.myActivities.completedOverrun.count,
                         label: "Overrun",
                         color: AppColors.outcomeOverrun,
-                        isSelected: statsFilter == .outcome(.overrun),
-                        action: { toggleFilter(.outcome(.overrun)) }
-                    )
+                        isSelected: statsFilter == .outcome(.overrun)
+                    ) { toggleFilter(.outcome(.overrun)) }
                 }
             }
-            
+
             // Clear filter button row
             if statsFilter != nil {
                 HStack {
@@ -261,7 +266,7 @@ struct ActivitiesHeader: View {
                         .foregroundColor(.secondary)
                     }
                     .buttonStyle(.plain)
-                    
+
                     Spacer()
                 }
             }
@@ -269,7 +274,7 @@ struct ActivitiesHeader: View {
         .padding()
         .background(Color(NSColor.windowBackgroundColor))
     }
-    
+
     private func toggleFilter(_ filter: MyActivitiesFilter) {
         withAnimation(.easeInOut(duration: 0.2)) {
             if statsFilter == filter {
@@ -285,7 +290,7 @@ struct ActivitiesHeader: View {
 
 enum ActivitySectionStyle {
     case pending, running, awaitingApproval, completed
-    
+
     var headerColor: Color {
         switch self {
         case .pending: return AppColors.statusTeamMemberPending
@@ -300,23 +305,23 @@ struct ActivitySection: View {
     let title: String
     let activities: [Activity]
     let style: ActivitySectionStyle
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Circle()
                     .fill(style.headerColor)
                     .frame(width: 6, height: 6)
-                
+
                 Text(title)
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundColor(.secondary)
-                
+
                 Text("(\(activities.count))")
                     .font(.system(size: 11))
                     .foregroundColor(.secondary.opacity(0.7))
             }
-            
+
             LazyVStack(spacing: 6) {
                 ForEach(activities) { activity in
                     ActivityRowWithSheet(activity: activity, style: style)
@@ -332,7 +337,7 @@ struct ActivityRowWithSheet: View {
     let activity: Activity
     let style: ActivitySectionStyle
     @Environment(TeamMemberAppState.self) private var appState
-    
+
     var body: some View {
         ActivityRow(
             activity: activity,
@@ -350,10 +355,9 @@ struct ActivityRowWithSheet: View {
     ActivitiesTab()
         .environment({
             let state = TeamMemberAppState()
-            state.currentMember = TeamMember.mockMembers[0]
+            state.currentMember = .mock
             state.hasCompletedOnboarding = true
             return state
         }())
         .frame(width: 800, height: 600)
 }
-
