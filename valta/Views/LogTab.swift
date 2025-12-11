@@ -13,55 +13,55 @@ import SwiftUI
 struct LogTab: View {
     @Environment(TeamMemberAppState.self) private var appState
     @State private var searchText: String = ""
-    @State private var statusFilter: ActivityStatus? = nil
-    @State private var priorityFilter: ActivityPriority? = nil
-    @State private var outcomeFilter: ActivityOutcome? = nil
+    @State private var statusFilter: ActivityStatus?
+    @State private var priorityFilter: ActivityPriority?
+    @State private var outcomeFilter: ActivityOutcome?
     @State private var showOnlyMine: Bool = false
-    
+
     var filteredEntries: [ActivityLogEntry] {
         var entries = appState.activityLog
-        
+
         // Filter by "mine"
         if showOnlyMine, let member = appState.currentMember {
             entries = entries.filter { $0.activity.assignedMember.id == member.id }
         }
-        
+
         // Filter by status
         if let status = statusFilter {
             entries = entries.filter { $0.activity.status == status }
         }
-        
+
         // Filter by priority
         if let priority = priorityFilter {
             entries = entries.filter { $0.activity.priority == priority }
         }
-        
+
         // Filter by outcome
         if let outcome = outcomeFilter {
             entries = entries.filter { $0.activity.outcome == outcome }
         }
-        
+
         // Filter by search
         if !searchText.isEmpty {
             entries = entries.filter { entry in
                 entry.activity.name.localizedCaseInsensitiveContains(searchText) ||
-                entry.activity.assignedMember.name.localizedCaseInsensitiveContains(searchText) ||
-                entry.performedBy.localizedCaseInsensitiveContains(searchText)
+                    entry.activity.assignedMember.name.localizedCaseInsensitiveContains(searchText) ||
+                    entry.performedBy.localizedCaseInsensitiveContains(searchText)
             }
         }
-        
+
         return entries
     }
-    
+
     var groupedEntries: [(date: String, entries: [ActivityLogEntry])] {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .none
-        
+
         let grouped = Dictionary(grouping: filteredEntries) { entry in
             formatter.string(from: entry.timestamp)
         }
-        
+
         return grouped.map { (date: $0.key, entries: $0.value) }
             .sorted { first, second in
                 let firstDate = first.entries.first?.timestamp ?? Date.distantPast
@@ -69,7 +69,7 @@ struct LogTab: View {
                 return firstDate > secondDate
             }
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             // Content
@@ -146,7 +146,7 @@ struct LogTab: View {
 struct LogDateSection: View {
     let date: String
     let entries: [ActivityLogEntry]
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             // Date header
@@ -154,12 +154,12 @@ struct LogDateSection: View {
                 Text(date)
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundColor(.secondary)
-                
+
                 Rectangle()
                     .fill(Color.secondary.opacity(0.2))
                     .frame(height: 1)
             }
-            
+
             // Entries
             LazyVStack(spacing: 0) {
                 ForEach(Array(entries.enumerated()), id: \.element.id) { index, entry in
@@ -179,11 +179,11 @@ struct LogEntryRow: View {
     let isLast: Bool
     @Environment(TeamMemberAppState.self) private var appState
     @State private var isHovered = false
-    
+
     var isOwnActivity: Bool {
         appState.currentMember?.id == entry.activity.assignedMember.id
     }
-    
+
     var actionIcon: String {
         switch entry.action {
         case .created: return AppSymbols.plusCircleFill
@@ -193,7 +193,7 @@ struct LogEntryRow: View {
         case .canceled: return AppSymbols.canceled
         }
     }
-    
+
     var actionColor: Color {
         switch entry.action {
         case .created: return AppColors.statusTeamMemberPending
@@ -203,7 +203,7 @@ struct LogEntryRow: View {
         case .canceled: return AppColors.statusCanceled
         }
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             HStack(alignment: .top, spacing: 12) {
@@ -212,7 +212,7 @@ struct LogEntryRow: View {
                     Image(symbol: actionIcon)
                         .font(.system(size: 20))
                         .foregroundColor(actionColor)
-                    
+
                     if !isLast {
                         Rectangle()
                             .fill(Color.secondary.opacity(0.2))
@@ -221,7 +221,7 @@ struct LogEntryRow: View {
                     }
                 }
                 .frame(width: 24)
-                
+
                 // Content
                 VStack(alignment: .leading, spacing: 8) {
                     // Action description
@@ -229,36 +229,36 @@ struct LogEntryRow: View {
                         Text(entry.action.rawValue)
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundColor(actionColor)
-                        
+
                         Text("by \(entry.performedBy)")
                             .font(.system(size: 13))
                             .foregroundColor(.secondary)
-                        
+
                         Spacer()
-                        
+
                         Text(entry.timestamp.formatted(date: .omitted, time: .shortened))
                             .font(.system(size: 12))
                             .foregroundColor(.secondary)
                     }
-                    
+
                     // Activity details
                     HStack(spacing: 10) {
                         PriorityBadge(priority: entry.activity.priority, compact: true)
-                        
+
                         Text(entry.activity.name)
                             .font(.system(size: 13, weight: .medium))
                             .lineLimit(1)
-                        
+
                         Spacer()
-                        
+
                         // Member info
                         HStack(spacing: 6) {
                             MemberAvatar(member: entry.activity.assignedMember, size: 20)
-                            
+
                             Text(entry.activity.assignedMember.name)
                                 .font(.system(size: 12))
                                 .foregroundColor(.secondary)
-                            
+
                             if isOwnActivity {
                                 Text("(You)")
                                     .font(.system(size: 10))
@@ -269,7 +269,7 @@ struct LogEntryRow: View {
                     .padding(10)
                     .background(isOwnActivity ? Color.accentColor.opacity(0.05) : Color(NSColor.controlBackgroundColor))
                     .cornerRadius(8)
-                    
+
                     // Outcome for completed entries
                     if entry.action == .completed, let outcome = entry.activity.outcome {
                         HStack(spacing: 6) {
@@ -291,7 +291,7 @@ struct LogEntryRow: View {
                     isHovered = hovering
                 }
             }
-            
+
             if !isLast {
                 Divider()
                     .padding(.leading, 52)
@@ -312,4 +312,3 @@ struct LogEntryRow: View {
         }())
         .frame(width: 900, height: 700)
 }
-

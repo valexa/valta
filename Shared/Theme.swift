@@ -16,23 +16,23 @@ import SwiftUI
 protocol AppTheme {
     // Priority colors
     func color(for priority: ActivityPriority) -> Color
-    
+
     // Status colors
     func color(for status: ActivityStatus) -> Color
-    
+
     // Outcome colors
     func color(for outcome: ActivityOutcome) -> Color
-    
+
     // Action colors
     var destructive: Color { get }
     var success: Color { get }
     var warning: Color { get }
-    
+
     // UI colors
     var avatar: Color { get }
     var shadow: Color { get }
     var statTotal: Color { get }
-    
+
     // Gradients
     var avatarGradient: AnyGradient { get }
     var successGradient: LinearGradient { get }
@@ -42,9 +42,9 @@ protocol AppTheme {
 
 /// Default theme implementation using AppColors
 struct DefaultTheme: AppTheme {
-    
+
     // MARK: - Priority Colors
-    
+
     func color(for priority: ActivityPriority) -> Color {
         switch priority {
         case .p0: return AppColors.priorityP0
@@ -53,9 +53,9 @@ struct DefaultTheme: AppTheme {
         case .p3: return AppColors.priorityP3
         }
     }
-    
+
     // MARK: - Status Colors
-    
+
     func color(for status: ActivityStatus) -> Color {
         switch status {
         case .running: return AppColors.statusRunning
@@ -65,9 +65,9 @@ struct DefaultTheme: AppTheme {
         case .teamMemberPending: return AppColors.statusTeamMemberPending
         }
     }
-    
+
     // MARK: - Outcome Colors
-    
+
     func color(for outcome: ActivityOutcome) -> Color {
         switch outcome {
         case .ahead: return AppColors.outcomeAhead
@@ -75,21 +75,21 @@ struct DefaultTheme: AppTheme {
         case .overrun: return AppColors.outcomeOverrun
         }
     }
-    
+
     // MARK: - Action Colors
-    
+
     var destructive: Color { AppColors.destructive }
     var success: Color { AppColors.success }
     var warning: Color { AppColors.warning }
-    
+
     // MARK: - UI Colors
-    
+
     var avatar: Color { AppColors.avatar }
     var shadow: Color { AppColors.shadow }
     var statTotal: Color { AppColors.statTotal }
-    
+
     // MARK: - Gradients
-    
+
     var avatarGradient: AnyGradient { AppColors.avatar.gradient }
     var successGradient: LinearGradient { AppGradients.success }
 }
@@ -156,18 +156,17 @@ extension Activity {
         if status == .teamMemberPending {
             return theme.color(for: .teamMemberPending)
         }
-        
+
         // Exception: For p0 activities if outcome is jit (on-time), color is red
         if priority == .p0, let outcome = outcome, outcome == .jit {
             return theme.destructive
         }
-        
+
         // For completed activities, show outcome color
         if let outcome = outcome {
             return theme.color(for: outcome)
         }
-        
+
         return theme.color(for: status)
     }
 }
-

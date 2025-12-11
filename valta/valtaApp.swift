@@ -20,18 +20,18 @@ struct valtaApp: App {
         FirebaseApp.configure()
     }
 
-#if os(iOS) || os(visionOS) || os(tvOS)
+    #if os(iOS) || os(visionOS) || os(tvOS)
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-#endif
+    #endif
 
-#if os(macOS)
+    #if os(macOS)
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-#endif
+    #endif
 
     @State private var dataManager = DataManager.shared
     @State private var authService = AuthService.shared
     @State private var notificationService = NotificationService.shared
-    
+
     var body: some Scene {
         WindowGroup {
             ContentView()
@@ -43,7 +43,7 @@ struct valtaApp: App {
                     do {
                         try await authService.signInAnonymously()
                         await dataManager.loadData()
-                        
+
                         // Request notification permissions and register for remote notifications
                         let granted = await notificationService.requestNotificationPermission()
                         if granted {
@@ -51,7 +51,7 @@ struct valtaApp: App {
                         } else {
                             print("⚠️ Notification permissions denied")
                         }
-                        
+
                         // Start periodic refresh every 60 seconds
                         while true {
                             try? await Task.sleep(nanoseconds: 60 * 1_000_000_000) // 60 seconds
@@ -66,4 +66,3 @@ struct valtaApp: App {
         .windowToolbarStyle(.unified)
     }
 }
-

@@ -15,8 +15,8 @@ struct MemberSelectionCard: View {
     var isSelected: Bool = false
     var isDisabled: Bool = false
     var avatarSize: CGFloat = 44
-    var action: (() -> Void)? = nil
-    
+    var action: (() -> Void)?
+
     @State private var isHovered = false
 
     var body: some View {
@@ -81,21 +81,17 @@ struct MemberSelectionCard: View {
     LazyVGrid(columns: [GridItem(.adaptive(minimum: 200))], spacing: 20) {
         MemberSelectionCard(
             member: TeamMember.mockMembers[0],
-            isSelected: false,
-            action: {}
+            isSelected: false
         )
         MemberSelectionCard(
             member: TeamMember.mockMembers[1],
-            isSelected: true,
-            action: {}
+            isSelected: true
         )
         MemberSelectionCard(
             member: TeamMember.mockMembers[2],
             isSelected: false,
-            isDisabled: true,
-            action: {}
+            isDisabled: true
         )
     }
     .frame(maxWidth: 600)
 }
-

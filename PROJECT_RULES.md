@@ -131,6 +131,26 @@ name,team,email,manager
 
 *   **Async/Await**: Use Swift Concurrency (`Task`, `async/await`) over GCD (`DispatchQueue`).
 
+### 5.1 SwiftLint Formatting Rules
+
+All code must follow the project's SwiftLint configuration (`.swiftlint.yml`). Key rules:
+
+*   **Trailing Newlines**: Files must end with a single newline
+*   **Trailing Whitespace**: No trailing whitespace on lines
+*   **Vertical Whitespace**: Maximum 1 consecutive blank line
+*   **Trailing Closure**: Use trailing closure syntax where appropriate
+*   **Implicit Return**: Use implicit return in single-expression closures
+*   **Empty Count**: Use `.isEmpty` instead of `.count == 0`
+*   **Sorted First Last**: Use `.first` and `.last` instead of subscript access
+
+**Disabled rules** (allowed in this project):
+- `line_length` - Long lines are acceptable
+- `identifier_name` - Short variable names allowed
+- `type_name` - Short type names allowed
+- `force_unwrapping` - Allowed when safe
+
+Run `swiftlint --fix` to auto-correct formatting issues.
+
 ---
 
 ## 6. Testing Framework

@@ -13,7 +13,7 @@ struct TeamCard: View {
     let team: Team
     let isSelected: Bool
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             VStack(alignment: .leading, spacing: 12) {
@@ -23,17 +23,17 @@ struct TeamCard: View {
                     Spacer()
                     CheckmarkButton(isSelected: isSelected)
                 }
-                
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text(team.name)
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(.white)
-                    
+
                     Text("\(team.members.count) members")
                         .font(.system(size: 14))
                         .foregroundColor(.white.opacity(0.6))
                 }
-                
+
                 // Member preview avatars
                 HStack(spacing: -8) {
                     ForEach(Array(team.members.prefix(10))) { member in
@@ -64,6 +64,5 @@ struct TeamCard: View {
         }
         .buttonStyle(.plain)
     }
-
 
 }

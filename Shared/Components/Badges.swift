@@ -13,10 +13,10 @@ import SwiftUI
 
 struct PriorityBadge: View {
     @Environment(\.theme) private var theme
-    
+
     let priority: ActivityPriority
     var compact: Bool = false
-    
+
     var body: some View {
         Text(priority.shortName)
             .font(.system(size: compact ? 10 : 11, weight: .bold, design: .rounded))
@@ -35,12 +35,12 @@ struct StatusBadge: View {
     let outcome: ActivityOutcome?
     let displayColor: Color
     var compact: Bool = false
-    
+
     var body: some View {
         HStack(spacing: 4) {
             Image(symbol: status.icon)
             .font(.system(size: compact ? 9 : 10))
-            
+
             Text(status.rawValue)
             .font(.system(size: compact ? 10 : 11, weight: .medium))
         }
@@ -56,18 +56,18 @@ struct StatusBadge: View {
 
 struct OutcomeBadge: View {
     @Environment(\.theme) private var theme
-    
+
     let outcome: ActivityOutcome
-    
+
     private var color: Color {
         outcome.color(using: theme)
     }
-    
+
     var body: some View {
         HStack(spacing: 4) {
             Image(symbol: outcome.icon)
             .font(.system(size: 11))
-            
+
             Text(outcome.rawValue)
             .font(.system(size: 11, weight: .medium))
         }
@@ -89,12 +89,12 @@ struct OutcomeBadge: View {
             PriorityBadge(priority: .p2)
             PriorityBadge(priority: .p3)
         }
-        
+
         HStack(spacing: 12) {
             StatusBadge(status: .running, outcome: nil, displayColor: .blue)
             StatusBadge(status: .completed, outcome: .ahead, displayColor: .green)
         }
-        
+
         HStack(spacing: 12) {
             OutcomeBadge(outcome: .ahead)
             OutcomeBadge(outcome: .jit)

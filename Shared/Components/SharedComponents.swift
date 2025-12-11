@@ -10,45 +10,41 @@
 
 import SwiftUI
 
-
-
-
-
 // MARK: - Member Avatar
 
 struct MemberAvatar: View {
     @Environment(\.theme) private var theme
-    
+
     let member: TeamMember?
     var size: CGFloat = 36
-    var initialsOverride: String? = nil
-    
+    var initialsOverride: String?
+
     private var displayInitials: String {
         if let override = initialsOverride {
             return override
         }
         return member?.initials ?? "?"
     }
-    
+
     var body: some View {
         ZStack {
             Circle()
                 .fill(theme.avatarGradient)
                 .frame(width: size, height: size)
-            
+
             Text(displayInitials)
                 .font(.system(size: size * 0.36, weight: .semibold, design: .rounded))
                 .foregroundColor(.white)
         }
     }
-    
+
     /// Convenience initializer for member-based avatar
     init(member: TeamMember, size: CGFloat = 36) {
         self.member = member
         self.size = size
         self.initialsOverride = nil
     }
-    
+
     /// Convenience initializer for preview avatar with custom initials
     init(initials: String, size: CGFloat = 36) {
         self.member = nil
@@ -57,17 +53,15 @@ struct MemberAvatar: View {
     }
 }
 
-
-
 // MARK: - Time Remaining Label
 
 struct TimeRemainingLabel: View {
     @Environment(\.theme) private var theme
-    
+
     let activity: Activity
     var compact: Bool = false
     var showProgressBar: Bool = false
-    
+
     var body: some View {
         HStack(spacing: 6) {
             HStack(spacing: 4) {
@@ -77,7 +71,7 @@ struct TimeRemainingLabel: View {
                     .font(.system(size: compact ? 11 : 12, weight: activity.isOverdue ? .semibold : .regular))
             }
             .foregroundColor(activity.isOverdue ? theme.destructive : .secondary)
-            
+
             if showProgressBar && activity.status != .completed && activity.status != .canceled {
                 TimeProgressBar(activity: activity, height: compact ? 3 : 4, width: compact ? 40 : 50)
             }
@@ -89,11 +83,11 @@ struct TimeRemainingLabel: View {
 
 struct TimeProgressBar: View {
     @Environment(\.theme) private var theme
-    
+
     let activity: Activity
     var height: CGFloat = 4
     var width: CGFloat = 60
-    
+
     private var progressColor: Color {
         let remaining = activity.timeRemainingProgress
         if remaining <= 0 || activity.isOverdue {
@@ -106,14 +100,14 @@ struct TimeProgressBar: View {
             return theme.success  // Green - good
         }
     }
-    
+
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
                 // Background track
                 Capsule()
                     .fill(Color.secondary.opacity(0.2))
-                
+
                 // Progress fill
                 Capsule()
                     .fill(progressColor.gradient)
@@ -130,7 +124,7 @@ struct ActivityInfoRow: View {
     let icon: String
     let text: String
     var color: Color = .secondary
-    
+
     var body: some View {
         HStack(spacing: 4) {
             Image(symbol: icon)
@@ -149,16 +143,16 @@ struct EmptyStateView: View {
     let title: String
     let message: String
     var iconColor: Color = .secondary
-    
+
     var body: some View {
         VStack(spacing: 16) {
             Image(symbol: icon)
                 .font(.system(size: 48))
                 .foregroundColor(iconColor)
-            
+
             Text(title)
                 .font(.system(size: 20, weight: .semibold, design: .rounded))
-            
+
             Text(message)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
@@ -172,20 +166,20 @@ struct EmptyStateView: View {
 
 struct SectionHeader: View {
     let title: String
-    var count: Int? = nil
-    
+    var count: Int?
+
     var body: some View {
         HStack {
             Text(title)
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundColor(.secondary)
-            
+
             if let count = count {
                 Text("(\(count))")
                     .font(.system(size: 12))
                     .foregroundColor(.secondary.opacity(0.7))
             }
-            
+
             Spacer()
         }
         .padding(.horizontal)
@@ -203,17 +197,17 @@ struct SectionHeader: View {
             PriorityBadge(priority: .p2)
             PriorityBadge(priority: .p3)
         }
-        
+
         HStack(spacing: 12) {
             StatusBadge(status: .running, outcome: nil, displayColor: .blue)
             StatusBadge(status: .completed, outcome: .ahead, displayColor: .green)
         }
-        
+
         HStack(spacing: 12) {
             MemberAvatar(member: TeamMember.mockMembers[0])
             MemberAvatar(member: TeamMember.mockMembers[1], size: 48)
         }
-        
+
         HStack(spacing: 12) {
             OutcomeBadge(outcome: .ahead)
             OutcomeBadge(outcome: .jit)
@@ -222,4 +216,3 @@ struct SectionHeader: View {
     }
     .padding()
 }
-

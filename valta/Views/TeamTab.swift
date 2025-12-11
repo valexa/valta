@@ -17,7 +17,7 @@ enum TeamStatsFilter: Equatable {
     case pending
     case running
     case outcome(ActivityOutcome)
-    
+
     var includesCompleted: Bool {
         switch self {
         case .outcome: return true
@@ -29,11 +29,11 @@ enum TeamStatsFilter: Equatable {
 struct TeamTab: View {
     @Environment(TeamMemberAppState.self) private var appState
     @State private var searchText: String = ""
-    @State private var statsFilter: TeamStatsFilter? = nil
-    
+    @State private var statsFilter: TeamStatsFilter?
+
     var filteredActivities: [Activity] {
         var activities: [Activity]
-        
+
         // Determine base activities based on filter
         if let filter = statsFilter {
             switch filter {
@@ -50,27 +50,27 @@ struct TeamTab: View {
             // No filter = show active activities
             activities = appState.runningActivities
         }
-        
+
         // Apply search filter
         if !searchText.isEmpty {
             activities = activities.filter { activity in
                 activity.name.localizedCaseInsensitiveContains(searchText) ||
-                activity.assignedMember.name.localizedCaseInsensitiveContains(searchText)
+                    activity.assignedMember.name.localizedCaseInsensitiveContains(searchText)
             }
         }
-        
+
         return activities
     }
-    
+
     var groupedActivities: [(member: TeamMember, activities: [Activity])] {
         let grouped = Dictionary(grouping: filteredActivities) { $0.assignedMember.id }
-        
+
         return appState.team.members.compactMap { member in
             guard let activities = grouped[member.id], !activities.isEmpty else { return nil }
             return (member: member, activities: activities)
         }
     }
-    
+
     var emptyStateMessage: String {
         if let filter = statsFilter {
             switch filter {
@@ -82,14 +82,14 @@ struct TeamTab: View {
         }
         return "No active activities in your team right now"
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             // Header
             TeamTabHeader(searchText: $searchText, statsFilter: $statsFilter)
-            
+
             Divider()
-            
+
             // Content
             if groupedActivities.isEmpty {
                 EmptyStateView(
@@ -120,21 +120,21 @@ struct TeamTabHeader: View {
     @Environment(TeamMemberAppState.self) private var appState
     @Binding var searchText: String
     @Binding var statsFilter: TeamStatsFilter?
-    
+
     var body: some View {
         VStack(spacing: 12) {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Team Activities")
                         .font(.system(size: 22, weight: .bold, design: .rounded))
-                    
+
                     Text(appState.team.name)
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
-                
+
                 Spacer()
-                
+
                 // Team stats (filterable)
                 HStack(spacing: 12) {
                     StatButton(
@@ -142,64 +142,58 @@ struct TeamTabHeader: View {
                         value: appState.team.activities.count,
                         label: "All",
                         color: AppColors.statTotal,
-                        isSelected: statsFilter == .all,
-                        action: { toggleFilter(.all) }
-                    )
-                    
+                        isSelected: statsFilter == .all
+                    ) { toggleFilter(.all) }
+
                     StatButton(
                         icon: AppSymbols.clock,
                         value: appState.teamPendingCount,
                         label: "Pending",
                         color: AppColors.statusTeamMemberPending,
-                        isSelected: statsFilter == .pending,
-                        action: { toggleFilter(.pending) }
-                    )
-                    
+                        isSelected: statsFilter == .pending
+                    ) { toggleFilter(.pending) }
+
                     StatButton(
                         icon: AppSymbols.running,
                         value: appState.teamRunningCount,
                         label: "Running",
                         color: AppColors.statusRunning,
-                        isSelected: statsFilter == .running,
-                        action: { toggleFilter(.running) }
-                    )
-                    
+                        isSelected: statsFilter == .running
+                    ) { toggleFilter(.running) }
+
                     Divider()
                         .frame(height: 30)
-                    
+
                     StatButton(
                         icon: AppSymbols.outcomeAhead,
                         value: appState.teamAheadCount,
                         label: "Ahead",
                         color: AppColors.outcomeAhead,
-                        isSelected: statsFilter == .outcome(.ahead),
-                        action: { toggleFilter(.outcome(.ahead)) }
-                    )
-                    
+                        isSelected: statsFilter == .outcome(.ahead)
+                    ) { toggleFilter(.outcome(.ahead)) }
+
                     StatButton(
                         icon: AppSymbols.outcomeJIT,
                         value: appState.teamJITCount,
                         label: "On Time",
                         color: AppColors.outcomeJIT,
-                        isSelected: statsFilter == .outcome(.jit),
-                        action: { toggleFilter(.outcome(.jit)) }
-                    )
-                    
+                        isSelected: statsFilter == .outcome(.jit)
+                    ) { toggleFilter(.outcome(.jit)) }
+
                     StatButton(
                         icon: AppSymbols.outcomeOverrun,
                         value: appState.teamOverrunCount,
                         label: "Overrun",
                         color: AppColors.outcomeOverrun,
-                        isSelected: statsFilter == .outcome(.overrun),
-                        action: { toggleFilter(.outcome(.overrun)) }
-                    )
+                        isSelected: statsFilter == .outcome(.overrun)
+                    ) { toggleFilter(.outcome(.overrun)) }
                 }
             }
-            
+
             HStack(spacing: 12) {
                 Spacer()
                 if statsFilter != nil {
-                    Button(action: { 
+                    Button(action: {
                         withAnimation(.easeInOut(duration: 0.2)) {
                             statsFilter = nil
                         }
@@ -214,14 +208,14 @@ struct TeamTabHeader: View {
                     }
                     .buttonStyle(.plain)
                 }
-                
+
                 Spacer()
             }
         }
         .padding()
         .background(Color(NSColor.windowBackgroundColor))
     }
-    
+
     private func toggleFilter(_ filter: TeamStatsFilter) {
         withAnimation(.easeInOut(duration: 0.2)) {
             if statsFilter == filter {
@@ -240,23 +234,23 @@ struct TeamMemberSection: View {
     let activities: [Activity]
     @Environment(TeamMemberAppState.self) private var appState
     @State private var isExpanded: Bool = true
-    
+
     var isCurrentUser: Bool {
         appState.currentMember?.id == member.id
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             // Member header
             Button(action: { withAnimation(.spring(duration: 0.3)) { isExpanded.toggle() } }) {
                 HStack(spacing: 12) {
                     MemberAvatar(member: member, size: 40)
-                    
+
                     VStack(alignment: .leading, spacing: 2) {
                         HStack(spacing: 6) {
                             Text(member.name)
                                 .font(.system(size: 15, weight: .semibold))
-                            
+
                             if isCurrentUser {
                                 Text("(You)")
                                     .font(.system(size: 12))
@@ -267,21 +261,21 @@ struct TeamMemberSection: View {
                                     .cornerRadius(4)
                             }
                         }
-                        
+
                         Text("\(activities.count) activit\(activities.count == 1 ? "y" : "ies")")
                             .font(.system(size: 12))
                             .foregroundColor(.secondary)
                     }
-                    
+
                     Spacer()
-                    
+
                     Image(symbol: isExpanded ? AppSymbols.chevronDown : AppSymbols.chevronRight)
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundColor(.secondary)
                 }
             }
             .buttonStyle(.plain)
-            
+
             // Activities
             if isExpanded {
                 LazyVStack(spacing: 8) {
@@ -303,7 +297,7 @@ struct TeamMemberSection: View {
 struct TeamActivityRow: View {
     let activity: Activity
     let isOwnActivity: Bool
-    
+
     var body: some View {
         ActivityRow(
             activity: activity,
@@ -327,4 +321,3 @@ struct TeamActivityRow: View {
         }())
         .frame(width: 900, height: 700)
 }
-

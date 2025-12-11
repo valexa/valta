@@ -14,17 +14,17 @@ struct OnboardingView: View {
     @Environment(ManagerAppState.self) private var appState
     @Environment(DataManager.self) private var dataManager
     @State private var selectedTeam: Team?
-    
+
     var body: some View {
         ZStack {
             // Background gradient
             AppGradients.managerBackground
                 .ignoresSafeArea()
-            
+
             // Animated background elements
             GeometryReader { geometry in
                 ZStack {
-                    ForEach(0..<3) { i in
+                    ForEach(0..<3) { _ in
                         Circle()
                             .fill(
                                 LinearGradient(
@@ -45,7 +45,7 @@ struct OnboardingView: View {
                     }
                 }
             }
-            
+
             if dataManager.isLoading {
                 VStack(spacing: 16) {
                     ProgressView()
@@ -83,42 +83,41 @@ struct OnboardingView: View {
                         Image(symbol: AppSymbols.person3Sequence)
                             .font(.system(size: 44))
                             .foregroundColor(.white)
-                        
+
                         Text("Select Your Team")
                             .font(.system(size: 32, weight: .bold, design: .rounded))
                             .foregroundColor(.white)
-                        
+
                         Text("Choose a team to manage from the list below")
                             .font(.system(size: 17))
                             .foregroundColor(.white.opacity(0.7))
                     }
                     .padding(.top, 60)
-                    
+
                     // Team List
                     ScrollView {
                         LazyVGrid(columns: [GridItem(.adaptive(minimum: 200), spacing: 20)], spacing: 20) {
                             ForEach(dataManager.teams) { team in
                                 TeamCard(
                                     team: team,
-                                    isSelected: selectedTeam?.id == team.id,
-                                    action: {
+                                    isSelected: selectedTeam?.id == team.id
+                                ) {
                                         withAnimation(.spring(duration: 0.3)) {
                                             selectedTeam = team
                                         }
                                     }
-                                )
                             }
                         }
                         .padding(.horizontal)
                         .padding(.bottom, 20)
                     }
-                    
+
                     // Continue Button
                     Button("Start Managing", systemImage: AppSymbols.arrowRight, action: finishOnboarding)
                         .onboardingButton()
-                    .disabled(selectedTeam == nil)
-                    .opacity(selectedTeam == nil ? 0.5 : 1.0)
-                    .padding(.bottom, 40)
+                        .disabled(selectedTeam == nil)
+                        .opacity(selectedTeam == nil ? 0.5 : 1.0)
+                        .padding(.bottom, 40)
                 }
             }
         }
@@ -129,7 +128,7 @@ struct OnboardingView: View {
             }
         }
     }
-    
+
     private func finishOnboarding() {
         guard selectedTeam != nil else { return }
         // Team is already set in DataManager by the user selecting it

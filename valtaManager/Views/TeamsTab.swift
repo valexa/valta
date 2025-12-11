@@ -13,7 +13,7 @@ import SwiftUI
 enum StatsFilter: Equatable {
     case status(ActivityStatus)
     case pending  // Matches both teamMemberPending and managerPending
-    
+
     func matches(_ activity: Activity) -> Bool {
         switch self {
         case .status(let status):
@@ -27,24 +27,24 @@ enum StatsFilter: Equatable {
 struct TeamsTab: View {
     @Environment(ManagerAppState.self) private var appState
     @State private var searchText: String = ""
-    @State private var statusFilter: ActivityStatus? = nil
-    @State private var statsFilter: StatsFilter? = nil
-    @State private var priorityFilter: ActivityPriority? = nil
-    @State private var outcomeFilter: ActivityOutcome? = nil
-    @State private var memberFilter: TeamMember? = nil
-    
+    @State private var statusFilter: ActivityStatus?
+    @State private var statsFilter: StatsFilter?
+    @State private var priorityFilter: ActivityPriority?
+    @State private var outcomeFilter: ActivityOutcome?
+    @State private var memberFilter: TeamMember?
+
     // Allow initializing with specific filters from the sidebar
     init(member: TeamMember? = nil, statsFilter: StatsFilter? = nil) {
         _memberFilter = State(wrappedValue: member)
         _statsFilter = State(wrappedValue: statsFilter)
     }
-    
+
     var filteredActivities: [Activity] {
         appState.team.activities.filter { activity in
             let matchesSearch = searchText.isEmpty ||
                 activity.name.localizedCaseInsensitiveContains(searchText) ||
                 activity.assignedMember.name.localizedCaseInsensitiveContains(searchText)
-            
+
             // Stats filter takes precedence if set
             let matchesStats: Bool
             if let statsFilter = statsFilter {
@@ -52,23 +52,23 @@ struct TeamsTab: View {
             } else {
                 matchesStats = statusFilter == nil || activity.status == statusFilter
             }
-            
+
             let matchesPriority = priorityFilter == nil || activity.priority == priorityFilter
-            
+
             let matchesOutcome = outcomeFilter == nil || activity.outcome == outcomeFilter
-            
+
             let matchesMember = memberFilter == nil || activity.assignedMember.id == memberFilter?.id
-            
+
             return matchesSearch && matchesStats && matchesPriority && matchesOutcome && matchesMember
         }
     }
-    
+
     var body: some View {
         @Bindable var state = appState
-        
+
         // Main content - Activity dashboard
         VStack(spacing: 0) {
-            
+
             // Activity list
             if filteredActivities.isEmpty {
                 EmptyActivityView()
@@ -110,31 +110,29 @@ struct TeamsTab: View {
     }
 }
 
-
 // MARK: - Dashboard Header
 
 // MARK: - Dashboard Header
 // Removed: filters and search moved to toolbar
 
-
 // MARK: - Empty State
 
 struct EmptyActivityView: View {
     @Environment(ManagerAppState.self) private var appState
-    
+
     var body: some View {
         VStack(spacing: 16) {
             Image(symbol: AppSymbols.tray)
                 .font(.system(size: 48))
                 .foregroundColor(.secondary)
-            
+
             Text("No Activities")
                 .font(.title2)
                 .fontWeight(.semibold)
-            
+
             Text("Create your first activity to get started")
                 .foregroundColor(.secondary)
-            
+
             Button(action: { appState.showingNewActivitySheet = true }) {
                 HStack(spacing: 6) {
                     Image(symbol: AppSymbols.plus)
@@ -154,4 +152,3 @@ struct EmptyActivityView: View {
         .environment(ManagerAppState())
         .frame(width: 1000, height: 700)
 }
-

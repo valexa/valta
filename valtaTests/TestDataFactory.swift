@@ -24,7 +24,7 @@ enum TestDataFactory {
     static let baseDate = Date(timeIntervalSince1970: 1_700_000_000)
 
     // MARK: - Members
-    
+
     static func makeMember(
         id: UUID = UUID(),
         name: String = "Alice",
@@ -86,7 +86,7 @@ enum TestDataFactory {
             managerEmail: managerEmail
         )
     }
-    
+
     // MARK: - Convenience Collections
 
     /// Creates a list of running activities assigned to an optional member

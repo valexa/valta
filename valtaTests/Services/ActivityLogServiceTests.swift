@@ -14,12 +14,12 @@ import Foundation
 struct ActivityLogServiceTests {
     var logService: ActivityLogService
     var mockMember: TeamMember
-    
+
     init() {
         logService = ActivityLogService.shared
         mockMember = TeamMember(name: "Test User", email: "test@example.com")
     }
-    
+
     @Test func testGenerateLogEntries_NewActivity() {
         let activity = Activity(
             name: "Test Activity",
@@ -29,14 +29,14 @@ struct ActivityLogServiceTests {
             status: .teamMemberPending,
             deadline: Date()
         )
-        
+
         let entries = logService.generateLogEntries(from: [activity])
-        
+
         // Should only have "created" entry for new activity
         #expect(entries.count == 1)
         #expect(entries[0].action == .created)
     }
-    
+
     @Test func testGenerateLogEntries_StartedActivity() {
         let activity = Activity(
             name: "Test Activity",
@@ -47,15 +47,15 @@ struct ActivityLogServiceTests {
             deadline: Date(),
             startedAt: Date()
         )
-        
+
         let entries = logService.generateLogEntries(from: [activity])
-        
+
         // Should have "created" and "started" entries
         #expect(entries.count == 2)
-        #expect(entries.contains(where: { $0.action == .created }))
-        #expect(entries.contains(where: { $0.action == .started }))
+        #expect(entries.contains { $0.action == .created })
+        #expect(entries.contains { $0.action == .started })
     }
-    
+
     @Test func testGenerateLogEntries_CompletedActivity() {
         let activity = Activity(
             name: "Test Activity",
@@ -67,16 +67,16 @@ struct ActivityLogServiceTests {
             startedAt: Date(),
             completedAt: Date()
         )
-        
+
         let entries = logService.generateLogEntries(from: [activity])
-        
+
         // Should have "created", "started", and "completed" entries
         #expect(entries.count == 3)
-        #expect(entries.contains(where: { $0.action == .created }))
-        #expect(entries.contains(where: { $0.action == .started }))
-        #expect(entries.contains(where: { $0.action == .completed }))
+        #expect(entries.contains { $0.action == .created })
+        #expect(entries.contains { $0.action == .started })
+        #expect(entries.contains { $0.action == .completed })
     }
-    
+
     @Test func testGenerateLogEntries_ManagerPendingActivity() {
         let activity = Activity(
             name: "Test Activity",
@@ -87,16 +87,16 @@ struct ActivityLogServiceTests {
             deadline: Date(),
             startedAt: Date()
         )
-        
+
         let entries = logService.generateLogEntries(from: [activity])
-        
+
         // Should have "created", "started", and "completionRequested" entries
         #expect(entries.count == 3)
-        #expect(entries.contains(where: { $0.action == .created }))
-        #expect(entries.contains(where: { $0.action == .started }))
-        #expect(entries.contains(where: { $0.action == .completionRequested }))
+        #expect(entries.contains { $0.action == .created })
+        #expect(entries.contains { $0.action == .started })
+        #expect(entries.contains { $0.action == .completionRequested })
     }
-    
+
     @Test func testGenerateLogEntries_CanceledActivity() {
         let activity = Activity(
             name: "Test Activity",
@@ -106,20 +106,20 @@ struct ActivityLogServiceTests {
             status: .canceled,
             deadline: Date()
         )
-        
+
         let entries = logService.generateLogEntries(from: [activity])
-        
+
         // Should have "created" and "canceled" entries
         #expect(entries.count == 2)
-        #expect(entries.contains(where: { $0.action == .created }))
-        #expect(entries.contains(where: { $0.action == .canceled }))
+        #expect(entries.contains { $0.action == .created })
+        #expect(entries.contains { $0.action == .canceled })
     }
-    
+
     @Test func testGenerateLogEntries_SortsByTimestamp() {
         let now = Date()
         let earlier = now.addingTimeInterval(-3600)
         let later = now.addingTimeInterval(3600)
-        
+
         let activities = [
             Activity(
                 name: "Activity 1",
@@ -143,9 +143,9 @@ struct ActivityLogServiceTests {
                 completedAt: later
             )
         ]
-        
+
         let entries = logService.generateLogEntries(from: activities)
-        
+
         // Entries should be sorted with most recent first
         #expect(entries[0].timestamp >= entries[1].timestamp)
         for i in 0..<(entries.count - 1) {
@@ -153,7 +153,7 @@ struct ActivityLogServiceTests {
                           "Entries should be sorted by timestamp descending")
         }
     }
-    
+
     @Test func testGenerateLogEntries_MultipleActivities() {
         let activities = [
             Activity(
@@ -174,9 +174,9 @@ struct ActivityLogServiceTests {
                 startedAt: Date()
             )
         ]
-        
+
         let entries = logService.generateLogEntries(from: activities)
-        
+
         // First activity: 1 entry, Second activity: 2 entries
         #expect(entries.count == 3)
     }

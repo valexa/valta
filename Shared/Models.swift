@@ -19,7 +19,7 @@ public enum ActivityStatus: String, Codable, Equatable, Hashable, CaseIterable {
     case canceled = "Canceled"
     case managerPending = "Manager Pending"
     case teamMemberPending = "Team Member Pending"
-    
+
     var icon: String {
         switch self {
         case .running: return AppSymbols.running
@@ -29,7 +29,7 @@ public enum ActivityStatus: String, Codable, Equatable, Hashable, CaseIterable {
         case .teamMemberPending: return AppSymbols.teamMemberPending
         }
     }
-    
+
     var color: Color {
         switch self {
         case .running: return AppColors.statusRunning
@@ -46,11 +46,11 @@ public enum ActivityPriority: Int, Codable, Equatable, Hashable, CaseIterable, C
     case p1 = 1
     case p2 = 2
     case p3 = 3
-    
+
     public static func < (lhs: ActivityPriority, rhs: ActivityPriority) -> Bool {
         return lhs.rawValue < rhs.rawValue
     }
-    
+
     var displayName: String {
         switch self {
         case .p0: return "P0 - Critical"
@@ -59,7 +59,7 @@ public enum ActivityPriority: Int, Codable, Equatable, Hashable, CaseIterable, C
         case .p3: return "P3 - Low"
         }
     }
-    
+
     var shortName: String {
         switch self {
         case .p0: return "P0"
@@ -92,7 +92,7 @@ public enum ActivityOutcome: String, Codable, Equatable, Hashable, CaseIterable 
     case ahead = "Ahead"
     case jit = "Just In Time"
     case overrun = "Overrun"
-    
+
     var color: Color {
         switch self {
         case .ahead: return AppColors.outcomeAhead
@@ -100,7 +100,7 @@ public enum ActivityOutcome: String, Codable, Equatable, Hashable, CaseIterable 
         case .overrun: return AppColors.outcomeOverrun
         }
     }
-    
+
     var icon: String {
         switch self {
         case .ahead: return AppSymbols.outcomeAhead
@@ -116,13 +116,13 @@ struct TeamMember: Identifiable, Hashable, Codable {
     let id: UUID
     var name: String
     var email: String
-    
+
     init(id: UUID = UUID(), name: String, email: String) {
         self.id = id
         self.name = name
         self.email = email
     }
-    
+
     var initials: String {
         let parts = name.split(separator: " ")
         if parts.count >= 2 {
@@ -130,7 +130,7 @@ struct TeamMember: Identifiable, Hashable, Codable {
         }
         return String(name.prefix(2)).uppercased()
     }
-    
+
     /// Neutral avatar color for all members
     static let avatarColor = AppColors.avatar
 }
@@ -148,7 +148,7 @@ struct Activity: Identifiable, Codable {
     var startedAt: Date?
     var completedAt: Date?
     var managerEmail: String?
-    
+
     init(
         id: UUID = UUID(),
         name: String,
@@ -176,25 +176,25 @@ struct Activity: Identifiable, Codable {
         self.completedAt = completedAt
         self.managerEmail = managerEmail
     }
-    
+
     // MARK: - Time Calculations (delegated to ActivityTimeCalculator)
-    
+
     var timeRemaining: String {
         timeCalculator.timeRemaining
     }
-    
+
     var isOverdue: Bool {
         timeCalculator.isOverdue
     }
-    
+
     var timeProgress: Double {
         timeCalculator.timeProgress
     }
-    
+
     var timeRemainingProgress: Double {
         timeCalculator.timeRemainingProgress
     }
-    
+
 }
 
 struct Team: Identifiable, Codable {
@@ -204,7 +204,7 @@ struct Team: Identifiable, Codable {
     var activities: [Activity]
     var createdAt: Date
     var managerEmail: String?
-    
+
     init(id: UUID = UUID(), name: String, members: [TeamMember] = [], activities: [Activity] = [], createdAt: Date = Date(), managerEmail: String? = nil) {
         self.id = id
         self.name = name
@@ -215,7 +215,6 @@ struct Team: Identifiable, Codable {
     }
 }
 
-
 // MARK: - Activity Log Entry (for team member app)
 
 struct ActivityLogEntry: Identifiable, Codable {
@@ -224,7 +223,7 @@ struct ActivityLogEntry: Identifiable, Codable {
     let action: LogAction
     let timestamp: Date
     let performedBy: String
-    
+
     enum LogAction: String, Codable {
         case created = "Created"
         case started = "Started"
@@ -232,7 +231,7 @@ struct ActivityLogEntry: Identifiable, Codable {
         case completed = "Completed"
         case canceled = "Canceled"
     }
-    
+
     init(id: UUID = UUID(), activity: Activity, action: LogAction, timestamp: Date = Date(), performedBy: String) {
         self.id = id
         self.activity = activity

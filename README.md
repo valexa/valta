@@ -147,7 +147,11 @@ The architecture is based on MVVM with clearly separated views, view models, and
 2. Select the scheme you want to run:
    - `valtaManager` - Manager app
    - `valta` - Team member app
-3. Build and run (⌘R)
+3. **SwiftLint Setup** (optional but recommended):
+   - Install SwiftLint: `brew install swiftlint`
+   - **Important**: Set `ENABLE_USER_SCRIPT_SANDBOXING = NO` in Build Settings for each target, or the linter won't be able to read project files
+   - Add a Run Script Build Phase with: `/opt/homebrew/bin/swiftlint`
+4. Build and run (⌘R)
 
 ## Documentation
 

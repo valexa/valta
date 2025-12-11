@@ -15,7 +15,7 @@ struct ActivityCard: View {
     @State private var isHovered = false
     @State private var showingCompleteSheet = false
     @State private var isExpanded = false
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             // Main content
@@ -23,7 +23,7 @@ struct ActivityCard: View {
                 // Priority indicator
                 VStack {
                     PriorityBadge(priority: activity.priority)
-                    
+
                     if activity.isOverdue {
                         Image(symbol: AppSymbols.exclamationTriangle)
                             .foregroundColor(AppColors.destructive)
@@ -31,37 +31,37 @@ struct ActivityCard: View {
                             .padding(.top, 4)
                     }
                 }
-                
+
                 // Activity info
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
                         Text(activity.name)
                             .font(.system(size: 15, weight: .semibold))
                             .lineLimit(1)
-                        
+
                         Spacer()
-                        
+
                         StatusBadge(status: activity.status, outcome: activity.outcome, displayColor: activity.displayColor)
                     }
-                    
+
                     Text(activity.description)
                         .font(.system(size: 13))
                         .foregroundColor(.secondary)
                         .lineLimit(isExpanded ? nil : 2)
-                    
+
                     HStack(spacing: 16) {
                         // Assignee
                         HStack(spacing: 6) {
                             MemberAvatar(member: activity.assignedMember, size: 22)
-                            
+
                             Text(activity.assignedMember.name)
                                 .font(.system(size: 12))
                                 .foregroundColor(.secondary)
                         }
-                        
+
                         // Deadline with progress bar
                         TimeRemainingLabel(activity: activity, compact: false, showProgressBar: true)
-                        
+
                         // Created date
                         HStack(spacing: 4) {
                             Image(symbol: AppSymbols.calendar)
@@ -70,11 +70,11 @@ struct ActivityCard: View {
                                 .font(.system(size: 12))
                         }
                         .foregroundColor(.secondary)
-                        
+
                         Spacer()
                     }
                 }
-                
+
                 // Actions
                 if isHovered && activity.status != .completed && activity.status != .canceled {
                     HStack(spacing: 8) {
@@ -87,7 +87,7 @@ struct ActivityCard: View {
                             .foregroundColor(AppColors.success)
                             .help("Complete Activity")
                         }
-                        
+
                         Button(action: { appState.cancelActivity(activity) }) {
                             Image(symbol: AppSymbols.xmarkCircle)
                                 .font(.system(size: 18))
@@ -99,24 +99,24 @@ struct ActivityCard: View {
                 }
             }
             .padding(16)
-            
+
             // Outcome indicator for completed activities
             if activity.status == .completed, let outcome = activity.outcome {
                 Divider()
-                
+
                 HStack(spacing: 8) {
                     Image(symbol: outcome.icon)
                         .font(.system(size: 12))
-                    
+
                     Text("Completed \(outcome.rawValue)")
                         .font(.system(size: 12, weight: .medium))
-                    
+
                     if let completedAt = activity.completedAt {
                         Text("•")
                         Text(completedAt.formatted(date: .abbreviated, time: .shortened))
                             .font(.system(size: 12))
                     }
-                    
+
                     Spacer()
                 }
                 .foregroundColor(outcome.color)
@@ -148,12 +148,11 @@ struct ActivityCard: View {
     }
 }
 
-
 struct CompleteActivitySheet: View {
     let activity: Activity
     @Environment(ManagerAppState.self) private var appState
     @Environment(\.dismiss) private var dismiss
-    
+
     var body: some View {
         VStack(spacing: 24) {
             // Header
@@ -161,28 +160,28 @@ struct CompleteActivitySheet: View {
                 Image(symbol: AppSymbols.checkmarkSeal)
                     .font(.system(size: 48))
                     .foregroundStyle(AppGradients.success)
-                
+
                 Text("Complete Activity")
                     .font(.system(size: 20, weight: .bold, design: .rounded))
-                
+
                 Text(activity.name)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
-            
+
             Divider()
-            
+
             // Info
             VStack(alignment: .leading, spacing: 12) {
                 Text("Are you sure you want to complete this activity?")
                     .font(.headline)
-                
+
                 Text("The outcome will be automatically determined based on the deadline.")
                     .foregroundColor(.secondary)
             }
-            
+
             Spacer()
-            
+
             // Actions
             HStack(spacing: 12) {
                 Button("Cancel") {
@@ -190,7 +189,7 @@ struct CompleteActivitySheet: View {
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.large)
-                
+
                 Button("Complete") {
                     appState.completeActivity(activity)
                     dismiss()
@@ -214,4 +213,3 @@ struct CompleteActivitySheet: View {
     .padding()
     .environment(ManagerAppState())
 }
-

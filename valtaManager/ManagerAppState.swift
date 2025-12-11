@@ -16,25 +16,25 @@ import FirebaseAuth
 
 @Observable
 final class ManagerAppState: BaseAppState, ActivityDataProviding {
-    
+
     // MARK: - UI State
-    
+
     var showingNewActivitySheet: Bool = false
-    var selectedActivity: Activity? = nil
+    var selectedActivity: Activity?
 
     // MARK: - Services
 
     private let teamService = TeamService()
-    
+
     // MARK: - Initialization
 
     override init() {
         super.init()
     }
-    
+
     override func onTeamsChanged() {
         super.onTeamsChanged()
-        
+
         // Register manager email for notifications once data is loaded
         if let team = dataManager.teams.first, let managerEmail = team.managerEmail {
             Task {
@@ -42,35 +42,35 @@ final class ManagerAppState: BaseAppState, ActivityDataProviding {
             }
         }
     }
-    
+
     // MARK: - Data Accessors
-    
+
     var team: Team {
         _ = dataVersion
         return dataManager.teams.first ?? Team(name: "Loading...", members: [])
     }
-    
+
     // Protocol provides: activityFilter, activityStats
-    
+
     var totalActivities: Int { totalActivitiesCount }
     var pendingCount: Int { allPendingCount }
-    
+
     // MARK: - Activity Actions (delegate to service)
-    
+
     func approveCompletion(_ activity: Activity) {
         var updatedActivity = activity
-        
+
         activity.updateInBackend { mutableActivity in
             mutableActivity.status = .completed
             // Calculate outcome based on existing completion time (if set) or now
             let completionTime = mutableActivity.completedAt ?? Date()
             mutableActivity.completedAt = completionTime
             mutableActivity.outcome = mutableActivity.calculateOutcome(completionDate: completionTime)
-            
+
             // Capture updated state
             updatedActivity = mutableActivity
         }
-        
+
         let finalActivity = updatedActivity
         Task {
             // Send notification to all team members
@@ -84,27 +84,27 @@ final class ManagerAppState: BaseAppState, ActivityDataProviding {
             }
         }
     }
-    
+
     func rejectCompletion(_ activity: Activity) {
         activity.updateInBackend { mutableActivity in
             mutableActivity.status = .running
             mutableActivity.outcome = nil
         }
     }
-    
+
     func completeActivity(_ activity: Activity) {
         var updatedActivity = activity
-        
+
         activity.updateInBackend { mutableActivity in
             let now = Date()
             mutableActivity.status = .completed
             mutableActivity.completedAt = now
             mutableActivity.outcome = mutableActivity.calculateOutcome(completionDate: now)
-            
+
             // Capture updated state
             updatedActivity = mutableActivity
         }
-        
+
         let finalActivity = updatedActivity
         Task {
             // Send notification to all team members
@@ -118,29 +118,29 @@ final class ManagerAppState: BaseAppState, ActivityDataProviding {
             }
         }
     }
-    
+
     func cancelActivity(_ activity: Activity) {
         activity.updateInBackend { mutableActivity in
             mutableActivity.status = .canceled
         }
     }
-    
+
     // MARK: - Team Actions (delegate to service)
-    
+
     func addActivity(_ activity: Activity) {
         guard let teamIndex = dataManager.teams.findTeamIndex(byId: team.id) else { return }
-        
+
         // Inject manager email from team data
         var newActivity = activity
         if let team = dataManager.teams.findTeam(byId: team.id) {
             newActivity.managerEmail = team.managerEmail
         }
-        
+
         teamService.addActivity(newActivity, to: &dataManager.teams[teamIndex])
-        
+
         Task {
             await dataManager.syncActivities()
-            
+
             // Send notification to assigned team member
             do {
                 // Use manager email from team data
