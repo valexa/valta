@@ -8,11 +8,15 @@
 import Foundation
 
 extension String {
-    /// Returns a sanitized string containing only alphanumeric characters and spaces.
-    /// This ensures CSV integrity by removing potential delimiters like commas, quotes, and newlines.
+    /// Returns a sanitized string safe for CSV export.
+    /// Removes characters that could break CSV format:
+    /// - Commas (field delimiter)
+    /// - Quotes (field enclosure)
+    /// - Newlines and carriage returns (row delimiter)
+    /// - Tabs (alternate delimiter in some systems)
     var sanitizedForCSV: String {
         return self.filter { char in
-            let isInvalid = char == "," || char == "\"" || char.isNewline
+            let isInvalid = char == "," || char == "\"" || char == "\t" || char.isNewline
             return !isInvalid
         }
     }

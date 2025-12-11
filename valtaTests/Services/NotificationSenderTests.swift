@@ -113,10 +113,7 @@ struct NotificationSenderTests {
         try await sender.sendActivityStartedNotification(activity: activity, team: testTeam)
         
         // Then
-        guard let call = mockProvider.calls.first else {
-            #expect(Bool(false), "Expected a call")
-            return
-        }
+        let call = try #require(mockProvider.calls.first, "Expected a call to cloud function")
         
         #expect(call.name == "sendActivityStartedNotification")
         
@@ -152,10 +149,7 @@ struct NotificationSenderTests {
         try await sender.sendCompletionRequestedNotification(activity: activity)
         
         // Then
-        guard let call = mockProvider.calls.first else {
-            #expect(Bool(false), "Expected a call")
-            return
-        }
+        let call = try #require(mockProvider.calls.first, "Expected a call to cloud function")
 
         #expect(call.name == "sendCompletionRequestedNotification")
         
@@ -187,10 +181,7 @@ struct NotificationSenderTests {
         try await sender.sendCompletionRequestedNotification(activity: activity)
         
         // Then
-        guard let call = mockProvider.calls.first else {
-            #expect(Bool(false), "Expected a call")
-            return
-        }
+        let call = try #require(mockProvider.calls.first, "Expected a call to cloud function")
         
         let data = call.data
         #expect(data["managerEmail"] == nil)
@@ -214,10 +205,7 @@ struct NotificationSenderTests {
         try await sender.sendActivityCompletedNotification(activity: activity, team: testTeam)
         
         // Then
-        guard let call = mockProvider.calls.first else {
-            #expect(Bool(false), "Expected a call")
-            return
-        }
+        let call = try #require(mockProvider.calls.first, "Expected a call to cloud function")
         
         #expect(call.name == "sendActivityCompletedNotification")
         
@@ -267,10 +255,7 @@ struct NotificationSenderTests {
             mockProvider.calls.removeAll()
             try await sender.sendActivityCompletedNotification(activity: activity, team: testTeam)
             
-            guard let call = mockProvider.calls.first else {
-                #expect(Bool(false), "Expected a call")
-                return
-            }
+            let call = try #require(mockProvider.calls.first, "Expected a call to cloud function")
             
             let color = call.data["statusColor"] as? String
             #expect(color == expected)
@@ -302,7 +287,7 @@ struct NotificationSenderTests {
         }
     }
     
-    @Test func testCloudFunctionError_ThrowsWrappedError() async {
+    @Test func testCloudFunctionError_ThrowsWrappedError() async throws {
         // Given
         mockProvider.shouldFail = true
         mockProvider.errorToThrow = NSError(domain: "test", code: 1, userInfo: [NSLocalizedDescriptionKey: "Network failure"])
@@ -316,13 +301,15 @@ struct NotificationSenderTests {
             deadline: Date()
         )
         
-        // When/Then
-        await #expect(throws: NotificationError.self) {
+        // When/Then - use do-catch to verify specific error details
+        do {
             try await sender.sendCompletionRequestedNotification(activity: activity)
+            Issue.record("Expected NotificationError.cloudFunctionError to be thrown")
+        } catch let error as NotificationError {
+            // Verify it's the right error case with the expected message
+            #expect(error == .cloudFunctionError("Network failure"), "Expected cloudFunctionError with 'Network failure' message")
+        } catch {
+            Issue.record("Expected NotificationError but got: \(type(of: error))")
         }
-        
-        // Note: Checking specific error associated values is harder with #expect(throws:),
-        // so we stick to checking the type or using do-catch if detailed inspection is needed.
-        // For now, type check is sufficient migration.
     }
 }

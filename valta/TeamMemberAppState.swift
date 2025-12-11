@@ -18,7 +18,7 @@ final class TeamMemberAppState: BaseAppState, ActivityDataProviding {
     
     // MARK: - Constants
     
-    private static let selectedMemberEmailKey = "selectedMemberEmail"
+    static let selectedMemberEmailKey = "com.valta.selectedMemberEmail"
     
     // MARK: - Services
     

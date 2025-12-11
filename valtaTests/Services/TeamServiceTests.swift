@@ -70,11 +70,10 @@ struct TeamServiceTests {
         
         #expect(team.activities.count == 1)
         #expect(team.activities.first?.id == activity.id)
-        // Check inserted at 0 (LIFO/Stack behavior implied by insert at 0?)
-        // Let's check order
+        // Verify new activities are inserted at position 0 (newest first)
         let activity2 = makeActivity()
         service.addActivity(activity2, to: &team)
-        #expect(team.activities.first?.id == activity2.id)
+        #expect(team.activities.first?.id == activity2.id, "Newest activity should be at index 0")
     }
     
     @Test func testRemoveActivity() {

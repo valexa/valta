@@ -13,6 +13,10 @@ class MockStorageProvider: StorageProvider {
 
     var shouldFailDownload = false
     var shouldFailUpload = false
+    
+    /// When true, returns empty CSV headers if data not found (useful for tests needing valid initial state).
+    /// When false (default), throws URLError.fileDoesNotExist if data not found (stricter test behavior).
+    var returnEmptyCSVOnMissingData = false
 
     func downloadData(path: String, maxSize: Int64) async throws -> Data {
         downloadCallCount += 1
@@ -22,13 +26,16 @@ class MockStorageProvider: StorageProvider {
         }
         
         guard let data = storedData[path] else {
-            // Return empty CSV headers by default if not found (logic merged from MockStorageProviderDiff)
-            // This is useful for tests that need valid initial state without setup
-            if path.contains("teams") {
-                return "id,name,members,managerEmail\n".data(using: .utf8)!
-            } else {
-                return "id,name,description,deadline,priority,status,assignedMemberId,createdAt\n".data(using: .utf8)!
+            // Only return empty CSV if explicitly configured
+            if returnEmptyCSVOnMissingData {
+                if path.contains("teams") {
+                    return "id,name,members,managerEmail\n".data(using: .utf8)!
+                } else {
+                    return "id,name,description,deadline,priority,status,assignedMemberId,createdAt\n".data(using: .utf8)!
+                }
             }
+            // Default: throw error for missing data (stricter behavior)
+            throw URLError(.fileDoesNotExist)
         }
         return data
     }

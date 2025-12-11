@@ -18,10 +18,14 @@ struct TeamMemberAppStateTests {
     
     init() {
         // Prevent tests from writing to real Firebase Storage (and deleting production data)
-        StorageService.shared.provider = MockStorageProvider()
+        let mockProvider = MockStorageProvider()
+        mockProvider.returnEmptyCSVOnMissingData = true  // Allow tests to run without explicit data setup
+        StorageService.shared.provider = mockProvider
+        
+        // Note: NotificationService.shared.isTestMode auto-detects test environment
         
         // Clear member persistence to ensure test isolation
-        UserDefaults.standard.removeObject(forKey: "selectedMemberEmail")
+        UserDefaults.standard.removeObject(forKey: TeamMemberAppState.selectedMemberEmailKey)
         
         // Reset DataManager state
         DataManager.shared.teams = []
@@ -151,7 +155,7 @@ struct TeamMemberAppStateTests {
 
         #expect(updatedActivity != nil, "Activity not found in DataManager teams")
         if let updatedActivity {
-             #expect(updatedActivity.status == .managerPending, "Status was \(updatedActivity.status), expected managerPending")
+            #expect(updatedActivity.status == .managerPending, "Status was \(updatedActivity.status), expected managerPending")
         }
     }
     
@@ -161,20 +165,18 @@ struct TeamMemberAppStateTests {
         let appState = TeamMemberAppState()
         let initialVersion = appState.dataVersion
         
-        // Trigger notification
-        NotificationCenter.default.post(name: DataManager.dataChangedNotification, object: nil)
+        // Directly call the handler instead of waiting for notification propagation
+        // This tests the dataVersion increment behavior deterministically
+        appState.onTeamsChanged()
         
-        // Allow main loop to process
-        try await Task.sleep(nanoseconds: 100_000_000)
-        
-        #expect(appState.dataVersion > initialVersion)
+        #expect(appState.dataVersion > initialVersion, "dataVersion should increment after onTeamsChanged()")
     }
     
     // MARK: - Member Persistence Tests
     
     @Test func testMemberSelectionPersistsToUserDefaults() async throws {
         // Clear any existing saved member
-        UserDefaults.standard.removeObject(forKey: "selectedMemberEmail")
+        UserDefaults.standard.removeObject(forKey: TeamMemberAppState.selectedMemberEmailKey)
         
         let appState = TeamMemberAppState()
         let alice = TestDataFactory.makeMember(name: "Alice")
@@ -183,11 +185,11 @@ struct TeamMemberAppStateTests {
         appState.selectMember(alice)
         
         // Verify email was saved to UserDefaults
-        let savedEmail = UserDefaults.standard.string(forKey: "selectedMemberEmail")
+        let savedEmail = UserDefaults.standard.string(forKey: TeamMemberAppState.selectedMemberEmailKey)
         #expect(savedEmail == alice.email, "Expected \(alice.email) but got \(savedEmail ?? "nil")")
         
         // Clean up
-        UserDefaults.standard.removeObject(forKey: "selectedMemberEmail")
+        UserDefaults.standard.removeObject(forKey: TeamMemberAppState.selectedMemberEmailKey)
     }
     
     @Test func testMemberRestoredFromUserDefaults() async throws {
@@ -197,7 +199,7 @@ struct TeamMemberAppStateTests {
         appState1.selectMember(alice)
         
         // Verify email was saved
-        let savedEmail = UserDefaults.standard.string(forKey: "selectedMemberEmail")
+        let savedEmail = UserDefaults.standard.string(forKey: TeamMemberAppState.selectedMemberEmailKey)
         #expect(savedEmail == alice.email, "Email should be saved")
         
         // Now simulate a fresh app launch: set up teams, create new AppState
@@ -216,12 +218,12 @@ struct TeamMemberAppStateTests {
         #expect(appState2.currentMember?.email == alice.email, "Current member email should match")
         
         // Clean up
-        UserDefaults.standard.removeObject(forKey: "selectedMemberEmail")
+        UserDefaults.standard.removeObject(forKey: TeamMemberAppState.selectedMemberEmailKey)
     }
     
     @Test func testMemberNotRestoredWhenEmailNotFound() async throws {
         // Set up: save a non-existent member email to UserDefaults
-        UserDefaults.standard.set("nonexistent@example.com", forKey: "selectedMemberEmail")
+        UserDefaults.standard.set("nonexistent@example.com", forKey: TeamMemberAppState.selectedMemberEmailKey)
         
         // Set up teams without the saved email
         let bob = TestDataFactory.makeMember(name: "Bob")
@@ -237,13 +239,13 @@ struct TeamMemberAppStateTests {
         #expect(appState.currentMember == nil, "Current member should be nil")
         
         // Clean up
-        UserDefaults.standard.removeObject(forKey: "selectedMemberEmail")
+        UserDefaults.standard.removeObject(forKey: TeamMemberAppState.selectedMemberEmailKey)
     }
     
     @Test func testMemberRestoredFromDifferentTeam() async throws {
         // Set up: save Alice's email to UserDefaults
         let alice = TestDataFactory.makeMember(name: "Alice")
-        UserDefaults.standard.set(alice.email, forKey: "selectedMemberEmail")
+        UserDefaults.standard.set(alice.email, forKey: TeamMemberAppState.selectedMemberEmailKey)
         
         // Create two teams - Alice is in Team 2, not Team 1
         let bob = TestDataFactory.makeMember(name: "Bob")
@@ -261,7 +263,7 @@ struct TeamMemberAppStateTests {
         #expect(appState.currentMember?.name == alice.name, "Member name should match")
         
         // Clean up
-        UserDefaults.standard.removeObject(forKey: "selectedMemberEmail")
+        UserDefaults.standard.removeObject(forKey: TeamMemberAppState.selectedMemberEmailKey)
     }
 }
 

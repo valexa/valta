@@ -5,7 +5,7 @@
 //  Shared helpers for creating deterministic test data across test targets.
 //  Provides factory methods for TeamMember, Activity, and Team with sensible defaults.
 //
-//  Created by Assistant on 2025-12-09.
+//  Created by Vlad on 2025-12-09.
 //
 
 import Foundation

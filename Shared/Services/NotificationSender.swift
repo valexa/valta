@@ -39,14 +39,13 @@ struct FirebaseAuthChecker: AuthChecking {
     }
 }
 
-@MainActor
 final class NotificationSender {
     static let shared = NotificationSender()
     
     private let functionProvider: CloudFunctionProvider
     private let authChecker: AuthChecking
     
-    private let dateFormatter: DateFormatter = {
+    private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .short
@@ -216,3 +215,4 @@ enum NotificationError: LocalizedError, Equatable {
         }
     }
 }
+
