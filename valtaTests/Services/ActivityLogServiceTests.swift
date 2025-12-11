@@ -7,24 +7,20 @@
 //  Created by vlad on 2025-12-05.
 //
 
-import XCTest
+import Testing
+import Foundation
 @testable import valta
 
-final class ActivityLogServiceTests: XCTestCase {
-    var logService: ActivityLogService!
-    var mockMember: TeamMember!
+struct ActivityLogServiceTests {
+    var logService: ActivityLogService
+    var mockMember: TeamMember
     
-    override func setUpWithError() throws {
+    init() {
         logService = ActivityLogService.shared
         mockMember = TeamMember(name: "Test User", email: "test@example.com")
     }
     
-    override func tearDownWithError() throws {
-        logService = nil
-        mockMember = nil
-    }
-    
-    func testGenerateLogEntries_NewActivity() throws {
+    @Test func testGenerateLogEntries_NewActivity() {
         let activity = Activity(
             name: "Test Activity",
             description: "Description",
@@ -37,11 +33,11 @@ final class ActivityLogServiceTests: XCTestCase {
         let entries = logService.generateLogEntries(from: [activity])
         
         // Should only have "created" entry for new activity
-        XCTAssertEqual(entries.count, 1)
-        XCTAssertEqual(entries[0].action, .created)
+        #expect(entries.count == 1)
+        #expect(entries[0].action == .created)
     }
     
-    func testGenerateLogEntries_StartedActivity() throws {
+    @Test func testGenerateLogEntries_StartedActivity() {
         let activity = Activity(
             name: "Test Activity",
             description: "Description",
@@ -55,12 +51,12 @@ final class ActivityLogServiceTests: XCTestCase {
         let entries = logService.generateLogEntries(from: [activity])
         
         // Should have "created" and "started" entries
-        XCTAssertEqual(entries.count, 2)
-        XCTAssertTrue(entries.contains(where: { $0.action == .created }))
-        XCTAssertTrue(entries.contains(where: { $0.action == .started }))
+        #expect(entries.count == 2)
+        #expect(entries.contains(where: { $0.action == .created }))
+        #expect(entries.contains(where: { $0.action == .started }))
     }
     
-    func testGenerateLogEntries_CompletedActivity() throws {
+    @Test func testGenerateLogEntries_CompletedActivity() {
         let activity = Activity(
             name: "Test Activity",
             description: "Description",
@@ -75,13 +71,13 @@ final class ActivityLogServiceTests: XCTestCase {
         let entries = logService.generateLogEntries(from: [activity])
         
         // Should have "created", "started", and "completed" entries
-        XCTAssertEqual(entries.count, 3)
-        XCTAssertTrue(entries.contains(where: { $0.action == .created }))
-        XCTAssertTrue(entries.contains(where: { $0.action == .started }))
-        XCTAssertTrue(entries.contains(where: { $0.action == .completed }))
+        #expect(entries.count == 3)
+        #expect(entries.contains(where: { $0.action == .created }))
+        #expect(entries.contains(where: { $0.action == .started }))
+        #expect(entries.contains(where: { $0.action == .completed }))
     }
     
-    func testGenerateLogEntries_ManagerPendingActivity() throws {
+    @Test func testGenerateLogEntries_ManagerPendingActivity() {
         let activity = Activity(
             name: "Test Activity",
             description: "Description",
@@ -95,13 +91,13 @@ final class ActivityLogServiceTests: XCTestCase {
         let entries = logService.generateLogEntries(from: [activity])
         
         // Should have "created", "started", and "completionRequested" entries
-        XCTAssertEqual(entries.count, 3)
-        XCTAssertTrue(entries.contains(where: { $0.action == .created }))
-        XCTAssertTrue(entries.contains(where: { $0.action == .started }))
-        XCTAssertTrue(entries.contains(where: { $0.action == .completionRequested }))
+        #expect(entries.count == 3)
+        #expect(entries.contains(where: { $0.action == .created }))
+        #expect(entries.contains(where: { $0.action == .started }))
+        #expect(entries.contains(where: { $0.action == .completionRequested }))
     }
     
-    func testGenerateLogEntries_CanceledActivity() throws {
+    @Test func testGenerateLogEntries_CanceledActivity() {
         let activity = Activity(
             name: "Test Activity",
             description: "Description",
@@ -114,12 +110,12 @@ final class ActivityLogServiceTests: XCTestCase {
         let entries = logService.generateLogEntries(from: [activity])
         
         // Should have "created" and "canceled" entries
-        XCTAssertEqual(entries.count, 2)
-        XCTAssertTrue(entries.contains(where: { $0.action == .created }))
-        XCTAssertTrue(entries.contains(where: { $0.action == .canceled }))
+        #expect(entries.count == 2)
+        #expect(entries.contains(where: { $0.action == .created }))
+        #expect(entries.contains(where: { $0.action == .canceled }))
     }
     
-    func testGenerateLogEntries_SortsByTimestamp() throws {
+    @Test func testGenerateLogEntries_SortsByTimestamp() {
         let now = Date()
         let earlier = now.addingTimeInterval(-3600)
         let later = now.addingTimeInterval(3600)
@@ -151,14 +147,14 @@ final class ActivityLogServiceTests: XCTestCase {
         let entries = logService.generateLogEntries(from: activities)
         
         // Entries should be sorted with most recent first
-        XCTAssertTrue(entries[0].timestamp >= entries[1].timestamp)
+        #expect(entries[0].timestamp >= entries[1].timestamp)
         for i in 0..<(entries.count - 1) {
-            XCTAssertTrue(entries[i].timestamp >= entries[i + 1].timestamp,
-                         "Entries should be sorted by timestamp descending")
+            #expect(entries[i].timestamp >= entries[i + 1].timestamp,
+                          "Entries should be sorted by timestamp descending")
         }
     }
     
-    func testGenerateLogEntries_MultipleActivities() throws {
+    @Test func testGenerateLogEntries_MultipleActivities() {
         let activities = [
             Activity(
                 name: "Activity 1",
@@ -182,6 +178,6 @@ final class ActivityLogServiceTests: XCTestCase {
         let entries = logService.generateLogEntries(from: activities)
         
         // First activity: 1 entry, Second activity: 2 entries
-        XCTAssertEqual(entries.count, 3)
+        #expect(entries.count == 3)
     }
 }

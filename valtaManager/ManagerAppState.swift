@@ -7,7 +7,7 @@
 //
 //  Uses Observation framework for automatic UI updates.
 //
-//  Created by ANTIGRAVITY on 2025-12-08.
+//  Created by Vlad on 2025-12-08.
 //
 
 import SwiftUI
@@ -15,82 +15,45 @@ import Observation
 import FirebaseAuth
 
 @Observable
-final class ManagerAppState {
-    
-    // MARK: - Services
-    
-    private let activityService = ActivityService()
-    private let teamService = TeamService()
-    
-    // Reference to DataManager for live data
-    private let dataManager = DataManager.shared
-    
-    // MARK: - Data State
-    
-    var hasCompletedOnboarding: Bool = false
+final class ManagerAppState: BaseAppState, ActivityDataProviding {
     
     // MARK: - UI State
     
     var showingNewActivitySheet: Bool = false
     var selectedActivity: Activity? = nil
-    var dataVersion: Int = 0
+
+    // MARK: - Services
+
+    private let teamService = TeamService()
     
     // MARK: - Initialization
 
-    init() {
-        // Observe DataManager team changes
-        NotificationCenter.default.addObserver(forName: DataManager.dataChangedNotification, object: nil, queue: .main) { [weak self] _ in
-            self?.dataVersion &+= 1
+    override init() {
+        super.init()
+    }
+    
+    override func onTeamsChanged() {
+        super.onTeamsChanged()
+        
+        // Register manager email for notifications once data is loaded
+        if let team = dataManager.teams.first, let managerEmail = team.managerEmail {
+            Task {
+                await NotificationService.shared.registerMemberEmail(managerEmail)
+            }
         }
     }
     
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-    
-    // MARK: - Data Accessors (delegate to DataManager)
+    // MARK: - Data Accessors
     
     var team: Team {
         _ = dataVersion
         return dataManager.teams.first ?? Team(name: "Loading...", members: [])
     }
     
-    // MARK: - Filters & Stats (computed via services)
+    // Protocol provides: activityFilter, activityStats
     
-    /// Activity filter for querying
-    var activityFilter: ActivityFilter {
-        team.activityFilter
-    }
-    
-    /// Activity statistics
-    var activityStats: ActivityStats {
-        team.activityStats
-    }
-    
-    // MARK: - Convenience Accessors (delegate to filter)
-    
-    var activeActivities: [Activity] {
-        activityFilter.active
-    }
-    
-    var pendingActivities: [Activity] {
-        activityFilter.managerPending
-    }
-    
-    var completedActivities: [Activity] {
-        activityFilter.completed
-    }
-    
-    var canceledActivities: [Activity] {
-        activityFilter.canceled
-    }
-    
-    // MARK: - Stats (delegate to activityStats)
-    
-    var totalActivities: Int { activityStats.total }
-    var runningCount: Int { activityStats.running }
-    var pendingCount: Int { activityStats.allPending }
-    var completedCount: Int { activityStats.completed }
+    var totalActivities: Int { totalActivitiesCount }
+    var pendingCount: Int { allPendingCount }
     
     // MARK: - Activity Actions (delegate to service)
     

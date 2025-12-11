@@ -1,13 +1,5 @@
 # Live Team Activities
 
-> [!IMPORTANT]
-> **CRITICAL ARCHITECTURE NOTE:**
-> This project uses a hybrid persistence strategy:
-> *   **Activities & Teams Data**: Persisted via **CSV files** in **Firebase Storage**.
-> *   **Notifications (FCM Tokens)**: Persisted via **Firestore**.
-> 
-> Firestore is strictly for token management. Do not use it for core data persistence.
-
 A macOS application suite for real-time team activity management, consisting of two companion apps for managers and team members.
 
 ## Overview
@@ -107,44 +99,9 @@ Both apps share a unified design system with centralized colors and reusable com
 
 ## Project Structure
 
-```
-valta/
-├── Shared/                     # Shared code between apps
-│   ├── Models.swift                 # Data models
-│   ├── MockData.swift               # Mock data for development
-│   ├── Theme.swift                  # Theme protocol & DI for colors
-│   ├── ActivityTimeCalculator.swift # Extracted time calculations
-│   ├── StyleGuideColors.swift       # Colors and gradients ONLY
-│   ├── StyleGuideFonts.swift        # Font sizes and styles ONLY
-│   ├── AppSymbols.swift             # Centralized SF Symbol names
-│   ├── Services/
-│   │   ├── ActivityFilter.swift     # Activity filtering/querying
-│   │   ├── ActivityStats.swift      # Statistics calculations
-│   │   └── ActivityService.swift    # Business logic/mutations
-│   └── Components/
-│       ├── SharedComponents.swift  # Badges, avatars, labels
-│       ├── ActivityRow.swift       # Unified activity row
-│       └── StatButton.swift        # Filterable stat button
-├── valta/                      # Team Member App
-│   ├── TeamMemberAppState.swift
-│   ├── ContentView.swift
-│   └── Views/
-│       ├── ActivitiesTab.swift
-│       ├── TeamTab.swift
-│       ├── LogTab.swift
-│       └── TeamMemberOnboardingView.swift
-├── valtaManager/               # Manager App
-│   ├── ManagerAppState.swift
-│   ├── ContentView.swift
-│   └── Views/
-│       ├── TeamsTab.swift
-│       ├── RequestsTab.swift
-│       ├── ActivityCard.swift
-│       ├── OnboardingView.swift
-│       ├── NewActivitySheet.swift
-│       └── AddMemberSheet.swift
-└── ...
-```
+
+(See Xcode project for file structure)
+
 ## Architecture & State Management (Updated)
 
 ### Architecture
@@ -171,6 +128,13 @@ The architecture is based on MVVM with clearly separated views, view models, and
 
 ---
 
+## Hybrid persistence strategy:
+> This project uses a hybrid persistence strategy:
+> *   **Activities & Teams Data**: Persisted via **CSV files** in **Firebase Storage**.
+> *   **Notifications (FCM Tokens)**: Persisted via **Firestore**.
+> 
+> Firestore is strictly for token management. Do not use it for core data persistence.
+
 ## Requirements
 
 - macOS 26.0+
@@ -185,20 +149,14 @@ The architecture is based on MVVM with clearly separated views, view models, and
    - `valta` - Team member app
 3. Build and run (⌘R)
 
-## Current Status
-
-✅ **Phase 1 Complete** - Full UI implementation with mocked data
-- Manager app with complete onboarding, dashboard, and approval workflows
-- Team member app with activity management, team visibility, and activity log
-- Shared design system with StyleGuide and reusable components
-
-🔲 **Upcoming** - Data persistence, business logic, notifications, inter-app sync
-
 ## Documentation
 
 - `FULL_SPECIFICATION.md` - Complete product specification
 - `IMPLEMENTATION_PLAN.md` - Development roadmap and progress
+- `PUSH_NOTIFICATIONS_PLAN.md` - Push notification specific plan
+- `NOTIFICATION_SETUP_GUIDE.md` - Push notification setup guide
 - `PROJECT_COMP.md` - Detailed implementation summary
+- `PROJECT_RULES.md` - Detailed AI rules
 
 ## License
 

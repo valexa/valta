@@ -1,0 +1,47 @@
+{
+  "configurations" : [
+    {
+      "id" : "CC091CA3-ADC7-4E4C-8438-497D0AC6F15B",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "performanceAntipatternCheckerEnabled" : true,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:valta.xcodeproj",
+      "identifier" : "F5338F862EE16BA300619943",
+      "name" : "valta"
+    }
+  },
+  "testTargets" : [
+    {
+      "enabled" : false,
+      "target" : {
+        "containerPath" : "container:valta.xcodeproj",
+        "identifier" : "F51CBB3B2EE17C9000615E23",
+        "name" : "valtaManagerUITests"
+      }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:valta.xcodeproj",
+        "identifier" : "F5338F932EE16BA500619943",
+        "name" : "valtaTests"
+      }
+    },
+    {
+      "enabled" : false,
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:valta.xcodeproj",
+        "identifier" : "F5338F9D2EE16BA500619943",
+        "name" : "valtaUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

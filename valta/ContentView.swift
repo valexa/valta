@@ -22,12 +22,12 @@ struct ContentView: View {
             }
         }
         .environment(appState)
-        .onChange(of: appState.myPendingActivities.count) { _, newCount in
+        .onChange(of: appState.myActivities.allPending.count) { _, newCount in
             updateDockBadge(count: newCount)
         }
         .onAppear {
-            updateDockBadge(count: appState.myPendingActivities.count)
-            
+            updateDockBadge(count: appState.myActivities.allPending.count)
+
             // Register token if member is already selected
             if let member = appState.currentMember {
                 print("🔄 App launched with member: \(member.name) (\(member.email))")
@@ -82,7 +82,7 @@ struct MainTabView: View {
                 .tag(TeamMemberTab.log)
         }
         .tabViewStyle(.sidebarAdaptable)
-        .frame(minWidth: 1000, minHeight: 550)
+        .frame(minWidth: 1000, minHeight: 800)
     }
 }
 

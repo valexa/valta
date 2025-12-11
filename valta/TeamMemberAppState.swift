@@ -14,19 +14,18 @@ import SwiftUI
 import Observation
 
 @Observable
-final class TeamMemberAppState {
+final class TeamMemberAppState: BaseAppState, ActivityDataProviding {
+    
+    // MARK: - Constants
+    
+    static let selectedMemberEmailKey = "com.valta.selectedMemberEmail"
     
     // MARK: - Services
     
-    private let activityService = ActivityService()
     private let logService = ActivityLogService.shared
-    
-    // Reference to DataManager for live data
-    private let dataManager = DataManager.shared
     
     // MARK: - Data State
     
-    var hasCompletedOnboarding: Bool = false
     var currentMember: TeamMember? = nil
     
     // Activity log - derived from activities via service
@@ -39,24 +38,39 @@ final class TeamMemberAppState {
     var selectedTab: TeamMemberTab = .activities
     var showingCompletionSheet: Bool = false
     var selectedActivityForCompletion: Activity? = nil
-    var dataVersion: Int = 0
     
     // MARK: - Initialization
     
-    init() {
-        // Observe DataManager team changes
-        NotificationCenter.default.addObserver(forName: DataManager.dataChangedNotification, object: nil, queue: .main) { [weak self] _ in
-            self?.onTeamsChanged()
-        }
-    }
-    
-    deinit {
-        NotificationCenter.default.removeObserver(self)
+    override init() {
+        super.init()
     }
     
     // Callbacks from DataManager
-    func onTeamsChanged() {
-        dataVersion &+= 1
+    override func onTeamsChanged() {
+        super.onTeamsChanged()
+        // Try to restore saved member if not yet onboarded
+        if !hasCompletedOnboarding {
+            restoreSavedMember()
+        }
+    }
+    
+    /// Restores the selected member from UserDefaults if available
+    private func restoreSavedMember() {
+        guard let savedEmail = UserDefaults.standard.string(forKey: Self.selectedMemberEmailKey) else { return }
+        
+        // Find member with this email across all teams
+        for team in dataManager.teams {
+            if let member = team.members.first(where: { $0.email == savedEmail }) {
+                currentMember = member
+                hasCompletedOnboarding = true
+                
+                // Re-register FCM token for this member
+                Task {
+                    await NotificationService.shared.registerMemberEmail(member.email)
+                }
+                return
+            }
+        }
     }
     
     // MARK: - Data Accessors (delegate to DataManager)
@@ -72,91 +86,16 @@ final class TeamMemberAppState {
     
     // MARK: - Filters (computed via services)
     
-    /// Activity filter for all team activities
-    var teamFilter: ActivityFilter {
-        team.activityFilter
-    }
-    
-    /// Activity filter for current member's activities
-    var myFilter: ActivityFilter {
-        guard let member = currentMember else {
-            return ActivityFilter(activities: [])
-        }
-        return teamFilter.assignedTo(member)
-    }
-    
-    /// Activity stats for all team activities
-    var teamStats: ActivityStats {
-        ActivityStats(filter: teamFilter)
-    }
-    
     /// Activity stats for current member's activities
     var myStats: ActivityStats {
-        ActivityStats(filter: myFilter)
+        ActivityStats(activities: myActivities)
     }
     
-    // MARK: - My Activities (delegate to filter)
+    // MARK: - My Activities
     
     var myActivities: [Activity] {
-        myFilter.activities
-    }
-    
-    var myPendingActivities: [Activity] {
-        myFilter.teamMemberPending
-    }
-    
-    var myRunningActivities: [Activity] {
-        myFilter.running
-    }
-    
-    var myAwaitingApproval: [Activity] {
-        myFilter.managerPending
-    }
-    
-    var myCompletedActivities: [Activity] {
-        myFilter.completed
-    }
-    
-    var myCompletedAhead: [Activity] {
-        myFilter.completedAhead
-    }
-    
-    var myCompletedJIT: [Activity] {
-        myFilter.completedJIT
-    }
-    
-    var myCompletedOverrun: [Activity] {
-        myFilter.completedOverrun
-    }
-    
-    // MARK: - Team Activities (delegate to filter)
-    
-    var teamActiveActivities: [Activity] {
-        teamFilter.active
-    }
-    
-    var teamCompletedActivities: [Activity] {
-        teamFilter.completed
-    }
-    
-    var teamRunningActivities: [Activity] {
-        teamFilter.running
-    }
-    
-    var teamPendingActivities: [Activity] {
-        teamFilter.allPending
-    }
-    
-    var teamCompletedAhead: [Activity] {
-        teamFilter.completedAhead
-    }
-    
-    var teamCompletedJIT: [Activity] {
-        teamFilter.completedJIT
-    }
-    
-    var teamCompletedOverrun: [Activity] {
-        teamFilter.completedOverrun
+        guard let member = currentMember else { return [] }
+        return team.activities.assignedTo(member)
     }
     
     // MARK: - Stats (delegate to stats services)
@@ -166,14 +105,13 @@ final class TeamMemberAppState {
     var myJITCount: Int { myStats.completedJIT }
     var myOverrunCount: Int { myStats.completedOverrun }
     
-    var teamActiveCount: Int { teamStats.active }
-    var teamRunningCount: Int { teamStats.running }
-    var teamCompletedCount: Int { teamStats.completed }
-    var teamPendingCount: Int { teamStats.allPending }
-    var teamAheadCount: Int { teamStats.completedAhead }
-    var teamJITCount: Int { teamStats.completedJIT }
-    var teamOverrunCount: Int { teamStats.completedOverrun }
-    var pendingApprovalCount: Int { myStats.managerPending }
+    var teamActiveCount: Int { activeCount }
+    var teamRunningCount: Int { runningCount }
+    var teamCompletedCount: Int { completedCount }
+    var teamPendingCount: Int { allPendingCount }
+    var teamAheadCount: Int { completedAheadCount }
+    var teamJITCount: Int { completedJITCount }
+    var teamOverrunCount: Int { completedOverrunCount }
     
     // MARK: - Actions (delegate to service)
     
@@ -227,6 +165,9 @@ final class TeamMemberAppState {
     func selectMember(_ member: TeamMember) {
         currentMember = member
         hasCompletedOnboarding = true
+        
+        // Persist member email to UserDefaults
+        UserDefaults.standard.set(member.email, forKey: Self.selectedMemberEmailKey)
         
         // Update notification profile and link token
         Task {

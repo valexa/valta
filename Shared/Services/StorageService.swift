@@ -3,6 +3,7 @@
 //  Shared
 //
 //  Handles Firebase Storage operations for CSV files.
+//  Exposes provider for testing.
 //
 //  Created by vlad on 2025-12-04.
 //
@@ -48,7 +49,7 @@ struct FirebaseStorageProvider: StorageProvider {
 class StorageService: ObservableObject {
     static let shared = StorageService()
     
-    private let provider: StorageProvider
+    var provider: StorageProvider
     private let activitiesPath = "activities.csv"
     private let teamsPath = "teams.csv"
     

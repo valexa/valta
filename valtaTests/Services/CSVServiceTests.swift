@@ -7,14 +7,15 @@
 //  Created by vlad on 2025-12-05.
 //
 
-import XCTest
+import Testing
+import Foundation
 @testable import valta
 
-final class CSVServiceTests: XCTestCase {
-    var csvService: CSVService!
-    var mockMembers: [TeamMember]!
+struct CSVServiceTests {
+    var csvService: CSVService
+    var mockMembers: [TeamMember]
     
-    override func setUpWithError() throws {
+    init() {
         csvService = CSVService.shared
         mockMembers = [
             TeamMember(name: "Vlad Alexa", email: "vlad@example.com"),
@@ -22,14 +23,9 @@ final class CSVServiceTests: XCTestCase {
         ]
     }
     
-    override func tearDownWithError() throws {
-        csvService = nil
-        mockMembers = nil
-    }
-    
     // MARK: - Activity Parsing Tests
     
-    func testParseActivities_ValidCSV() throws {
+    @Test func testParseActivities_ValidCSV() {
         let csvString = """
         id,name,description,memberName,priority,status,outcome,createdAt,deadline,startedAt,completedAt
         96D53C78-1234-4567-8901-234567890001,Test Activity,Test Description,Vlad Alexa,p0,Running,,2025-12-04T20:00:00Z,2025-12-04T22:45:00Z,2025-12-04T21:00:00Z,
@@ -37,18 +33,18 @@ final class CSVServiceTests: XCTestCase {
         
         let activities = csvService.parseActivities(csvString: csvString, teamMembers: mockMembers)
         
-        XCTAssertEqual(activities.count, 1)
-        XCTAssertEqual(activities[0].name, "Test Activity")
-        XCTAssertEqual(activities[0].description, "Test Description")
-        XCTAssertEqual(activities[0].assignedMember.name, "Vlad Alexa")
-        XCTAssertEqual(activities[0].priority, .p0)
-        XCTAssertEqual(activities[0].status, .running)
-        XCTAssertNil(activities[0].outcome)
-        XCTAssertNotNil(activities[0].startedAt)
-        XCTAssertNil(activities[0].completedAt)
+        #expect(activities.count == 1)
+        #expect(activities[0].name == "Test Activity")
+        #expect(activities[0].description == "Test Description")
+        #expect(activities[0].assignedMember.name == "Vlad Alexa")
+        #expect(activities[0].priority == .p0)
+        #expect(activities[0].status == .running)
+        #expect(activities[0].outcome == nil)
+        #expect(activities[0].startedAt != nil)
+        #expect(activities[0].completedAt == nil)
     }
     
-    func testParseActivities_WithOutcome() throws {
+    @Test func testParseActivities_WithOutcome() {
         let csvString = """
         id,name,description,memberName,priority,status,outcome,createdAt,deadline,startedAt,completedAt
         96D53C78-1234-4567-8901-234567890001,Test Activity,Test Description,Vlad Alexa,p1,Completed,Ahead,2025-12-04T20:00:00Z,2025-12-04T22:45:00Z,2025-12-04T21:00:00Z,2025-12-04T22:00:00Z
@@ -56,21 +52,21 @@ final class CSVServiceTests: XCTestCase {
         
         let activities = csvService.parseActivities(csvString: csvString, teamMembers: mockMembers)
         
-        XCTAssertEqual(activities.count, 1)
-        XCTAssertEqual(activities[0].status, .completed)
-        XCTAssertEqual(activities[0].outcome, .ahead)
-        XCTAssertNotNil(activities[0].completedAt)
+        #expect(activities.count == 1)
+        #expect(activities[0].status == .completed)
+        #expect(activities[0].outcome == .ahead)
+        #expect(activities[0].completedAt != nil)
     }
     
-    func testParseActivities_EmptyCSV() throws {
+    @Test func testParseActivities_EmptyCSV() {
         let csvString = "id,name,description,memberName,priority,status,outcome,createdAt,deadline,startedAt,completedAt"
         
         let activities = csvService.parseActivities(csvString: csvString, teamMembers: mockMembers)
         
-        XCTAssertEqual(activities.count, 0)
+        #expect(activities.count == 0)
     }
     
-    func testParseActivities_SkipsMemberNotFound() throws {
+    @Test func testParseActivities_SkipsMemberNotFound() {
         let csvString = """
         id,name,description,memberName,priority,status,outcome,createdAt,deadline,startedAt,completedAt
         96D53C78-1234-4567-8901-234567890001,Test Activity,Test Description,Unknown Person,p0,Running,,2025-12-04T20:00:00Z,2025-12-04T22:45:00Z,2025-12-04T21:00:00Z,
@@ -78,12 +74,12 @@ final class CSVServiceTests: XCTestCase {
         
         let activities = csvService.parseActivities(csvString: csvString, teamMembers: mockMembers)
         
-        XCTAssertEqual(activities.count, 0)
+        #expect(activities.count == 0)
     }
     
     // MARK: - Activity Serialization Tests
     
-    func testSerializeActivities_Basic() throws {
+    @Test func testSerializeActivities_Basic() {
         let activity = Activity(
             name: "Test Activity",
             description: "Test Description",
@@ -95,14 +91,14 @@ final class CSVServiceTests: XCTestCase {
         
         let csvString = csvService.serializeActivities([activity])
         
-        XCTAssertTrue(csvString.contains("Test Activity"))
-        XCTAssertTrue(csvString.contains("Test Description"))
-        XCTAssertTrue(csvString.contains("Vlad Alexa"))
-        XCTAssertTrue(csvString.contains("p0"))
-        XCTAssertTrue(csvString.contains("Running"))
+        #expect(csvString.contains("Test Activity"))
+        #expect(csvString.contains("Test Description"))
+        #expect(csvString.contains("Vlad Alexa"))
+        #expect(csvString.contains("p0"))
+        #expect(csvString.contains("Running"))
     }
     
-    func testSerializeActivities_EscapesCommas() throws {
+    @Test func testSerializeActivities_EscapesCommas() {
         let activity = Activity(
             name: "Test, with comma",
             description: "Description, also with comma",
@@ -114,13 +110,13 @@ final class CSVServiceTests: XCTestCase {
         
         let csvString = csvService.serializeActivities([activity])
         
-        XCTAssertTrue(csvString.contains("\"Test, with comma\""))
-        XCTAssertTrue(csvString.contains("\"Description, also with comma\""))
+        #expect(csvString.contains("\"Test, with comma\""))
+        #expect(csvString.contains("\"Description, also with comma\""))
     }
     
     // MARK: - Team Parsing Tests
     
-    func testParseTeams_ValidCSV() throws {
+    @Test func testParseTeams_ValidCSV() {
         let csvString = """
         name,team,email
         Vlad Alexa,Coal Miners,vlad@example.com
@@ -129,23 +125,23 @@ final class CSVServiceTests: XCTestCase {
         
         let teams = csvService.parseTeams(csvString: csvString)
         
-        XCTAssertEqual(teams.count, 2)
-        XCTAssertEqual(teams[0].teamName, "Coal Miners")
-        XCTAssertEqual(teams[0].member.name, "Vlad Alexa")
-        XCTAssertEqual(teams[0].member.email, "vlad@example.com")
+        #expect(teams.count == 2)
+        #expect(teams[0].teamName == "Coal Miners")
+        #expect(teams[0].member.name == "Vlad Alexa")
+        #expect(teams[0].member.email == "vlad@example.com")
     }
     
-    func testParseTeams_EmptyCSV() throws {
+    @Test func testParseTeams_EmptyCSV() {
         let csvString = "name,team,email"
         
         let teams = csvService.parseTeams(csvString: csvString)
         
-        XCTAssertEqual(teams.count, 0)
+        #expect(teams.count == 0)
     }
     
     // MARK: - Round-Trip Tests
     
-    func testRoundTrip_SerializeAndParse() throws {
+    @Test func testRoundTrip_SerializeAndParse() {
         let originalActivities = [
             Activity(
                 name: "Activity 1",
@@ -170,15 +166,15 @@ final class CSVServiceTests: XCTestCase {
         let csvString = csvService.serializeActivities(originalActivities)
         let parsedActivities = csvService.parseActivities(csvString: csvString, teamMembers: mockMembers)
         
-        XCTAssertEqual(parsedActivities.count, originalActivities.count)
-        XCTAssertEqual(parsedActivities[0].name, originalActivities[0].name)
-        XCTAssertEqual(parsedActivities[0].status, originalActivities[0].status)
-        XCTAssertEqual(parsedActivities[1].outcome, originalActivities[1].outcome)
+        #expect(parsedActivities.count == originalActivities.count)
+        #expect(parsedActivities[0].name == originalActivities[0].name)
+        #expect(parsedActivities[0].status == originalActivities[0].status)
+        #expect(parsedActivities[1].outcome == originalActivities[1].outcome)
     }
     
     // MARK: - CSV Format Validation Tests
     
-    func testActivitiesCSV_HeaderFormat() throws {
+    @Test func testActivitiesCSV_HeaderFormat() {
         // This test ensures the header format matches the documented schema
         let expectedHeader = "id,name,description,memberName,priority,status,outcome,createdAt,deadline,startedAt,completedAt,manager"
         
@@ -195,11 +191,11 @@ final class CSVServiceTests: XCTestCase {
         let csv = csvService.serializeActivities([activity])
         let lines = csv.components(separatedBy: .newlines)
         
-        XCTAssertGreaterThan(lines.count, 0, "CSV should have at least a header")
-        XCTAssertEqual(lines[0], expectedHeader, "Activities CSV header must match documented format")
+        #expect(lines.count > 0, "CSV should have at least a header")
+        #expect(lines[0] == expectedHeader, "Activities CSV header must match documented format")
     }
     
-    func testTeamsCSV_HeaderFormat() throws {
+    @Test func testTeamsCSV_HeaderFormat() {
         // This test ensures teams parsing expects the correct column order
         let csvString = """
         name,team,email,manager
@@ -208,14 +204,14 @@ final class CSVServiceTests: XCTestCase {
         
         let teams = csvService.parseTeams(csvString: csvString)
         
-        XCTAssertEqual(teams.count, 1)
-        XCTAssertEqual(teams[0].member.name, "Vlad Alexa")
-        XCTAssertEqual(teams[0].teamName, "Coal Miners")
-        XCTAssertEqual(teams[0].member.email, "vlad@example.com")
-        XCTAssertEqual(teams[0].managerEmail, "manager@example.com", "Manager email should be parsed from 4th column")
+        #expect(teams.count == 1)
+        #expect(teams[0].member.name == "Vlad Alexa")
+        #expect(teams[0].teamName == "Coal Miners")
+        #expect(teams[0].member.email == "vlad@example.com")
+        #expect(teams[0].managerEmail == "manager@example.com", "Manager email should be parsed from 4th column")
     }
     
-    func testActivitiesCSV_ManagerEmailColumn() throws {
+    @Test func testActivitiesCSV_ManagerEmailColumn() {
         // Verify manager email is written and read from column 12 (index 11)
         let activity = Activity(
             name: "Test Activity",
@@ -231,16 +227,16 @@ final class CSVServiceTests: XCTestCase {
         let lines = csvString.components(separatedBy: .newlines)
         
         // Parse the data line (line 1, since line 0 is header)
-        XCTAssertGreaterThan(lines.count, 1, "CSV should have header and data")
+        #expect(lines.count > 1, "CSV should have header and data")
         let dataLine = lines[1]
         let columns = dataLine.components(separatedBy: ",")
         
         // Column 11 (12th column, 0-indexed) should be manager email
-        XCTAssertGreaterThan(columns.count, 11, "CSV should have at least 12 columns")
-        XCTAssertEqual(columns[11], "test.manager@example.com", "Manager email should be in column 12")
+        #expect(columns.count > 11, "CSV should have at least 12 columns")
+        #expect(columns[11] == "test.manager@example.com", "Manager email should be in column 12")
     }
     
-    func testActivitiesCSV_RequiredColumnsOrder() throws {
+    @Test func testActivitiesCSV_RequiredColumnsOrder() {
         // Verify all columns are in the correct order
         let activity = Activity(
             id: UUID(uuidString: "12345678-1234-1234-1234-123456789ABC")!,
@@ -262,17 +258,17 @@ final class CSVServiceTests: XCTestCase {
         let dataLine = lines[1]
         
         // Verify column positions
-        XCTAssertTrue(dataLine.starts(with: "12345678-1234-1234-1234-123456789ABC"), "Column 0: id")
-        XCTAssertTrue(dataLine.contains("Test Activity"), "Column 1: name")
-        XCTAssertTrue(dataLine.contains("Test Description"), "Column 2: description")
-        XCTAssertTrue(dataLine.contains("Vlad Alexa"), "Column 3: memberName")
-        XCTAssertTrue(dataLine.contains("p2"), "Column 4: priority")
-        XCTAssertTrue(dataLine.contains("Completed"), "Column 5: status")
-        XCTAssertTrue(dataLine.contains("Ahead"), "Column 6: outcome")
-        XCTAssertTrue(dataLine.hasSuffix("boss@example.com"), "Column 11: manager (last column)")
+        #expect(dataLine.starts(with: "12345678-1234-1234-1234-123456789ABC"), "Column 0: id")
+        #expect(dataLine.contains("Test Activity"), "Column 1: name")
+        #expect(dataLine.contains("Test Description"), "Column 2: description")
+        #expect(dataLine.contains("Vlad Alexa"), "Column 3: memberName")
+        #expect(dataLine.contains("p2"), "Column 4: priority")
+        #expect(dataLine.contains("Completed"), "Column 5: status")
+        #expect(dataLine.contains("Ahead"), "Column 6: outcome")
+        #expect(dataLine.hasSuffix("boss@example.com"), "Column 11: manager (last column)")
     }
     
-    func testTeamsCSV_WithoutManagerColumn() throws {
+    @Test func testTeamsCSV_WithoutManagerColumn() {
         // Verify backward compatibility: teams CSV without manager column should still parse
         let csvString = """
         name,team,email
@@ -281,12 +277,12 @@ final class CSVServiceTests: XCTestCase {
         
         let teams = csvService.parseTeams(csvString: csvString)
         
-        XCTAssertEqual(teams.count, 1)
-        XCTAssertEqual(teams[0].member.name, "Vlad Alexa")
-        XCTAssertNil(teams[0].managerEmail, "Manager email should be nil when column is absent")
+        #expect(teams.count == 1)
+        #expect(teams[0].member.name == "Vlad Alexa")
+        #expect(teams[0].managerEmail == nil, "Manager email should be nil when column is absent")
     }
     
-    func testActivitiesCSV_ColumnCountValidation() throws {
+    @Test func testActivitiesCSV_ColumnCountValidation() {
         // Ensure minimum 9 columns are required (up to deadline)
         let validCSV = """
         id,name,description,memberName,priority,status,outcome,createdAt,deadline
@@ -294,7 +290,7 @@ final class CSVServiceTests: XCTestCase {
         """
         
         let activities = csvService.parseActivities(csvString: validCSV, teamMembers: mockMembers)
-        XCTAssertEqual(activities.count, 1, "Should parse activity with minimum 9 columns")
+        #expect(activities.count == 1, "Should parse activity with minimum 9 columns")
         
         let invalidCSV = """
         id,name,description,memberName,priority,status,outcome,createdAt
@@ -302,6 +298,6 @@ final class CSVServiceTests: XCTestCase {
         """
         
         let noActivities = csvService.parseActivities(csvString: invalidCSV, teamMembers: mockMembers)
-        XCTAssertEqual(noActivities.count, 0, "Should skip rows with less than 9 columns")
+        #expect(noActivities.count == 0, "Should skip rows with less than 9 columns")
     }
 }

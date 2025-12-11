@@ -26,6 +26,12 @@ final class NotificationService: NSObject {
     var isPermissionGranted: Bool = false
     var notificationPermissionStatus: UNAuthorizationStatus = .notDetermined
     
+    /// Returns true when running in a unit test environment.
+    /// Auto-detects by checking for XCTestConfigurationFilePath environment variable.
+    var isTestMode: Bool {
+        ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
+    }
+    
     // Track the member email we are currently registered as (in addition to Auth UID)
     private var registeredMemberEmail: String?
     
@@ -49,7 +55,7 @@ final class NotificationService: NSObject {
             }
             
             if granted {
-                await registerForRemoteNotifications()
+                registerForRemoteNotifications()
             }
             
             // Update permission status
@@ -77,11 +83,11 @@ final class NotificationService: NSObject {
     // MARK: - FCM Token Management
     
     /// Registers for remote notifications (call this after permission is granted)
-    func registerForRemoteNotifications() async {
+    func registerForRemoteNotifications() {
         #if os(iOS) || os(visionOS) || os(tvOS)
-        await UIApplication.shared.registerForRemoteNotifications()
+        UIApplication.shared.registerForRemoteNotifications()
         #elseif os(macOS)
-        await NSApplication.shared.registerForRemoteNotifications()
+        NSApplication.shared.registerForRemoteNotifications()
         #endif
     }
     
@@ -104,6 +110,7 @@ final class NotificationService: NSObject {
 
     /// Uploads FCM token to Firestore/backend
     private func uploadFCMToken(_ token: String, userId: String) async {
+        guard !isTestMode else { return }  // Skip Firestore writes during tests
         do {
             try await FirestoreService.shared.saveFCMToken(token, for: userId)
         } catch {
@@ -159,12 +166,24 @@ final class NotificationService: NSObject {
     
     /// Updates the member profile (name) in Firestore for notification lookup
     func updateMemberProfile(name: String) async {
+        guard !isTestMode else { return }  // Skip Firestore writes during tests
         guard let memberEmail = self.registeredMemberEmail else { return }
         
         do {
             try await FirestoreService.shared.updateMemberName(name, for: memberEmail)
         } catch {
             print("❌ Error updating member profile: \(error.localizedDescription)")
+        }
+    }
+    
+    /// Fetches all member emails that have FCM tokens registered (indicating they are logged in elsewhere)
+    func getLoggedInMemberEmails() async -> Set<String> {
+        do {
+            let emails = try await FirestoreService.shared.getAllFCMTokenEmails()
+            return Set(emails)
+        } catch {
+            print("❌ Error fetching logged-in member emails: \(error.localizedDescription)")
+            return []
         }
     }
 }
@@ -196,7 +215,18 @@ import AppKit
 /// Helper class for Firestore operations (FCM Tokens only)
 class FirestoreService {
     static let shared = FirestoreService()
-    private let db = Firestore.firestore()
+    private let db: Firestore
+    
+    private init() {
+        let settings = FirestoreSettings()
+        // Use in-memory cache instead of persistent disk cache.
+        // This avoids file system permission issues and ensures fresh data on each app launch.
+        // FCM token data is small and quickly fetched, so persistent caching is unnecessary.
+        settings.cacheSettings = MemoryCacheSettings()
+        let firestore = Firestore.firestore()
+        firestore.settings = settings
+        self.db = firestore
+    }
     
     // MARK: - FCM Tokens
     
@@ -220,5 +250,11 @@ class FirestoreService {
     
     func updateMemberName(_ name: String, for userId: String) async throws {
         try await db.collection("fcmTokens").document(userId).setData(["memberName": name], merge: true)
+    }
+    
+    /// Returns all document IDs (member emails) from the fcmTokens collection
+    func getAllFCMTokenEmails() async throws -> [String] {
+        let snapshot = try await db.collection("fcmTokens").getDocuments()
+        return snapshot.documents.map { $0.documentID }
     }
 }

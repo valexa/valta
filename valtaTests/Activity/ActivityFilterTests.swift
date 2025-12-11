@@ -7,15 +7,16 @@
 //  Created by vlad on 2025-12-05.
 //
 
-import XCTest
+import Testing
+import Foundation
 @testable import valta
 
-final class ActivityFilterTests: XCTestCase {
-    var mockActivities: [Activity]!
-    var mockMember1: TeamMember!
-    var mockMember2: TeamMember!
+struct ActivityFilterTests {
+    var mockActivities: [Activity]
+    var mockMember1: TeamMember
+    var mockMember2: TeamMember
     
-    override func setUpWithError() throws {
+    init() {
         mockMember1 = TeamMember(name: "User 1", email: "user1@example.com")
         mockMember2 = TeamMember(name: "User 2", email: "user2@example.com")
         
@@ -65,81 +66,75 @@ final class ActivityFilterTests: XCTestCase {
         ]
     }
     
-    override func tearDownWithError() throws {
-        mockActivities = nil
-        mockMember1 = nil
-        mockMember2 = nil
-    }
-    
-    func testRunning() throws {
+    @Test func testRunning() {
         let filter = ActivityFilter(activities: mockActivities)
         
-        XCTAssertEqual(filter.running.count, 1)
-        XCTAssertEqual(filter.running[0].name, "Running Activity")
+        #expect(filter.running.count == 1)
+        #expect(filter.running[0].name == "Running Activity")
     }
     
-    func testTeamMemberPending() throws {
+    @Test func testTeamMemberPending() {
         let filter = ActivityFilter(activities: mockActivities)
         
-        XCTAssertEqual(filter.teamMemberPending.count, 1)
-        XCTAssertEqual(filter.teamMemberPending[0].name, "Pending Activity")
+        #expect(filter.teamMemberPending.count == 1)
+        #expect(filter.teamMemberPending[0].name == "Pending Activity")
     }
     
-    func testManagerPending() throws {
+    @Test func testManagerPending() {
         let filter = ActivityFilter(activities: mockActivities)
         
-        XCTAssertEqual(filter.managerPending.count, 1)
-        XCTAssertEqual(filter.managerPending[0].name, "Manager Pending Activity")
+        #expect(filter.managerPending.count == 1)
+        #expect(filter.managerPending[0].name == "Manager Pending Activity")
     }
     
-    func testCompleted() throws {
+    @Test func testCompleted() {
         let filter = ActivityFilter(activities: mockActivities)
         
-        XCTAssertEqual(filter.completed.count, 1)
-        XCTAssertEqual(filter.completed[0].name, "Completed Activity")
+        #expect(filter.completed.count == 1)
+        #expect(filter.completed[0].name == "Completed Activity")
     }
     
-    func testCanceled() throws {
+    @Test func testCanceled() {
         let filter = ActivityFilter(activities: mockActivities)
         
-        XCTAssertEqual(filter.canceled.count, 1)
-        XCTAssertEqual(filter.canceled[0].name, "Canceled Activity")
+        #expect(filter.canceled.count == 1)
+        #expect(filter.canceled[0].name == "Canceled Activity")
     }
     
-    func testActive() throws {
+    @Test func testActive() {
         let filter = ActivityFilter(activities: mockActivities)
         
         // Active = running + teamMemberPending + managerPending
-        XCTAssertEqual(filter.active.count, 3)
+        #expect(filter.active.count == 3)
     }
     
-    func testAllPending() throws {
+    @Test func testAllPending() {
         let filter = ActivityFilter(activities: mockActivities)
         
         // All pending = teamMemberPending + managerPending
-        XCTAssertEqual(filter.allPending.count, 2)
+        #expect(filter.allPending.count == 2)
     }
     
-    func testCompletedAhead() throws {
+    @Test func testCompletedAhead() {
         let filter = ActivityFilter(activities: mockActivities)
         
-        XCTAssertEqual(filter.completedAhead.count, 1)
-        XCTAssertEqual(filter.completedAhead[0].outcome, .ahead)
+        #expect(filter.completedAhead.count == 1)
+        #expect(filter.completedAhead[0].outcome == .ahead)
     }
     
-    func testAssignedTo() throws {
+    @Test func testAssignedTo() {
         let filter = ActivityFilter(activities: mockActivities)
         let member1Filter = filter.assignedTo(mockMember1)
         
-        XCTAssertEqual(member1Filter.activities.count, 3)
-        XCTAssertTrue(member1Filter.activities.allSatisfy { $0.assignedMember.id == mockMember1.id })
+        #expect(member1Filter.activities.count == 3)
+        #expect(member1Filter.activities.allSatisfy { $0.assignedMember.id == mockMember1.id })
     }
     
-    func testByPriority() throws {
+    @Test func testByPriority() {
         let filter = ActivityFilter(activities: mockActivities)
         let p0Activities = filter.byPriority(.p0)
         
-        XCTAssertEqual(p0Activities.count, 2)
-        XCTAssertTrue(p0Activities.allSatisfy { $0.priority == .p0 })
+        #expect(p0Activities.count == 2)
+        #expect(p0Activities.allSatisfy { $0.priority == .p0 })
     }
 }

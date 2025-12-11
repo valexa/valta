@@ -7,18 +7,17 @@
 //  Created by vlad on 2025-12-08.
 //
 
-import XCTest
+import Testing
+import Foundation
 @testable import valta
 
-final class ArrayExtensionsTests: XCTestCase {
+struct ArrayExtensionsTests {
     // Test Data
-    var testMembers: [TeamMember]!
-    var testActivities: [Activity]!
-    var testTeams: [Team]!
+    var testMembers: [TeamMember]
+    var testActivities: [Activity]
+    var testTeams: [Team]
     
-    override func setUp() {
-        super.setUp()
-        
+    init() {
         // Create test members
         testMembers = [
             TeamMember(id: UUID(), name: "Alice", email: "alice@example.com"),
@@ -71,185 +70,178 @@ final class ArrayExtensionsTests: XCTestCase {
         ]
     }
     
-    override func tearDown() {
-        testMembers = nil
-        testActivities = nil
-        testTeams = nil
-        super.tearDown()
-    }
-    
     // MARK: - Team Array Tests
     
-    func testFindTeam_ById_Found() {
+    @Test func testFindTeam_ById_Found() {
         let targetId = testTeams[0].id
         let result = testTeams.findTeam(byId: targetId)
         
-        XCTAssertNotNil(result)
-        XCTAssertEqual(result?.id, targetId)
-        XCTAssertEqual(result?.name, "Team Alpha")
+        #expect(result != nil)
+        #expect(result?.id == targetId)
+        #expect(result?.name == "Team Alpha")
     }
     
-    func testFindTeam_ById_NotFound() {
+    @Test func testFindTeam_ById_NotFound() {
         let nonExistentId = UUID()
         let result = testTeams.findTeam(byId: nonExistentId)
         
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
     
-    func testFindTeamIndex_ById_Found() {
+    @Test func testFindTeamIndex_ById_Found() {
         let targetId = testTeams[1].id
         let result = testTeams.findTeamIndex(byId: targetId)
         
-        XCTAssertNotNil(result)
-        XCTAssertEqual(result, 1)
+        #expect(result != nil)
+        #expect(result == 1)
     }
     
-    func testFindTeamIndex_ById_NotFound() {
+    @Test func testFindTeamIndex_ById_NotFound() {
         let nonExistentId = UUID()
         let result = testTeams.findTeamIndex(byId: nonExistentId)
         
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
     
-    func testFindTeam_ContainingActivityId_Found() {
+    @Test func testFindTeam_ContainingActivityId_Found() {
         let targetActivityId = testActivities[1].id
         let result = testTeams.findTeam(containingActivityId: targetActivityId)
         
-        XCTAssertNotNil(result)
-        XCTAssertEqual(result?.name, "Team Beta")
-        XCTAssertTrue(result!.activities.contains(where: { $0.id == targetActivityId }))
+        #expect(result != nil)
+        #expect(result?.name == "Team Beta")
+        #expect(result?.activities.contains(where: { $0.id == targetActivityId }) == true)
     }
     
-    func testFindTeam_ContainingActivityId_NotFound() {
+    @Test func testFindTeam_ContainingActivityId_NotFound() {
         let nonExistentActivityId = UUID()
         let result = testTeams.findTeam(containingActivityId: nonExistentActivityId)
         
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
     
-    func testFindTeamIndex_ContainingActivityId_Found() {
+    @Test func testFindTeamIndex_ContainingActivityId_Found() {
         let targetActivityId = testActivities[0].id
         let result = testTeams.findTeamIndex(containingActivityId: targetActivityId)
         
-        XCTAssertNotNil(result)
-        XCTAssertEqual(result, 0)
+        #expect(result != nil)
+        #expect(result == 0)
     }
     
-    func testFindTeamIndex_ContainingActivityId_NotFound() {
+    @Test func testFindTeamIndex_ContainingActivityId_NotFound() {
         let nonExistentActivityId = UUID()
         let result = testTeams.findTeamIndex(containingActivityId: nonExistentActivityId)
         
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
     
-    func testFindTeam_EmptyArray() {
+    @Test func testFindTeam_EmptyArray() {
         let emptyTeams: [Team] = []
         let result = emptyTeams.findTeam(byId: UUID())
         
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
     
-    func testFindTeam_ContainingMemberId_Found() {
+    @Test func testFindTeam_ContainingMemberId_Found() {
         let targetMemberId = testMembers[2].id
         let result = testTeams.findTeam(containingMemberId: targetMemberId)
         
-        XCTAssertNotNil(result)
-        XCTAssertEqual(result?.name, "Team Beta")
-        XCTAssertTrue(result!.members.contains(where: { $0.id == targetMemberId }))
+        #expect(result != nil)
+        #expect(result?.name == "Team Beta")
+        #expect(result?.members.contains(where: { $0.id == targetMemberId }) == true)
     }
     
-    func testFindTeam_ContainingMemberId_NotFound() {
+    @Test func testFindTeam_ContainingMemberId_NotFound() {
         let nonExistentMemberId = UUID()
         let result = testTeams.findTeam(containingMemberId: nonExistentMemberId)
         
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
     
     // MARK: - Activity Array Tests
     
-    func testFindActivity_ById_Found() {
+    @Test func testFindActivity_ById_Found() {
         let targetId = testActivities[1].id
         let result = testActivities.findActivity(byId: targetId)
         
-        XCTAssertNotNil(result)
-        XCTAssertEqual(result?.id, targetId)
-        XCTAssertEqual(result?.name, "Activity 2")
+        #expect(result != nil)
+        #expect(result?.id == targetId)
+        #expect(result?.name == "Activity 2")
     }
     
-    func testFindActivity_ById_NotFound() {
+    @Test func testFindActivity_ById_NotFound() {
         let nonExistentId = UUID()
         let result = testActivities.findActivity(byId: nonExistentId)
         
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
     
-    func testFindActivityIndex_ById_Found() {
+    @Test func testFindActivityIndex_ById_Found() {
         let targetId = testActivities[2].id
         let result = testActivities.findActivityIndex(byId: targetId)
         
-        XCTAssertNotNil(result)
-        XCTAssertEqual(result, 2)
+        #expect(result != nil)
+        #expect(result == 2)
     }
     
-    func testFindActivityIndex_ById_NotFound() {
+    @Test func testFindActivityIndex_ById_NotFound() {
         let nonExistentId = UUID()
         let result = testActivities.findActivityIndex(byId: nonExistentId)
         
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
     
-    func testFindActivity_EmptyArray() {
+    @Test func testFindActivity_EmptyArray() {
         let emptyActivities: [Activity] = []
         let result = emptyActivities.findActivity(byId: UUID())
         
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
     
     // MARK: - TeamMember Array Tests
     
-    func testFindMember_ByName_Found() {
+    @Test func testFindMember_ByName_Found() {
         let result = testMembers.findMember(byName: "Bob")
         
-        XCTAssertNotNil(result)
-        XCTAssertEqual(result?.name, "Bob")
-        XCTAssertEqual(result?.email, "bob@example.com")
+        #expect(result != nil)
+        #expect(result?.name == "Bob")
+        #expect(result?.email == "bob@example.com")
     }
     
-    func testFindMember_ByName_NotFound() {
+    @Test func testFindMember_ByName_NotFound() {
         let result = testMembers.findMember(byName: "NonExistent")
         
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
     
-    func testFindMember_ByName_CaseSensitive() {
+    @Test func testFindMember_ByName_CaseSensitive() {
         let result = testMembers.findMember(byName: "alice") // lowercase
         
-        XCTAssertNil(result) // Should not find "Alice" with lowercase
+        #expect(result == nil) // Should not find "Alice" with lowercase
     }
     
-    func testFindMemberIndex_ByName_Found() {
+    @Test func testFindMemberIndex_ByName_Found() {
         let result = testMembers.findMemberIndex(byName: "Charlie")
         
-        XCTAssertNotNil(result)
-        XCTAssertEqual(result, 2)
+        #expect(result != nil)
+        #expect(result == 2)
     }
     
-    func testFindMemberIndex_ByName_NotFound() {
+    @Test func testFindMemberIndex_ByName_NotFound() {
         let result = testMembers.findMemberIndex(byName: "NonExistent")
         
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
     
-    func testFindMember_EmptyArray() {
+    @Test func testFindMember_EmptyArray() {
         let emptyMembers: [TeamMember] = []
         let result = emptyMembers.findMember(byName: "Test")
         
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
     
     // MARK: - Edge Cases
     
-    func testMultipleTeamsWithSameActivity() {
+    @Test func testMultipleTeamsWithSameActivity() {
         // Edge case: same activity ID shouldn't exist in multiple teams,
         // but test that find returns the first match
         let sharedActivity = testActivities[0]
@@ -260,11 +252,11 @@ final class ArrayExtensionsTests: XCTestCase {
         
         let result = teams.findTeam(containingActivityId: sharedActivity.id)
         
-        XCTAssertNotNil(result)
-        XCTAssertEqual(result?.name, "Team 1") // Should find first match
+        #expect(result != nil)
+        #expect(result?.name == "Team 1") // Should find first match
     }
     
-    func testDuplicateMemberNames() {
+    @Test func testDuplicateMemberNames() {
         // Edge case: duplicate names should return first match
         let members = [
             TeamMember(id: UUID(), name: "John", email: "john1@example.com"),
@@ -273,7 +265,8 @@ final class ArrayExtensionsTests: XCTestCase {
         
         let result = members.findMember(byName: "John")
         
-        XCTAssertNotNil(result)
-        XCTAssertEqual(result?.email, "john1@example.com") // Should find first
+        #expect(result != nil)
+        #expect(result?.email == "john1@example.com") // Should find first
     }
 }
+

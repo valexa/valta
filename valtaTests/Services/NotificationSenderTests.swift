@@ -7,7 +7,8 @@
 //  Created by vlad on 2025-12-05.
 //
 
-import XCTest
+import Testing
+import Foundation
 @testable import valta
 
 // MARK: - Mocks
@@ -33,32 +34,24 @@ class MockAuthChecker: AuthChecking {
 // MARK: - Tests
 
 @MainActor
-final class NotificationSenderTests: XCTestCase {
-    var sender: NotificationSender!
-    var mockProvider: MockCloudFunctionProvider!
-    var mockAuth: MockAuthChecker!
+struct NotificationSenderTests {
+    var sender: NotificationSender
+    var mockProvider: MockCloudFunctionProvider
+    var mockAuth: MockAuthChecker
     
     // Test Data
     let testMember = TeamMember(id: UUID(), name: "Test User", email: "test@example.com")
     let testTeam = Team(id: UUID(), name: "Test Team", members: [])
     
-    override func setUp() {
-        super.setUp()
+    init() {
         mockProvider = MockCloudFunctionProvider()
         mockAuth = MockAuthChecker()
         sender = NotificationSender(functionProvider: mockProvider, authChecker: mockAuth)
     }
     
-    override func tearDown() {
-        sender = nil
-        mockProvider = nil
-        mockAuth = nil
-        super.tearDown()
-    }
-    
     // MARK: - Activity Assigned Tests
     
-    func testSendActivityAssigned_FormatsMessageCorrectly() async throws {
+    @Test func testSendActivityAssigned_FormatsMessageCorrectly() async throws {
         // Given
         let createdAt = Date(timeIntervalSince1970: 1733400000) // 2024-12-05 12:00:00 UTC
         let deadline = Date(timeIntervalSince1970: 1733486400) // 2024-12-06 12:00:00 UTC
@@ -81,32 +74,29 @@ final class NotificationSenderTests: XCTestCase {
         )
         
         // Then
-        XCTAssertEqual(mockProvider.calls.count, 1)
-        let call = mockProvider.calls[0]
-        XCTAssertEqual(call.name, "sendActivityAssignedNotification")
+        #expect(mockProvider.calls.count == 1)
         
-        let data = call.data
-        XCTAssertEqual(data["type"] as? String, "activity_assigned")
-        XCTAssertEqual(data["activityId"] as? String, activity.id.uuidString)
-        XCTAssertEqual(data["assignedMemberEmail"] as? String, testMember.email)
-        XCTAssertEqual(data["assignedMemberName"] as? String, testMember.name)
-        XCTAssertEqual(data["priority"] as? String, "P0")
-        XCTAssertEqual(data["activityName"] as? String, "Test Activity")
-        
-        let message = data["message"] as? String
-        XCTAssertNotNil(message)
-        XCTAssertTrue(message!.contains("Manager Bob"))
-        // Implementation check: The implementation builds message: "Manager Bob has assigned P0 activity on ... to you"
-        // It does NOT currently include the activity name in the message string in NotificationSender.swift L75.
-        // Let's verify what the implementation actually does.
-        // Implementation: "\(managerName) has assigned \(activity.priority.shortName) activity on \(createdDate) with deadline \(deadlineDate) to you, please start the activity."
-        XCTAssertTrue(message!.contains("P0"))
-        XCTAssertTrue(message!.contains("Manager Bob"))
+        if let call = mockProvider.calls.first {
+            #expect(call.name == "sendActivityAssignedNotification")
+            
+            let data = call.data
+            #expect(data["type"] as? String == "activity_assigned")
+            #expect(data["activityId"] as? String == activity.id.uuidString)
+            #expect(data["assignedMemberEmail"] as? String == testMember.email)
+            #expect(data["assignedMemberName"] as? String == testMember.name)
+            #expect(data["priority"] as? String == "P0")
+            #expect(data["activityName"] as? String == "Test Activity")
+            
+            let message = data["message"] as? String
+            #expect(message != nil)
+            #expect(message?.contains("Manager Bob") == true)
+            #expect(message?.contains("P0") == true)
+        }
     }
     
     // MARK: - Activity Started Tests
     
-    func testSendActivityStarted_WithStartedAt() async throws {
+    @Test func testSendActivityStarted_WithStartedAt() async throws {
         // Given
         let startedAt = Date(timeIntervalSince1970: 1733403600) // 13:00
         let activity = Activity(
@@ -123,25 +113,26 @@ final class NotificationSenderTests: XCTestCase {
         try await sender.sendActivityStartedNotification(activity: activity, team: testTeam)
         
         // Then
-        let call = mockProvider.calls[0]
-        XCTAssertEqual(call.name, "sendActivityStartedNotification")
+        let call = try #require(mockProvider.calls.first, "Expected a call to cloud function")
+        
+        #expect(call.name == "sendActivityStartedNotification")
         
         let data = call.data
-        XCTAssertEqual(data["type"] as? String, "activity_started")
-        XCTAssertEqual(data["activityId"] as? String, activity.id.uuidString)
-        XCTAssertEqual(data["teamId"] as? String, testTeam.id.uuidString)
-        XCTAssertEqual(data["memberName"] as? String, testMember.name)
-        XCTAssertEqual(data["priority"] as? String, "P1")
-        XCTAssertEqual(data["activityName"] as? String, "Test Task")
+        #expect(data["type"] as? String == "activity_started")
+        #expect(data["activityId"] as? String == activity.id.uuidString)
+        #expect(data["teamId"] as? String == testTeam.id.uuidString)
+        #expect(data["memberName"] as? String == testMember.name)
+        #expect(data["priority"] as? String == "P1")
+        #expect(data["activityName"] as? String == "Test Task")
         
         let message = data["message"] as? String
-        XCTAssertTrue(message!.contains("Test User"))
-        XCTAssertTrue(message!.contains("P1"))
+        #expect(message?.contains("Test User") == true)
+        #expect(message?.contains("P1") == true)
     }
     
     // MARK: - Completion Requested Tests
     
-    func testSendCompletionRequested_WithManagerEmail() async throws {
+    @Test func testSendCompletionRequested_WithManagerEmail() async throws {
         // Given
         let managerEmail = "manager@example.com"
         let activity = Activity(
@@ -158,22 +149,23 @@ final class NotificationSenderTests: XCTestCase {
         try await sender.sendCompletionRequestedNotification(activity: activity)
         
         // Then
-        let call = mockProvider.calls[0]
-        XCTAssertEqual(call.name, "sendCompletionRequestedNotification")
+        let call = try #require(mockProvider.calls.first, "Expected a call to cloud function")
+
+        #expect(call.name == "sendCompletionRequestedNotification")
         
         let data = call.data
-        XCTAssertEqual(data["type"] as? String, "completion_requested")
-        XCTAssertEqual(data["activityId"] as? String, activity.id.uuidString)
-        XCTAssertEqual(data["managerEmail"] as? String, managerEmail) // Check managerEmail is passed
-        XCTAssertEqual(data["memberName"] as? String, testMember.name)
-        XCTAssertEqual(data["activityName"] as? String, "Important Task")
+        #expect(data["type"] as? String == "completion_requested")
+        #expect(data["activityId"] as? String == activity.id.uuidString)
+        #expect(data["managerEmail"] as? String == managerEmail)
+        #expect(data["memberName"] as? String == testMember.name)
+        #expect(data["activityName"] as? String == "Important Task")
         
         let message = data["message"] as? String
-        XCTAssertTrue(message!.contains("Test User"))
-        XCTAssertTrue(message!.contains("Important Task"))
+        #expect(message?.contains("Test User") == true)
+        #expect(message?.contains("Important Task") == true)
     }
     
-    func testSendCompletionRequested_WithoutManagerEmail() async throws {
+    @Test func testSendCompletionRequested_WithoutManagerEmail() async throws {
         // Given
         let activity = Activity(
             name: "Important Task",
@@ -189,14 +181,15 @@ final class NotificationSenderTests: XCTestCase {
         try await sender.sendCompletionRequestedNotification(activity: activity)
         
         // Then
-        let call = mockProvider.calls[0]
+        let call = try #require(mockProvider.calls.first, "Expected a call to cloud function")
+        
         let data = call.data
-        XCTAssertNil(data["managerEmail"])
+        #expect(data["managerEmail"] == nil)
     }
     
     // MARK: - Activity Completed Tests
     
-    func testSendActivityCompleted_WithOutcome() async throws {
+    @Test func testSendActivityCompleted_WithOutcome() async throws {
         // Given
         let activity = Activity(
             name: "Done Task",
@@ -212,24 +205,24 @@ final class NotificationSenderTests: XCTestCase {
         try await sender.sendActivityCompletedNotification(activity: activity, team: testTeam)
         
         // Then
-        let call = mockProvider.calls[0]
-        XCTAssertEqual(call.name, "sendActivityCompletedNotification")
+        let call = try #require(mockProvider.calls.first, "Expected a call to cloud function")
+        
+        #expect(call.name == "sendActivityCompletedNotification")
         
         let data = call.data
-        XCTAssertEqual(data["type"] as? String, "activity_completed")
-        XCTAssertEqual(data["activityId"] as? String, activity.id.uuidString)
-        XCTAssertEqual(data["teamId"] as? String, testTeam.id.uuidString)
-        XCTAssertEqual(data["statusColor"] as? String, "green")
-        XCTAssertEqual(data["outcome"] as? String, "Ahead")
-        XCTAssertEqual(data["activityName"] as? String, "Done Task")
+        #expect(data["type"] as? String == "activity_completed")
+        #expect(data["activityId"] as? String == activity.id.uuidString)
+        #expect(data["teamId"] as? String == testTeam.id.uuidString)
+        #expect(data["statusColor"] as? String == "green")
+        #expect(data["outcome"] as? String == "Ahead")
+        #expect(data["activityName"] as? String == "Done Task")
         
         let message = data["message"] as? String
-        // Implementation: "\(activity.assignedMember.name)'s \(activity.priority.shortName) activity has completed \(outcomeText) with status \(statusColor)"
-        XCTAssertTrue(message!.contains("ahead"))
-        XCTAssertTrue(message!.contains("green"))
+        #expect(message?.contains("ahead") == true)
+        #expect(message?.contains("green") == true)
     }
     
-    func testSendActivityCompleted_MissingOutcome_ThrowsError() async {
+    @Test func testSendActivityCompleted_MissingOutcome_ThrowsError() async {
         // Given
         let activity = Activity(
             name: "Done Task",
@@ -242,15 +235,12 @@ final class NotificationSenderTests: XCTestCase {
         )
         
         // When/Then
-        do {
+        await #expect(throws: NotificationError.missingOutcome) {
             try await sender.sendActivityCompletedNotification(activity: activity, team: testTeam)
-            XCTFail("Expected error not thrown")
-        } catch {
-            XCTAssertEqual(error as? NotificationError, NotificationError.missingOutcome)
         }
     }
     
-    func testColorMapping() async throws {
+    @Test func testColorMapping() async throws {
         // Helper to check color mapping
         func checkColor(outcome: ActivityOutcome, expected: String) async throws {
             let activity = Activity(
@@ -264,8 +254,11 @@ final class NotificationSenderTests: XCTestCase {
             )
             mockProvider.calls.removeAll()
             try await sender.sendActivityCompletedNotification(activity: activity, team: testTeam)
-            let color = mockProvider.calls[0].data["statusColor"] as? String
-            XCTAssertEqual(color, expected)
+            
+            let call = try #require(mockProvider.calls.first, "Expected a call to cloud function")
+            
+            let color = call.data["statusColor"] as? String
+            #expect(color == expected)
         }
         
         try await checkColor(outcome: .ahead, expected: "green")
@@ -275,7 +268,7 @@ final class NotificationSenderTests: XCTestCase {
     
     // MARK: - Error Handling Tests
     
-    func testNotAuthenticated_ThrowsError() async {
+    @Test func testNotAuthenticated_ThrowsError() async {
         // Given
         mockAuth.isAuthenticated = false
         
@@ -289,15 +282,12 @@ final class NotificationSenderTests: XCTestCase {
         )
         
         // When/Then
-        do {
+        await #expect(throws: NotificationError.notAuthenticated) {
             try await sender.sendCompletionRequestedNotification(activity: activity)
-            XCTFail("Expected error not thrown")
-        } catch {
-            XCTAssertEqual(error as? NotificationError, NotificationError.notAuthenticated)
         }
     }
     
-    func testCloudFunctionError_ThrowsWrappedError() async {
+    @Test func testCloudFunctionError_ThrowsWrappedError() async throws {
         // Given
         mockProvider.shouldFail = true
         mockProvider.errorToThrow = NSError(domain: "test", code: 1, userInfo: [NSLocalizedDescriptionKey: "Network failure"])
@@ -311,16 +301,15 @@ final class NotificationSenderTests: XCTestCase {
             deadline: Date()
         )
         
-        // When/Then
+        // When/Then - use do-catch to verify specific error details
         do {
             try await sender.sendCompletionRequestedNotification(activity: activity)
-            XCTFail("Expected error not thrown")
+            Issue.record("Expected NotificationError.cloudFunctionError to be thrown")
+        } catch let error as NotificationError {
+            // Verify it's the right error case with the expected message
+            #expect(error == .cloudFunctionError("Network failure"), "Expected cloudFunctionError with 'Network failure' message")
         } catch {
-            if case let NotificationError.cloudFunctionError(msg) = error {
-                XCTAssertEqual(msg, "Network failure")
-            } else {
-                XCTFail("Incorrect error type caught: \(error)")
-            }
+            Issue.record("Expected NotificationError but got: \(type(of: error))")
         }
     }
 }

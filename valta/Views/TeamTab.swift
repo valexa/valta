@@ -40,15 +40,15 @@ struct TeamTab: View {
             case .all:
                 activities = appState.team.activities
             case .pending:
-                activities = appState.teamPendingActivities
+                activities = appState.allPendingActivities
             case .running:
-                activities = appState.teamRunningActivities
+                activities = appState.runningActivities
             case .outcome(let outcome):
-                activities = appState.teamCompletedActivities.filter { $0.outcome == outcome }
+                activities = appState.completedActivities.filter { $0.outcome == outcome }
             }
         } else {
             // No filter = show active activities
-            activities = appState.teamActiveActivities
+            activities = appState.runningActivities
         }
         
         // Apply search filter

@@ -32,8 +32,6 @@ enum AppSymbols {
     
     static let play = "play.fill"
     static let checkmark = "checkmark"
-    static let checkmarkCircle = "checkmark.circle"
-    static let checkmarkCircleFill = "checkmark.circle.fill"
     static let checkmarkSeal = "checkmark.seal.fill"
     static let xmark = "xmark"
     static let xmarkCircle = "xmark.circle"
@@ -68,7 +66,6 @@ enum AppSymbols {
     static let person3Sequence = "person.3.sequence.fill"
     static let person3 = "person.3"
     static let personBadgePlus = "person.badge.plus"
-    static let personCropCircleBadgeCheckmark = "person.crop.circle.badge.checkmark"
     static let person2Fill = "person.2.fill"
     
     // MARK: - UI Icons
@@ -82,7 +79,6 @@ enum AppSymbols {
     static let flagBadge = "flag.badge.ellipsis"
     static let flagCheckered = "flag.checkered"
     static let tray = "tray"
-    static let rectangleGroup = "rectangle.3.group.fill"
     static let listBullet = "list.bullet.rectangle"
     static let listBulletClipboard = "list.bullet.clipboard"
     static let trayFullFill = "tray.full.fill"

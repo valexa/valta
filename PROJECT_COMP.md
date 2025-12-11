@@ -9,45 +9,9 @@
 
 ## Project Structure
 
-```
-valta/
-├── Shared/                          # Shared code between both apps
-│   ├── Models.swift                 # Data models (no mock data)
-│   ├── MockData.swift               # Mock data for development
-│   ├── Theme.swift                  # Theme protocol and dependency injection
-│   ├── ActivityTimeCalculator.swift # Extracted time calculations
-│   ├── StyleGuideColors.swift       # ONLY colors and gradients
-│   ├── StyleGuideFonts.swift        # ONLY font sizes and styles
-│   ├── AppSymbols.swift             # Centralized SF Symbol names
-│   ├── Services/
-│   │   ├── ActivityFilter.swift     # Activity filtering and querying
-│   │   ├── ActivityStats.swift      # Statistics calculations
-│   │   └── ActivityService.swift    # Business logic and mutations
-│   └── Components/
-│       ├── SharedComponents.swift   # Reusable UI components (badges, avatars)
-│       ├── ActivityRow.swift        # Unified activity row with time delta
-│       └── StatButton.swift         # Filterable stat button component
-├── valta/                           # Team Member App
-│   ├── valtaApp.swift              # App entry point
-│   ├── ContentView.swift           # Main view with tabs
-│   ├── TeamMemberAppState.swift    # State management
-│   └── Views/
-│       ├── TeamMemberOnboardingView.swift
-│       ├── ActivitiesTab.swift
-│       ├── TeamTab.swift
-│       └── LogTab.swift
-├── valtaManager/                    # Manager App
-│   ├── valtaManagerApp.swift       # App entry point
-│   ├── ContentView.swift           # Main view with tabs
-│   ├── ManagerAppState.swift              # State management
-│   └── Views/
-│       ├── OnboardingView.swift
-│       ├── TeamsTab.swift
-│       ├── ActivityCard.swift
-│       ├── RequestsTab.swift
-│       └── NewActivitySheet.swift
-└── ...
-```
+
+(See Xcode project for file structure)
+
 
 ---
 

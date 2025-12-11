@@ -163,13 +163,6 @@ enum AppGradients {
     
     // MARK: - Team Member App
     
-    /// Primary button gradient for team member app
-    static let teamMemberPrimary = LinearGradient(
-        colors: [AppColors.TeamMember.primary, AppColors.TeamMember.primaryEnd],
-        startPoint: .leading,
-        endPoint: .trailing
-    )
-    
     /// Onboarding background for team member app
     static let teamMemberBackground = LinearGradient(
         colors: [

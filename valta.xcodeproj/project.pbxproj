@@ -28,13 +28,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		F51CBB332EE17C9000615E23 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F5338F7F2EE16BA300619943 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F51CBB252EE17C8F00615E23;
-			remoteInfo = valtaManager;
-		};
 		F51CBB3D2EE17C9000615E23 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F5338F7F2EE16BA300619943 /* Project object */;
@@ -62,7 +55,6 @@
 		F51CBB1F2EE16FE600615E23 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		F51CBB202EE170D800615E23 /* FULL_SPECIFICATION.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = FULL_SPECIFICATION.md; sourceTree = "<group>"; };
 		F51CBB262EE17C8F00615E23 /* valtaManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = valtaManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		F51CBB322EE17C9000615E23 /* valtaManagerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = valtaManagerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F51CBB3C2EE17C9000615E23 /* valtaManagerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = valtaManagerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F51CBB4D2EE17E6E00615E23 /* IMPLEMENTATION_PLAN.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = IMPLEMENTATION_PLAN.md; sourceTree = "<group>"; };
 		F5338F872EE16BA300619943 /* valta.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = valta.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -70,6 +62,7 @@
 		F5338F9E2EE16BA500619943 /* valtaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = valtaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F5A10C162EE43C68006A8DFD /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		F5A10C182EE441C3006A8DFD /* AppIconManager.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIconManager.icon; sourceTree = "<group>"; };
+		F5F096222EE7B72A0005C249 /* valta.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = valta.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -101,11 +94,6 @@
 				F559C3C62EE24B7F004EB3E0 /* Exceptions for "valtaManager" folder in "valtaManager" target */,
 			);
 			path = valtaManager;
-			sourceTree = "<group>";
-		};
-		F51CBB352EE17C9000615E23 /* valtaManagerTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = valtaManagerTests;
 			sourceTree = "<group>";
 		};
 		F51CBB3F2EE17C9000615E23 /* valtaManagerUITests */ = {
@@ -145,13 +133,6 @@
 				F559C3C02EE2482D004EB3E0 /* FirebaseCrashlytics in Frameworks */,
 				F559C3C22EE2482D004EB3E0 /* FirebasePerformance in Frameworks */,
 				F51414552EE5A43F001609BF /* FirebaseFirestore in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F51CBB2F2EE17C9000615E23 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -196,6 +177,7 @@
 		F5338F7E2EE16BA300619943 = {
 			isa = PBXGroup;
 			children = (
+				F5F096222EE7B72A0005C249 /* valta.xctestplan */,
 				F5A10C162EE43C68006A8DFD /* AppIcon.icon */,
 				F5A10C182EE441C3006A8DFD /* AppIconManager.icon */,
 				F51CBB1F2EE16FE600615E23 /* README.md */,
@@ -203,10 +185,9 @@
 				F51CBB4D2EE17E6E00615E23 /* IMPLEMENTATION_PLAN.md */,
 				A1SHARED2EE1900000000001 /* Shared */,
 				F5338F892EE16BA300619943 /* valta */,
+				F51CBB272EE17C8F00615E23 /* valtaManager */,
 				F5338F972EE16BA500619943 /* valtaTests */,
 				F5338FA12EE16BA500619943 /* valtaUITests */,
-				F51CBB272EE17C8F00615E23 /* valtaManager */,
-				F51CBB352EE17C9000615E23 /* valtaManagerTests */,
 				F51CBB3F2EE17C9000615E23 /* valtaManagerUITests */,
 				F559C3CC2EE24C9B004EB3E0 /* Frameworks */,
 				F5338F882EE16BA300619943 /* Products */,
@@ -220,7 +201,6 @@
 				F5338F942EE16BA500619943 /* valtaTests.xctest */,
 				F5338F9E2EE16BA500619943 /* valtaUITests.xctest */,
 				F51CBB262EE17C8F00615E23 /* valtaManager.app */,
-				F51CBB322EE17C9000615E23 /* valtaManagerTests.xctest */,
 				F51CBB3C2EE17C9000615E23 /* valtaManagerUITests.xctest */,
 			);
 			name = Products;
@@ -265,29 +245,6 @@
 			productName = valtaManager;
 			productReference = F51CBB262EE17C8F00615E23 /* valtaManager.app */;
 			productType = "com.apple.product-type.application";
-		};
-		F51CBB312EE17C9000615E23 /* valtaManagerTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = F51CBB472EE17C9000615E23 /* Build configuration list for PBXNativeTarget "valtaManagerTests" */;
-			buildPhases = (
-				F51CBB2E2EE17C9000615E23 /* Sources */,
-				F51CBB2F2EE17C9000615E23 /* Frameworks */,
-				F51CBB302EE17C9000615E23 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				F51CBB342EE17C9000615E23 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				F51CBB352EE17C9000615E23 /* valtaManagerTests */,
-			);
-			name = valtaManagerTests;
-			packageProductDependencies = (
-			);
-			productName = valtaManagerTests;
-			productReference = F51CBB322EE17C9000615E23 /* valtaManagerTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		F51CBB3B2EE17C9000615E23 /* valtaManagerUITests */ = {
 			isa = PBXNativeTarget;
@@ -401,10 +358,6 @@
 					F51CBB252EE17C8F00615E23 = {
 						CreatedOnToolsVersion = 26.1.1;
 					};
-					F51CBB312EE17C9000615E23 = {
-						CreatedOnToolsVersion = 26.1.1;
-						TestTargetID = F51CBB252EE17C8F00615E23;
-					};
 					F51CBB3B2EE17C9000615E23 = {
 						CreatedOnToolsVersion = 26.1.1;
 						TestTargetID = F51CBB252EE17C8F00615E23;
@@ -443,7 +396,6 @@
 				F5338F932EE16BA500619943 /* valtaTests */,
 				F5338F9D2EE16BA500619943 /* valtaUITests */,
 				F51CBB252EE17C8F00615E23 /* valtaManager */,
-				F51CBB312EE17C9000615E23 /* valtaManagerTests */,
 				F51CBB3B2EE17C9000615E23 /* valtaManagerUITests */,
 			);
 		};
@@ -455,13 +407,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F5A10C192EE441C3006A8DFD /* AppIconManager.icon in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F51CBB302EE17C9000615E23 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -506,13 +451,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F51CBB2E2EE17C9000615E23 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		F51CBB382EE17C9000615E23 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -544,11 +482,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		F51CBB342EE17C9000615E23 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = F51CBB252EE17C8F00615E23 /* valtaManager */;
-			targetProxy = F51CBB332EE17C9000615E23 /* PBXContainerItemProxy */;
-		};
 		F51CBB3E2EE17C9000615E23 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F51CBB252EE17C8F00615E23 /* valtaManager */;
@@ -679,58 +612,6 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				XROS_DEPLOYMENT_TARGET = 26.1;
-			};
-			name = Release;
-		};
-		F51CBB482EE17C9000615E23 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6P6BQ65AWN;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
-				MACOSX_DEPLOYMENT_TARGET = 26.1;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.valexa.valtaManagerTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/valtaManager.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/valtaManager";
-				XROS_DEPLOYMENT_TARGET = 26.1;
-			};
-			name = Debug;
-		};
-		F51CBB492EE17C9000615E23 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6P6BQ65AWN;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
-				MACOSX_DEPLOYMENT_TARGET = 26.1;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.valexa.valtaManagerTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/valtaManager.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/valtaManager";
 				XROS_DEPLOYMENT_TARGET = 26.1;
 			};
 			name = Release;
@@ -1129,15 +1010,6 @@
 			buildConfigurations = (
 				F51CBB452EE17C9000615E23 /* Debug */,
 				F51CBB462EE17C9000615E23 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		F51CBB472EE17C9000615E23 /* Build configuration list for PBXNativeTarget "valtaManagerTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				F51CBB482EE17C9000615E23 /* Debug */,
-				F51CBB492EE17C9000615E23 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
