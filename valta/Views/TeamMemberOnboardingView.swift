@@ -193,7 +193,7 @@ struct TeamSelectionView: View {
                         }
                 }
             }
-            .padding(.horizontal)
+            .padding()
             .frame(maxWidth: 800)
         }
     }

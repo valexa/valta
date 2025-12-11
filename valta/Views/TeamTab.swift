@@ -29,7 +29,7 @@ enum TeamStatsFilter: Equatable {
 struct TeamTab: View {
     @Environment(TeamMemberAppState.self) private var appState
     @State private var searchText: String = ""
-    @State private var statsFilter: TeamStatsFilter?
+    @State private var statsFilter: TeamStatsFilter? = .all
 
     var filteredActivities: [Activity] {
         var activities: [Activity]
@@ -315,7 +315,7 @@ struct TeamActivityRow: View {
     TeamTab()
         .environment({
             let state = TeamMemberAppState()
-            state.currentMember = TeamMember.mockMembers[0]
+            state.currentMember = .mock
             state.hasCompletedOnboarding = true
             return state
         }())

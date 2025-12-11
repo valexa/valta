@@ -207,7 +207,7 @@ struct CompleteActivitySheet: View {
 
 #Preview {
     VStack(spacing: 16) {
-        ActivityCard(activity: Activity.mockActivities[0])
+        ActivityCard(activity: .mock)
         ActivityCard(activity: Activity.mockActivities[4])
     }
     .padding()

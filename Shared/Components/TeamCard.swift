@@ -35,13 +35,9 @@ struct TeamCard: View {
                 }
 
                 // Member preview avatars
-                HStack(spacing: -8) {
+                HStack(spacing: -4) {
                     ForEach(Array(team.members.prefix(10))) { member in
-                        MemberAvatar(member: member, size: 24)
-                            .overlay(
-                                Circle()
-                                    .stroke(Color.black.opacity(0.2), lineWidth: 1)
-                            )
+                        MemberAvatar(member: member, size: 36)
                     }
                     if team.members.count > 10 {
                         Text("+\(team.members.count - 10)")
@@ -65,4 +61,10 @@ struct TeamCard: View {
         .buttonStyle(.plain)
     }
 
+}
+
+// MARK: - Preview
+
+#Preview {
+    TeamCard(team: .mock, isSelected: false) {}
 }

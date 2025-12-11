@@ -10,6 +10,36 @@
 
 import Foundation
 
+// MARK: - Mockable
+
+extension Activity: Mockable {
+    static func mock() -> Activity {
+        Activity.mockActivities.first!
+    }
+}
+
+extension TeamMember: Mockable {
+    static func mock() -> TeamMember {
+        TeamMember.mockMembers.first!
+    }
+}
+
+extension Team: Mockable {
+    static func mock() -> Team {
+        Team(
+            name: "Platform Engineering",
+            members: TeamMember.mockMembers,
+            activities: Activity.mockActivities
+        )
+    }
+}
+
+extension ActivityLogEntry: Mockable {
+    static func mock() -> ActivityLogEntry {
+        ActivityLogEntry.mockLogEntries.first!
+    }
+}
+
 // MARK: - Mock Team Members
 
 extension TeamMember {
@@ -165,11 +195,7 @@ extension Activity {
 // MARK: - Mock Team
 
 extension Team {
-    static let mockTeam = Team(
-        name: "Platform Engineering",
-        members: TeamMember.mockMembers,
-        activities: Activity.mockActivities
-    )
+    static let mockTeam = Team.mock
 }
 
 // MARK: - Mock Activity Log Entries

@@ -27,15 +27,14 @@ struct MemberAvatar: View {
     }
 
     var body: some View {
-        ZStack {
-            Circle()
-                .fill(theme.avatarGradient)
-                .frame(width: size, height: size)
-
+        Button(action: {}) {
             Text(displayInitials)
                 .font(.system(size: size * 0.36, weight: .semibold, design: .rounded))
                 .foregroundColor(.white)
         }
+        .frame(width: size, height: size)
+        .tint(.brown)
+        .buttonStyle(.glass)
     }
 
     /// Convenience initializer for member-based avatar
@@ -191,28 +190,54 @@ struct SectionHeader: View {
 
 #Preview {
     VStack(spacing: 20) {
+        // MemberAvatar
         HStack(spacing: 12) {
-            PriorityBadge(priority: .p0)
-            PriorityBadge(priority: .p1)
-            PriorityBadge(priority: .p2)
-            PriorityBadge(priority: .p3)
+            MemberAvatar(member: .mock)
+            MemberAvatar(member: .mock, size: 72)
+            MemberAvatar(initials: "VA", size: 36)
+                .disabled(true)
         }
 
-        HStack(spacing: 12) {
-            StatusBadge(status: .running, outcome: nil, displayColor: .blue)
-            StatusBadge(status: .completed, outcome: .ahead, displayColor: .green)
+        Divider()
+
+        // TimeRemainingLabel & TimeProgressBar
+        VStack(alignment: .leading, spacing: 8) {
+            Text("TimeRemainingLabel").font(.caption).foregroundColor(.secondary)
+            TimeRemainingLabel(activity: .mock, showProgressBar: true)
+            TimeRemainingLabel(activity: .mock, compact: true, showProgressBar: true)
         }
 
-        HStack(spacing: 12) {
-            MemberAvatar(member: TeamMember.mockMembers[0])
-            MemberAvatar(member: TeamMember.mockMembers[1], size: 48)
+        Divider()
+
+        // ActivityInfoRow
+        VStack(alignment: .leading, spacing: 8) {
+            Text("ActivityInfoRow").font(.caption).foregroundColor(.secondary)
+            ActivityInfoRow(icon: AppSymbols.clock, text: "2 hours remaining")
+            ActivityInfoRow(icon: AppSymbols.person2Fill, text: "Assigned to John", color: .blue)
         }
 
-        HStack(spacing: 12) {
-            OutcomeBadge(outcome: .ahead)
-            OutcomeBadge(outcome: .jit)
-            OutcomeBadge(outcome: .overrun)
+        Divider()
+
+        // EmptyStateView
+        VStack(alignment: .leading, spacing: 8) {
+            Text("EmptyStateView").font(.caption).foregroundColor(.secondary)
+            EmptyStateView(
+                icon: AppSymbols.tray,
+                title: "No Activities",
+                message: "You have no pending activities."
+            )
+            .frame(height: 150)
+        }
+
+        Divider()
+
+        // SectionHeader
+        VStack(alignment: .leading, spacing: 8) {
+            Text("SectionHeader").font(.caption).foregroundColor(.secondary)
+            SectionHeader(title: "Pending", count: 5)
+            SectionHeader(title: "Completed")
         }
     }
     .padding()
+    .frame(width: 400)
 }

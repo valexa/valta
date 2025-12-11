@@ -176,7 +176,7 @@ struct CompletionTimeDelta: View {
     VStack(spacing: 8) {
         // Running activity
         ActivityRow(
-            activity: Activity.mockActivities[0],
+            activity: .mock,
             showAssignee: true
         )
 

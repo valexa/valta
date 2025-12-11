@@ -9,6 +9,7 @@
 //
 
 import SwiftUI
+import TipKit
 
 // MARK: - My Activities Filter
 
@@ -139,6 +140,15 @@ struct ActivitiesTab: View {
         }
         .background(Color(NSColor.controlBackgroundColor))
         .searchable(text: $searchText, placement: .toolbar, prompt: "Search activities...")
+        .task {
+#if os(iOS) || os(macOS) || os(visionOS)
+            try? Tips.configure([
+                .displayFrequency(.immediate),
+                .datastoreLocation(.applicationDefault)
+            ])
+#endif
+
+        }
     }
 
     private func styleForActivity(_ activity: Activity) -> ActivitySectionStyle {
@@ -156,6 +166,7 @@ struct ActivitiesTab: View {
 struct ActivitiesHeader: View {
     @Environment(TeamMemberAppState.self) private var appState
     @Binding var statsFilter: MyActivitiesFilter?
+    private let avatarTip = AvatarTip()
 
     var body: some View {
         VStack(spacing: 12) {
@@ -164,6 +175,7 @@ struct ActivitiesHeader: View {
                 if let member = appState.currentMember {
                     HStack(spacing: 12) {
                         MemberAvatar(member: member, size: 44)
+                            .popoverTip(avatarTip, arrowEdge: .top)
                         VStack(alignment: .leading, spacing: 2) {
                             Text(member.name)
                                 .lineLimit(1)
@@ -343,7 +355,7 @@ struct ActivityRowWithSheet: View {
     ActivitiesTab()
         .environment({
             let state = TeamMemberAppState()
-            state.currentMember = TeamMember.mockMembers[0]
+            state.currentMember = .mock
             state.hasCompletedOnboarding = true
             return state
         }())

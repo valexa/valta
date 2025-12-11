@@ -306,7 +306,7 @@ struct LogEntryRow: View {
     LogTab()
         .environment({
             let state = TeamMemberAppState()
-            state.currentMember = TeamMember.mockMembers[0]
+            state.currentMember = .mock
             state.hasCompletedOnboarding = true
             return state
         }())
