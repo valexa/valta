@@ -96,9 +96,9 @@ struct OnboardingView: View {
                     
                     // Team List
                     ScrollView {
-                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 280), spacing: 20)], spacing: 20) {
+                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 200), spacing: 20)], spacing: 20) {
                             ForEach(dataManager.teams) { team in
-                                TeamSelectionCard(
+                                TeamCard(
                                     team: team,
                                     isSelected: selectedTeam?.id == team.id,
                                     action: {
@@ -135,81 +135,6 @@ struct OnboardingView: View {
         // Team is already set in DataManager by the user selecting it
         // AppState now reads from DataManager.teams
         appState.hasCompletedOnboarding = true
-    }
-}
-
-struct TeamSelectionCard: View {
-    let team: Team
-    let isSelected: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    Image(symbol: AppSymbols.rectangleGroup)
-                        .font(.system(size: 24))
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [AppColors.Manager.teamNameStart, AppColors.Manager.teamNameEnd],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                    
-                    Spacer()
-                    
-                    if isSelected {
-                        Image(symbol: AppSymbols.checkmark)
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(.white)
-                            .padding(6)
-                            .background(AppColors.success)
-                            .clipShape(Circle())
-                    }
-                }
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(team.name)
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.white)
-                    
-                    Text("\(team.members.count) members")
-                        .font(.system(size: 14))
-                        .foregroundColor(.white.opacity(0.6))
-                }
-                
-                // Member preview avatars
-                HStack(spacing: -8) {
-                    ForEach(Array(team.members.prefix(5))) { member in
-                        MemberAvatar(member: member, size: 24)
-                            .overlay(
-                                Circle()
-                                    .stroke(Color.black.opacity(0.2), lineWidth: 1)
-                            )
-                    }
-                    if team.members.count > 5 {
-                        Text("+\(team.members.count - 5)")
-                            .font(.caption2)
-                            .foregroundColor(.white.opacity(0.6))
-                            .padding(.leading, 12)
-                    }
-                }
-            }
-            .padding(16)
-
-            .background(.regularMaterial)
-            .cornerRadius(16)
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(
-                        isSelected ? AppColors.Manager.primary : Color.white.opacity(0.1),
-                        lineWidth: isSelected ? 2 : 1
-                    )
-            )
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
     }
 }
 

@@ -28,9 +28,11 @@ enum TestDataFactory {
     static func makeMember(
         id: UUID = UUID(),
         name: String = "Alice",
-        email: String = "alice@example.com"
+        email: String? = nil
     ) -> AppTeamMember {
-        AppTeamMember(id: id, name: name, email: email)
+        // Auto-generate email from name if not provided (e.g., "Alice" -> "alice@example.com")
+        let memberEmail = email ?? "\(name.lowercased())@example.com"
+        return AppTeamMember(id: id, name: name, email: memberEmail)
     }
 
     // MARK: - Activities

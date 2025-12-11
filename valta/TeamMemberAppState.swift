@@ -16,6 +16,10 @@ import Observation
 @Observable
 final class TeamMemberAppState: BaseAppState, ActivityDataProviding {
     
+    // MARK: - Constants
+    
+    private static let selectedMemberEmailKey = "selectedMemberEmail"
+    
     // MARK: - Services
     
     private let logService = ActivityLogService.shared
@@ -44,6 +48,29 @@ final class TeamMemberAppState: BaseAppState, ActivityDataProviding {
     // Callbacks from DataManager
     override func onTeamsChanged() {
         super.onTeamsChanged()
+        // Try to restore saved member if not yet onboarded
+        if !hasCompletedOnboarding {
+            restoreSavedMember()
+        }
+    }
+    
+    /// Restores the selected member from UserDefaults if available
+    private func restoreSavedMember() {
+        guard let savedEmail = UserDefaults.standard.string(forKey: Self.selectedMemberEmailKey) else { return }
+        
+        // Find member with this email across all teams
+        for team in dataManager.teams {
+            if let member = team.members.first(where: { $0.email == savedEmail }) {
+                currentMember = member
+                hasCompletedOnboarding = true
+                
+                // Re-register FCM token for this member
+                Task {
+                    await NotificationService.shared.registerMemberEmail(member.email)
+                }
+                return
+            }
+        }
     }
     
     // MARK: - Data Accessors (delegate to DataManager)
@@ -138,6 +165,9 @@ final class TeamMemberAppState: BaseAppState, ActivityDataProviding {
     func selectMember(_ member: TeamMember) {
         currentMember = member
         hasCompletedOnboarding = true
+        
+        // Persist member email to UserDefaults
+        UserDefaults.standard.set(member.email, forKey: Self.selectedMemberEmailKey)
         
         // Update notification profile and link token
         Task {

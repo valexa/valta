@@ -19,6 +19,12 @@ struct TeamMemberAppStateTests {
     init() {
         // Prevent tests from writing to real Firebase Storage (and deleting production data)
         StorageService.shared.provider = MockStorageProvider()
+        
+        // Clear member persistence to ensure test isolation
+        UserDefaults.standard.removeObject(forKey: "selectedMemberEmail")
+        
+        // Reset DataManager state
+        DataManager.shared.teams = []
     }
     
     // MARK: - Initial State Tests
@@ -114,13 +120,10 @@ struct TeamMemberAppStateTests {
         // Act
         appState.startActivity(activity)
         
-        // Verify (wait for async update propagation)
-        try await Task.sleep(nanoseconds: 500_000_000)
-        
         // Verify status change
-        let updatedTeam = DataManager.shared.teams.first(where: { $0.id == team.id })
-        let updatedActivity = updatedTeam?.activities.first(where: { $0.id == activity.id })
-        
+        let updatedTeam = DataManager.shared.teams.findTeam(byId: team.id)
+        let updatedActivity = updatedTeam?.activities.findActivity(byId: activity.id)
+
         #expect(updatedActivity != nil, "Activity not found in DataManager teams")
         if let updatedActivity {
             #expect(updatedActivity.status == .running, "Status was \(updatedActivity.status), expected running")
@@ -142,13 +145,10 @@ struct TeamMemberAppStateTests {
         // Act
         appState.requestReview(activity)
         
-        // Verify execution path
-        try await Task.sleep(nanoseconds: 500_000_000)
-        
         // Verify status change
-        let updatedTeam = DataManager.shared.teams.first(where: { $0.id == team.id })
-        let updatedActivity = updatedTeam?.activities.first(where: { $0.id == activity.id })
-        
+        let updatedTeam = DataManager.shared.teams.findTeam(byId: team.id)
+        let updatedActivity = updatedTeam?.activities.findActivity(byId: activity.id)
+
         #expect(updatedActivity != nil, "Activity not found in DataManager teams")
         if let updatedActivity {
              #expect(updatedActivity.status == .managerPending, "Status was \(updatedActivity.status), expected managerPending")
@@ -169,5 +169,100 @@ struct TeamMemberAppStateTests {
         
         #expect(appState.dataVersion > initialVersion)
     }
+    
+    // MARK: - Member Persistence Tests
+    
+    @Test func testMemberSelectionPersistsToUserDefaults() async throws {
+        // Clear any existing saved member
+        UserDefaults.standard.removeObject(forKey: "selectedMemberEmail")
+        
+        let appState = TeamMemberAppState()
+        let alice = TestDataFactory.makeMember(name: "Alice")
+        
+        // Select Alice
+        appState.selectMember(alice)
+        
+        // Verify email was saved to UserDefaults
+        let savedEmail = UserDefaults.standard.string(forKey: "selectedMemberEmail")
+        #expect(savedEmail == alice.email, "Expected \(alice.email) but got \(savedEmail ?? "nil")")
+        
+        // Clean up
+        UserDefaults.standard.removeObject(forKey: "selectedMemberEmail")
+    }
+    
+    @Test func testMemberRestoredFromUserDefaults() async throws {
+        // First, use selectMember to save Alice's email (this tests the save path)
+        let alice = TestDataFactory.makeMember(name: "Alice")
+        let appState1 = TeamMemberAppState()
+        appState1.selectMember(alice)
+        
+        // Verify email was saved
+        let savedEmail = UserDefaults.standard.string(forKey: "selectedMemberEmail")
+        #expect(savedEmail == alice.email, "Email should be saved")
+        
+        // Now simulate a fresh app launch: set up teams, create new AppState
+        let team = TestDataFactory.makeTeam(members: [alice], activities: [])
+        DataManager.shared.teams = [team]
+        
+        // Create a "fresh" AppState - it should restore from UserDefaults when teams change
+        let appState2 = TeamMemberAppState()
+        #expect(appState2.hasCompletedOnboarding == false, "Should not be onboarded initially")
+        
+        // Manually call onTeamsChanged to trigger restoration (simulates DataManager notification)
+        appState2.onTeamsChanged()
+        
+        // Verify member was restored
+        #expect(appState2.hasCompletedOnboarding == true, "Should be onboarded after restore")
+        #expect(appState2.currentMember?.email == alice.email, "Current member email should match")
+        
+        // Clean up
+        UserDefaults.standard.removeObject(forKey: "selectedMemberEmail")
+    }
+    
+    @Test func testMemberNotRestoredWhenEmailNotFound() async throws {
+        // Set up: save a non-existent member email to UserDefaults
+        UserDefaults.standard.set("nonexistent@example.com", forKey: "selectedMemberEmail")
+        
+        // Set up teams without the saved email
+        let bob = TestDataFactory.makeMember(name: "Bob")
+        let team = TestDataFactory.makeTeam(members: [bob], activities: [])
+        DataManager.shared.teams = [team]
+        
+        // Create app state and manually trigger restoration
+        let appState = TeamMemberAppState()
+        appState.onTeamsChanged()  // Direct call instead of notification
+        
+        // Verify member was NOT restored (email not found)
+        #expect(appState.hasCompletedOnboarding == false, "Should NOT be onboarded when saved email not found")
+        #expect(appState.currentMember == nil, "Current member should be nil")
+        
+        // Clean up
+        UserDefaults.standard.removeObject(forKey: "selectedMemberEmail")
+    }
+    
+    @Test func testMemberRestoredFromDifferentTeam() async throws {
+        // Set up: save Alice's email to UserDefaults
+        let alice = TestDataFactory.makeMember(name: "Alice")
+        UserDefaults.standard.set(alice.email, forKey: "selectedMemberEmail")
+        
+        // Create two teams - Alice is in Team 2, not Team 1
+        let bob = TestDataFactory.makeMember(name: "Bob")
+        let team1 = TestDataFactory.makeTeam(members: [bob], activities: [])
+        let team2 = TestDataFactory.makeTeam(members: [alice], activities: [])
+        DataManager.shared.teams = [team1, team2]
+        
+        // Create app state and manually trigger restoration
+        let appState = TeamMemberAppState()
+        appState.onTeamsChanged()  // Direct call instead of notification
+        
+        // Verify member was restored from the second team
+        #expect(appState.hasCompletedOnboarding == true, "Should be onboarded")
+        #expect(appState.currentMember?.email == alice.email, "Should restore Alice from Team 2")
+        #expect(appState.currentMember?.name == alice.name, "Member name should match")
+        
+        // Clean up
+        UserDefaults.standard.removeObject(forKey: "selectedMemberEmail")
+    }
 }
+
 

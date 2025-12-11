@@ -80,7 +80,7 @@ struct ActivityCard: View {
                     HStack(spacing: 8) {
                         if activity.status == .running || activity.status == .managerPending {
                             Button(action: { showingCompleteSheet = true }) {
-                                Image(symbol: AppSymbols.checkmarkCircle)
+                                Image(symbol: AppSymbols.checkmark)
                                     .font(.system(size: 18))
                             }
                             .buttonStyle(.plain)

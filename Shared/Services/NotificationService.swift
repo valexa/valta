@@ -167,6 +167,17 @@ final class NotificationService: NSObject {
             print("❌ Error updating member profile: \(error.localizedDescription)")
         }
     }
+    
+    /// Fetches all member emails that have FCM tokens registered (indicating they are logged in elsewhere)
+    func getLoggedInMemberEmails() async -> Set<String> {
+        do {
+            let emails = try await FirestoreService.shared.getAllFCMTokenEmails()
+            return Set(emails)
+        } catch {
+            print("❌ Error fetching logged-in member emails: \(error.localizedDescription)")
+            return []
+        }
+    }
 }
 
 // MARK: - MessagingDelegate
@@ -196,7 +207,15 @@ import AppKit
 /// Helper class for Firestore operations (FCM Tokens only)
 class FirestoreService {
     static let shared = FirestoreService()
-    private let db = Firestore.firestore()
+    private let db: Firestore
+    
+    private init() {
+        let settings = FirestoreSettings()
+        settings.cacheSettings = MemoryCacheSettings()
+        let firestore = Firestore.firestore()
+        firestore.settings = settings
+        self.db = firestore
+    }
     
     // MARK: - FCM Tokens
     
@@ -220,5 +239,11 @@ class FirestoreService {
     
     func updateMemberName(_ name: String, for userId: String) async throws {
         try await db.collection("fcmTokens").document(userId).setData(["memberName": name], merge: true)
+    }
+    
+    /// Returns all document IDs (member emails) from the fcmTokens collection
+    func getAllFCMTokenEmails() async throws -> [String] {
+        let snapshot = try await db.collection("fcmTokens").getDocuments()
+        return snapshot.documents.map { $0.documentID }
     }
 }

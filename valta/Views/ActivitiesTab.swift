@@ -78,7 +78,7 @@ struct ActivitiesTab: View {
             // Content
             if filteredActivities.isEmpty {
                 EmptyStateView(
-                    icon: AppSymbols.checkmarkCircle,
+                    icon: AppSymbols.checkmarkSeal,
                     title: "No Activities",
                     message: emptyStateMessage,
                     iconColor: AppColors.success

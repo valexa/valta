@@ -63,3 +63,9 @@ The notification text above gets sent a specific notification to all team member
 [Team member name]’s p[0/1/2/3] activity has completed [ahead/jit/overrun] with status [red/green/amber]
 
 The notification text above gets sent to all team members once the manager has completed an activity.
+
+Team Member Onboarding Requirements:
+
+* Once a team member has logged in and has their FCM token saved in Firebase, that member should no longer be selectable in the OnboardingView. The member card should be visually greyed out/disabled to indicate they are already logged in on another device.
+
+* After the first successful member selection, the selected member's identity should be persisted in UserDefaults so that subsequent app launches do not require re-selection.
