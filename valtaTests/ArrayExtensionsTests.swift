@@ -109,7 +109,7 @@ struct ArrayExtensionsTests {
 
         #expect(result != nil)
         #expect(result?.name == "Team Beta")
-        #expect(result?.activities.contains { $0.id == targetActivityId }== true)
+        #expect(result?.activities.contains { $0.id == targetActivityId } ?? false)
     }
 
     @Test func testFindTeam_ContainingActivityId_NotFound() {
@@ -147,7 +147,7 @@ struct ArrayExtensionsTests {
 
         #expect(result != nil)
         #expect(result?.name == "Team Beta")
-        #expect(result?.members.contains { $0.id == targetMemberId }== true)
+        #expect(result?.members.contains { $0.id == targetMemberId } ?? false)
     }
 
     @Test func testFindTeam_ContainingMemberId_NotFound() {

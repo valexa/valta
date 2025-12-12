@@ -20,14 +20,19 @@ struct ActivityFilterTests {
         mockMember1 = TeamMember(name: "User 1", email: "user1@example.com")
         mockMember2 = TeamMember(name: "User 2", email: "user2@example.com")
 
+        let now = Date()
+        let yesterday = now.addingTimeInterval(-86400)
+        let tomorrow = now.addingTimeInterval(86400)
+
         mockActivities = [
             Activity(
                 name: "Running Activity",
-                description: "Description",
+                description: "Urgent task",
                 assignedMember: mockMember1,
                 priority: .p0,
                 status: .running,
-                deadline: Date()
+                createdAt: yesterday,
+                deadline: tomorrow
             ),
             Activity(
                 name: "Pending Activity",
@@ -35,7 +40,8 @@ struct ActivityFilterTests {
                 assignedMember: mockMember1,
                 priority: .p1,
                 status: .teamMemberPending,
-                deadline: Date()
+                createdAt: now,
+                deadline: now
             ),
             Activity(
                 name: "Completed Activity",
@@ -44,7 +50,8 @@ struct ActivityFilterTests {
                 priority: .p2,
                 status: .completed,
                 outcome: .ahead,
-                deadline: Date()
+                createdAt: yesterday,
+                deadline: tomorrow
             ),
             Activity(
                 name: "Manager Pending Activity",
@@ -53,7 +60,8 @@ struct ActivityFilterTests {
                 priority: .p0,
                 status: .managerPending,
                 outcome: .jit,
-                deadline: Date()
+                createdAt: now,
+                deadline: yesterday // Overdue
             ),
             Activity(
                 name: "Canceled Activity",
@@ -61,10 +69,13 @@ struct ActivityFilterTests {
                 assignedMember: mockMember2,
                 priority: .p3,
                 status: .canceled,
-                deadline: Date()
+                createdAt: now,
+                deadline: now
             )
         ]
     }
+
+    // MARK: - Status Filter Tests
 
     @Test func testRunning() {
         let filter = ActivityFilter(activities: mockActivities)
@@ -115,12 +126,16 @@ struct ActivityFilterTests {
         #expect(filter.allPending.count == 2)
     }
 
+    // MARK: - Outcome Filter Tests
+
     @Test func testCompletedAhead() {
         let filter = ActivityFilter(activities: mockActivities)
 
         #expect(filter.completedAhead.count == 1)
         #expect(filter.completedAhead[0].outcome == .ahead)
     }
+
+    // MARK: - Member Filter Tests
 
     @Test func testAssignedTo() {
         let filter = ActivityFilter(activities: mockActivities)
@@ -130,6 +145,15 @@ struct ActivityFilterTests {
         #expect(member1Filter.activities.allSatisfy { $0.assignedMember.id == mockMember1.id })
     }
 
+    @Test func testAssignedToById() {
+        let filter = ActivityFilter(activities: mockActivities)
+        let member2Filter = filter.assignedTo(memberId: mockMember2.id)
+
+        #expect(member2Filter.activities.count == 2)
+    }
+
+    // MARK: - Priority Filter Tests
+
     @Test func testByPriority() {
         let filter = ActivityFilter(activities: mockActivities)
         let p0Activities = filter.byPriority(.p0)
@@ -137,4 +161,111 @@ struct ActivityFilterTests {
         #expect(p0Activities.count == 2)
         #expect(p0Activities.allSatisfy { $0.priority == .p0 })
     }
+
+    @Test func testPriorityShortcuts() {
+        let filter = ActivityFilter(activities: mockActivities)
+
+        #expect(filter.p0.count == 2)
+        #expect(filter.p1.count == 1)
+        #expect(filter.p2.count == 1)
+        #expect(filter.p3.count == 1)
+    }
+
+    // MARK: - Search Tests
+
+    @Test func testSearchByName() {
+        let filter = ActivityFilter(activities: mockActivities)
+        let results = filter.search("Running")
+
+        #expect(results.count == 1)
+        #expect(results[0].name == "Running Activity")
+    }
+
+    @Test func testSearchByDescription() {
+        let filter = ActivityFilter(activities: mockActivities)
+        let results = filter.search("Urgent")
+
+        #expect(results.count == 1)
+        #expect(results[0].name == "Running Activity")
+    }
+
+    @Test func testSearchByMemberName() {
+        let filter = ActivityFilter(activities: mockActivities)
+        let results = filter.search("User 2")
+
+        #expect(results.count == 2)
+    }
+
+    @Test func testSearchCaseInsensitive() {
+        let filter = ActivityFilter(activities: mockActivities)
+        let results = filter.search("RUNNING")
+
+        #expect(results.count == 1)
+    }
+
+    @Test func testSearchEmptyQuery() {
+        let filter = ActivityFilter(activities: mockActivities)
+        let results = filter.search("")
+
+        #expect(results.count == mockActivities.count)
+    }
+
+    // MARK: - Sorting Tests
+
+    @Test func testSortedByPriority() {
+        let filter = ActivityFilter(activities: mockActivities)
+        let sorted = filter.sortedByPriority()
+
+        #expect(sorted.first?.priority == .p0)
+        #expect(sorted.last?.priority == .p3)
+    }
+
+    @Test func testSortedByDeadlineAscending() {
+        let filter = ActivityFilter(activities: mockActivities)
+        let sorted = filter.sortedByDeadline(ascending: true)
+
+        #expect(sorted.first!.deadline <= sorted.last!.deadline)
+    }
+
+    @Test func testSortedByDeadlineDescending() {
+        let filter = ActivityFilter(activities: mockActivities)
+        let sorted = filter.sortedByDeadline(ascending: false)
+
+        #expect(sorted.first!.deadline >= sorted.last!.deadline)
+    }
+
+    @Test func testSortedByCreatedAt() {
+        let filter = ActivityFilter(activities: mockActivities)
+        let sorted = filter.sortedByCreatedAt(ascending: true)
+
+        #expect(sorted.first!.createdAt <= sorted.last!.createdAt)
+    }
+
+    // MARK: - Edge Cases
+
+    @Test func testEmptyFilter() {
+        let filter = ActivityFilter(activities: [])
+
+        #expect(filter.running.isEmpty)
+        #expect(filter.completed.isEmpty)
+        #expect(filter.active.isEmpty)
+        #expect(filter.search("test").isEmpty)
+    }
+
+    @Test func testByStatus() {
+        let filter = ActivityFilter(activities: mockActivities)
+        let running = filter.byStatus(.running)
+
+        #expect(running.count == 1)
+        #expect(running[0].status == .running)
+    }
+
+    @Test func testByOutcome() {
+        let filter = ActivityFilter(activities: mockActivities)
+        let ahead = filter.byOutcome(.ahead)
+
+        #expect(ahead.count == 1)
+        #expect(ahead[0].outcome == .ahead)
+    }
 }
+

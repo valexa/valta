@@ -17,7 +17,7 @@ struct ContentView: View {
             if appState.hasCompletedOnboarding {
                 MainTabView()
             } else {
-                OnboardingView()
+                ManagerOnboardingView()
             }
         }
         .environment(appState)

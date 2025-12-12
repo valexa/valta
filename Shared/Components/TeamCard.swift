@@ -17,13 +17,8 @@ struct TeamCard: View {
     var body: some View {
         Button(action: action) {
             VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    Image(symbol: AppSymbols.person3)
+                Image(symbol: AppSymbols.person3)
                         .font(.system(size: 24))
-                    Spacer()
-                    CheckmarkButton(isSelected: isSelected)
-                }
-
                 VStack(alignment: .leading, spacing: 4) {
                     Text(team.name)
                         .font(.system(size: 18, weight: .semibold))
@@ -46,6 +41,9 @@ struct TeamCard: View {
                             .padding(.leading, 12)
                     }
                 }
+            }
+            .overlay(alignment: .topTrailing) {
+                CheckmarkButton(isSelected: isSelected)
             }
             .padding(16)
             .background(RoundedRectangle(cornerRadius: 16).fill(.regularMaterial))

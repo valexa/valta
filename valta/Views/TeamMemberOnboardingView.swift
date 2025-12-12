@@ -10,6 +10,12 @@
 
 import SwiftUI
 
+enum ViewState: Equatable {
+    case loading
+    case failed(String)
+    case loaded
+}
+
 struct TeamMemberOnboardingView: View {
     @Environment(TeamMemberAppState.self) private var appState
     @Environment(DataManager.self) private var dataManager
@@ -17,6 +23,14 @@ struct TeamMemberOnboardingView: View {
     @State private var selectedMember: TeamMember?
     @State private var currentStep: OnboardingStep = .selectTeam
     @State private var loggedInEmails: Set<String> = []
+    @State private var state: ViewState
+
+    private let disableAutoState: Bool
+
+    init(initialState: ViewState = .loading, disableAutoState: Bool = false) {
+        _state = State(initialValue: initialState)
+        self.disableAutoState = disableAutoState
+    }
 
     enum OnboardingStep {
         case selectTeam
@@ -25,117 +39,20 @@ struct TeamMemberOnboardingView: View {
 
     var body: some View {
         ZStack {
+
             // Background gradient - teal/cyan theme for team member app
             AppGradients.teamMemberBackground
                 .ignoresSafeArea()
 
-            // Animated background elements
-            GeometryReader { geometry in
-                ZStack {
-                    ForEach(0..<5) { _ in
-                        Circle()
-                            .fill(
-                                LinearGradient(
-                                    colors: [
-                                        AppColors.TeamMember.glowPrimary.opacity(0.12),
-                                        AppColors.TeamMember.glowSecondary.opacity(0.08)
-                                    ],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-                            .frame(width: CGFloat.random(in: 100...250))
-                            .offset(
-                                x: CGFloat.random(in: -200...geometry.size.width),
-                                y: CGFloat.random(in: -100...geometry.size.height)
-                            )
-                            .blur(radius: 50)
-                    }
-                }
-            }
+            background
 
-            if dataManager.isLoading {
-                VStack(spacing: 16) {
-                    ProgressView()
-                        .controlSize(.large)
-                        .tint(.white)
-                    Text("Loading Teams...")
-                        .font(.headline)
-                        .foregroundColor(.white.opacity(0.8))
-                }
-            } else if let error = dataManager.errorMessage {
-                VStack(spacing: 16) {
-                    Image(symbol: AppSymbols.exclamationTriangle)
-                        .font(.system(size: 44))
-                        .foregroundColor(AppColors.destructive)
-                    Text("Error loading teams")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                    Text(error)
-                        .font(.caption)
-                        .foregroundColor(.white.opacity(0.7))
-                        .multilineTextAlignment(.center)
-                    Button("Retry") {
-                        Task { await dataManager.loadData() }
-                    }
-                    .padding()
-                    .background(Color.white.opacity(0.1))
-                    .cornerRadius(8)
-                    .foregroundColor(.white)
-                }
-                .padding()
-            } else {
-                VStack(spacing: 40) {
-
-                    VStack(spacing: 12) {
-                        Text(currentStep == .selectTeam ? "Select Your Team" : "Select Your Name")
-                            .font(.system(size: 28, weight: .bold, design: .rounded))
-                            .foregroundColor(.white)
-                    }
-
-                    // Content based on step
-                    if currentStep == .selectTeam {
-                        TeamSelectionView(selectedTeam: $selectedTeam)
-                    } else {
-                        MemberSelectionView(team: selectedTeam!, selectedMember: $selectedMember, loggedInEmails: loggedInEmails)
-                    }
-
-                    // Navigation buttons
-                    HStack(spacing: 16) {
-                        if currentStep == .selectMember {
-                            Button(action: {
-                                withAnimation {
-                                    currentStep = .selectTeam
-                                    selectedMember = nil
-                                }
-                            }) {
-                                HStack(spacing: 8) {
-                                    Image(symbol: AppSymbols.arrowLeft)
-                                        .font(.system(size: 14, weight: .semibold))
-                                    Text("Back")
-                                        .font(.system(size: 16, weight: .semibold))
-                                }
-                                .foregroundColor(.white.opacity(0.7))
-                            }
-                            .onboardingButton()
-                        }
-
-                        Button(action: handleContinue) {
-                            HStack(spacing: 8) {
-                                Text("Continue")
-                                    .font(.system(size: 16, weight: .semibold))
-
-                                Image(symbol: AppSymbols.arrowRight)
-                                    .font(.system(size: 14, weight: .semibold))
-                            }
-                            .foregroundColor(.white)
-                        }
-                        .onboardingButton()
-                        .tint(.primary)
-                        .disabled(!canContinue)
-                    }
-                }
-                .padding(40)
+            switch state {
+            case .loading:
+                loadingState
+            case .failed(let error):
+                errorState(error: error)
+            case .loaded:
+                loadedState
             }
         }
         .frame(minWidth: 700, minHeight: 550)
@@ -145,6 +62,26 @@ struct TeamMemberOnboardingView: View {
             }
             // Fetch members that are already logged in elsewhere
             loggedInEmails = await NotificationService.shared.getLoggedInMemberEmails()
+        }
+        .onChange(of: dataManager.isLoading) { _, isLoading in
+            guard !disableAutoState else { return }
+            if isLoading {
+                state = .loading
+            } else if let error = dataManager.errorMessage {
+                state = .failed(error)
+            } else {
+                state = .loaded
+            }
+        }
+        .onAppear {
+            guard !disableAutoState else { return }
+            if dataManager.isLoading {
+                state = .loading
+            } else if let error = dataManager.errorMessage {
+                state = .failed(error)
+            } else if !dataManager.teams.isEmpty {
+                state = .loaded
+            }
         }
     }
 
@@ -173,28 +110,101 @@ struct TeamMemberOnboardingView: View {
     }
 }
 
-// MARK: - Team Selection View
+// MARK: - View States
 
-struct TeamSelectionView: View {
-    @Environment(DataManager.self) private var dataManager
-    @Binding var selectedTeam: Team?
+extension TeamMemberOnboardingView {
 
-    var body: some View {
-        ScrollView {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 200), spacing: 20)], spacing: 20) {
-                ForEach(dataManager.teams) { team in
-                    TeamCard(
-                        team: team,
-                        isSelected: selectedTeam?.id == team.id
-                    ) {
-                            withAnimation(.spring(duration: 0.3)) {
-                                selectedTeam = team
-                            }
+    @ViewBuilder
+    var loadedState: some View {
+        VStack(spacing: 40) {
+
+            VStack(spacing: 12) {
+                Text(currentStep == .selectTeam ? "Select Your Team" : "Select Your Name")
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+            }
+
+            // Content based on step
+            if currentStep == .selectTeam {
+                TeamSelectionView(selectedTeam: $selectedTeam)
+            } else {
+                MemberSelectionView(team: selectedTeam!, selectedMember: $selectedMember, loggedInEmails: loggedInEmails)
+            }
+
+            // Navigation buttons
+            HStack(spacing: 16) {
+                if currentStep == .selectMember {
+                    Button(action: {
+                        withAnimation {
+                            currentStep = .selectTeam
+                            selectedMember = nil
                         }
+                    }) {
+                        HStack(spacing: 8) {
+                            Image(symbol: AppSymbols.arrowLeft)
+                                .font(.system(size: 14, weight: .semibold))
+                            Text("Back")
+                                .font(.system(size: 16, weight: .semibold))
+                        }
+                        .foregroundColor(.white.opacity(0.7))
+                    }
+                    .onboardingButton()
+                }
+
+                Button(action: handleContinue) {
+                    HStack(spacing: 8) {
+                        Text("Continue")
+                            .font(.system(size: 16, weight: .semibold))
+
+                        Image(symbol: AppSymbols.arrowRight)
+                            .font(.system(size: 14, weight: .semibold))
+                    }
+                    .foregroundColor(.white)
+                }
+                .onboardingButton()
+                .tint(.primary)
+                .disabled(!canContinue)
+            }
+        }
+        .padding(40)
+    }
+
+    @ViewBuilder
+    func errorState(error: String) -> some View {
+        ErrorView(title: "Error loading teams", message: error) {
+            Task { await dataManager.loadData() }
+        }
+    }
+
+    @ViewBuilder
+    var loadingState: some View {
+        LoadingView(message: "Loading Teams...")
+    }
+
+    var background: some View {
+        // Animated background elements
+        GeometryReader { geometry in
+            ZStack {
+                ForEach(0..<5) { _ in
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    AppColors.TeamMember.glowPrimary.opacity(0.12),
+                                    AppColors.TeamMember.glowSecondary.opacity(0.08)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: CGFloat.random(in: 100...250))
+                        .offset(
+                            x: CGFloat.random(in: -200...geometry.size.width),
+                            y: CGFloat.random(in: -100...geometry.size.height)
+                        )
+                        .blur(radius: 50)
                 }
             }
-            .padding()
-            .frame(maxWidth: 800)
         }
     }
 }
@@ -229,8 +239,20 @@ struct MemberSelectionView: View {
 
 // MARK: - Preview
 
-#Preview {
-    TeamMemberOnboardingView()
+#Preview("Loaded") {
+    TeamMemberOnboardingView(initialState: .loaded, disableAutoState: true)
+        .environment(TeamMemberAppState())
+        .environment(DataManager.shared)
+}
+
+#Preview("Loading") {
+    TeamMemberOnboardingView(initialState: .loading, disableAutoState: true)
+        .environment(TeamMemberAppState())
+        .environment(DataManager.shared)
+}
+
+#Preview("Error") {
+    TeamMemberOnboardingView(initialState: .failed("Failed to connect to server."), disableAutoState: true)
         .environment(TeamMemberAppState())
         .environment(DataManager.shared)
 }

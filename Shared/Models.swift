@@ -130,9 +130,6 @@ struct TeamMember: Identifiable, Hashable, Codable {
         }
         return String(name.prefix(2)).uppercased()
     }
-
-    /// Neutral avatar color for all members
-    static let avatarColor = AppColors.avatar
 }
 
 struct Activity: Identifiable, Codable {
@@ -185,10 +182,6 @@ struct Activity: Identifiable, Codable {
 
     var isOverdue: Bool {
         timeCalculator.isOverdue
-    }
-
-    var timeProgress: Double {
-        timeCalculator.timeProgress
     }
 
     var timeRemainingProgress: Double {

@@ -43,9 +43,9 @@ struct CheckmarkButton: View {
     List {
         CheckmarkButton(isSelected: true)
             .padding()
-        CheckmarkButton(isSelected: false)
+        CheckmarkButton(isSelected: false, placeholder: false)
             .padding()
-        CheckmarkButton(isSelected: false, placeholder: true)
+        CheckmarkButton(isSelected: false)
             .padding()
     }
 }
