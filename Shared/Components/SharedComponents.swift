@@ -35,6 +35,8 @@ struct MemberAvatar: View {
         .frame(width: size, height: size)
         .tint(.brown)
         .buttonStyle(.glass)
+        .buttonBorderShape(.capsule)
+        .allowsHitTesting(false)
     }
 
     /// Convenience initializer for member-based avatar
@@ -161,6 +163,49 @@ struct EmptyStateView: View {
     }
 }
 
+// MARK: - Error View
+
+struct ErrorView: View {
+    var title: String = "Something went wrong"
+    let message: String
+    let onRetry: () -> Void
+
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(symbol: AppSymbols.exclamationTriangle)
+                .font(.system(size: 44))
+                .foregroundColor(AppColors.destructive)
+            Text(title)
+                .font(.headline)
+                .foregroundColor(.white)
+            Text(message)
+                .font(.caption)
+                .foregroundColor(.white.opacity(0.7))
+                .multilineTextAlignment(.center)
+            Button("Retry", action: onRetry)
+                .buttonStyle(.glassProminent)
+        }
+        .padding()
+    }
+}
+
+// MARK: - Loading View
+
+struct LoadingView: View {
+    var message: String = "Loading..."
+
+    var body: some View {
+        VStack(spacing: 16) {
+            ProgressView()
+                .controlSize(.large)
+                .tint(.white)
+            Text(message)
+                .font(.headline)
+                .foregroundColor(.white.opacity(0.8))
+        }
+    }
+}
+
 // MARK: - Section Header
 
 struct SectionHeader: View {
@@ -186,9 +231,9 @@ struct SectionHeader: View {
     }
 }
 
-// MARK: - Preview
+// MARK: - Previews
 
-#Preview {
+#Preview("Components") {
     VStack(spacing: 20) {
         // MemberAvatar
         HStack(spacing: 12) {
@@ -240,4 +285,20 @@ struct SectionHeader: View {
     }
     .padding()
     .frame(width: 400)
+}
+
+#Preview("LoadingView") {
+    ZStack {
+        AppGradients.teamMemberBackground.ignoresSafeArea()
+        LoadingView(message: "Loading Teams...")
+    }
+    .frame(width: 400, height: 300)
+}
+
+#Preview("ErrorView") {
+    ZStack {
+        AppGradients.managerBackground.ignoresSafeArea()
+        ErrorView(title: "Error loading teams", message: "Failed to connect to server.") {}
+    }
+    .frame(width: 400, height: 300)
 }

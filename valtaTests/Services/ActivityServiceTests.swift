@@ -39,6 +39,27 @@ struct ActivityServiceTests {
                 status: .running,
                 deadline: Date(),
                 startedAt: Date()
+            ),
+            Activity(
+                id: UUID(uuidString: "00000000-0000-0000-0000-000000000003")!,
+                name: "Activity 3",
+                description: "Description 3",
+                assignedMember: mockMember,
+                priority: .p2,
+                status: .managerPending,
+                outcome: .jit,
+                deadline: Date()
+            ),
+            Activity(
+                id: UUID(uuidString: "00000000-0000-0000-0000-000000000004")!,
+                name: "Activity 4",
+                description: "Description 4",
+                assignedMember: mockMember,
+                priority: .p3,
+                status: .completed,
+                outcome: .ahead,
+                deadline: Date(),
+                completedAt: Date()
             )
         ]
     }
@@ -62,6 +83,24 @@ struct ActivityServiceTests {
         var activities = mockActivities
 
         let updatedActivity = activityService.startActivity(id: nonExistentId, in: &activities)
+
+        #expect(updatedActivity == nil)
+    }
+
+    @Test func testStartActivity_InvalidStatus_AlreadyRunning() {
+        let activityId = mockActivities[1].id // Already running
+        var activities = mockActivities
+
+        let updatedActivity = activityService.startActivity(id: activityId, in: &activities)
+
+        #expect(updatedActivity == nil)
+    }
+
+    @Test func testStartActivity_InvalidStatus_Completed() {
+        let activityId = mockActivities[3].id // Completed
+        var activities = mockActivities
+
+        let updatedActivity = activityService.startActivity(id: activityId, in: &activities)
 
         #expect(updatedActivity == nil)
     }
@@ -93,6 +132,83 @@ struct ActivityServiceTests {
             outcome: .jit,
             in: &activities
         )
+
+        #expect(updatedActivity == nil)
+    }
+
+    @Test func testRequestCompletion_InvalidStatus_NotRunning() {
+        let activityId = mockActivities[0].id // teamMemberPending
+        var activities = mockActivities
+
+        let updatedActivity = activityService.requestCompletion(
+            id: activityId,
+            outcome: .ahead,
+            in: &activities
+        )
+
+        #expect(updatedActivity == nil)
+    }
+
+    // MARK: - Approve Completion Tests
+
+    @Test func testApproveCompletion_Success() {
+        let activityId = mockActivities[2].id // managerPending
+        var activities = mockActivities
+
+        let updatedActivity = activityService.approveCompletion(id: activityId, in: &activities)
+
+        #expect(updatedActivity != nil)
+        #expect(updatedActivity?.status == .completed)
+        #expect(updatedActivity?.completedAt != nil)
+        #expect(activities[2].status == .completed)
+    }
+
+    @Test func testApproveCompletion_NonExistentID() {
+        let nonExistentId = UUID()
+        var activities = mockActivities
+
+        let updatedActivity = activityService.approveCompletion(id: nonExistentId, in: &activities)
+
+        #expect(updatedActivity == nil)
+    }
+
+    @Test func testApproveCompletion_InvalidStatus_NotManagerPending() {
+        let activityId = mockActivities[1].id // running
+        var activities = mockActivities
+
+        let updatedActivity = activityService.approveCompletion(id: activityId, in: &activities)
+
+        #expect(updatedActivity == nil)
+    }
+
+    // MARK: - Reject Completion Tests
+
+    @Test func testRejectCompletion_Success() {
+        let activityId = mockActivities[2].id // managerPending
+        var activities = mockActivities
+
+        let updatedActivity = activityService.rejectCompletion(id: activityId, in: &activities)
+
+        #expect(updatedActivity != nil)
+        #expect(updatedActivity?.status == .running)
+        #expect(updatedActivity?.outcome == nil) // Outcome should be cleared
+        #expect(activities[2].status == .running)
+    }
+
+    @Test func testRejectCompletion_NonExistentID() {
+        let nonExistentId = UUID()
+        var activities = mockActivities
+
+        let updatedActivity = activityService.rejectCompletion(id: nonExistentId, in: &activities)
+
+        #expect(updatedActivity == nil)
+    }
+
+    @Test func testRejectCompletion_InvalidStatus_NotManagerPending() {
+        let activityId = mockActivities[1].id // running
+        var activities = mockActivities
+
+        let updatedActivity = activityService.rejectCompletion(id: activityId, in: &activities)
 
         #expect(updatedActivity == nil)
     }
@@ -140,4 +256,15 @@ struct ActivityServiceTests {
 
         #expect(activities.map { $0.status } == originalStatuses)
     }
+
+    @Test func testCancelActivity_InvalidStatus_AlreadyCompleted() {
+        let activityId = mockActivities[3].id // completed
+        var activities = mockActivities
+
+        let result = activityService.cancelActivity(id: activityId, in: &activities)
+
+        #expect(result == nil)
+        #expect(activities[3].status == .completed) // Should remain completed
+    }
 }
+
