@@ -253,7 +253,7 @@ struct LogEntryRow: View {
 
                         // Member info
                         HStack(spacing: 6) {
-                            MemberAvatar(member: entry.activity.assignedMember, size: 20)
+                            MemberAvatar(member: entry.activity.assignedMember, size: 30)
 
                             Text(entry.activity.assignedMember.name)
                                 .font(.system(size: 12))
