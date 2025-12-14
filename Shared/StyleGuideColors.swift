@@ -192,3 +192,44 @@ enum AppGradients {
     /// Avatar gradient
     static let avatar = AppColors.avatar.gradient
 }
+
+// MARK: - Cross-Platform Color Extensions
+
+extension Color {
+    #if os(macOS)
+    static let controlBackground = Color(NSColor.controlBackgroundColor)
+    static let windowBackground = Color(NSColor.windowBackgroundColor)
+    #else
+    static let controlBackground = Color(UIColor.secondarySystemBackground)
+    static let windowBackground = Color(UIColor.systemBackground)
+    #endif
+}
+
+// MARK: - Color toHex Extension
+
+extension Color {
+    /// Converts the color to a 6-character hex string (e.g. "#FF0000").
+    /// Returns nil if conversion is not possible (e.g. system colors).
+    func toHex() -> String? {
+        #if canImport(UIKit)
+        // UIKit (iOS, iPadOS, visionOS)
+        let uiColor = UIColor(self)
+        var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
+        guard uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha) else { return nil }
+        return String(format: "#%02X%02X%02X",
+                      Int(red * 255),
+                      Int(green * 255),
+                      Int(blue * 255))
+        #elseif canImport(AppKit)
+        // AppKit (macOS)
+        let nsColor = NSColor(self)
+        guard let rgbColor = nsColor.usingColorSpace(.deviceRGB) else { return nil }
+        return String(format: "#%02X%02X%02X",
+                      Int(rgbColor.redComponent * 255),
+                      Int(rgbColor.greenComponent * 255),
+                      Int(rgbColor.blueComponent * 255))
+        #else
+        return nil
+        #endif
+    }
+}

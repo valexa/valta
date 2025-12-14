@@ -90,7 +90,11 @@ struct ActivityRow: View {
         .padding(.vertical, 8)
         .background(
             RoundedRectangle(cornerRadius: 8)
+                #if os(macOS)
                 .fill(isHighlighted ? Color.accentColor.opacity(0.05) : Color(NSColor.controlBackgroundColor))
+                #else
+                .fill(isHighlighted ? Color.accentColor.opacity(0.05) : Color(UIColor.secondarySystemBackground))
+                #endif
         )
         .overlay(
             RoundedRectangle(cornerRadius: 8)

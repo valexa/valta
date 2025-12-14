@@ -125,7 +125,7 @@ struct ActivityCard: View {
                 .background(outcome.color.opacity(0.1))
             }
         }
-        .background(Color(NSColor.controlBackgroundColor))
+        .background(Color.controlBackground)
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)

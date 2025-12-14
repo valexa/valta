@@ -122,4 +122,3 @@ struct ActivityStatsTests {
         #expect(stats.completed == 3)
     }
 }
-

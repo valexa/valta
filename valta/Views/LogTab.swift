@@ -91,7 +91,7 @@ struct LogTab: View {
                 }
             }
         }
-        .background(Color(NSColor.controlBackgroundColor))
+        .background(Color.controlBackground)
         .searchable(text: $searchText, placement: .toolbarPrincipal, prompt: "Search log...")
         .toolbar {
 
@@ -166,7 +166,7 @@ struct LogDateSection: View {
                     LogEntryRow(entry: entry, isLast: index == entries.count - 1)
                 }
             }
-            .background(Color(NSColor.windowBackgroundColor))
+            .background(Color.windowBackground)
             .cornerRadius(12)
         }
     }
@@ -267,7 +267,7 @@ struct LogEntryRow: View {
                         }
                     }
                     .padding(10)
-                    .background(isOwnActivity ? Color.accentColor.opacity(0.05) : Color(NSColor.controlBackgroundColor))
+                    .background(isOwnActivity ? Color.accentColor.opacity(0.05) : Color.controlBackground)
                     .cornerRadius(8)
 
                     // Outcome for completed entries

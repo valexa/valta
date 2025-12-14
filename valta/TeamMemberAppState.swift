@@ -52,6 +52,39 @@ final class TeamMemberAppState: BaseAppState, ActivityDataProviding {
         if !hasCompletedOnboarding {
             restoreSavedMember()
         }
+        
+        // Sync live activities for current member
+        syncLiveActivities()
+    }
+    
+    private func syncLiveActivities() {
+        guard let member = currentMember else { return }
+        
+#if os(iOS)
+        // Get currently running activities for this member
+        let runningActivities = myActivities.filter { $0.status == .running }
+        
+        // Extract primitive data for isolation
+        let runningIds = Set(runningActivities.map { $0.id })
+        var activitiesInfo: [UUID: (name: String, deadline: Date, priority: String, colorHex: String)] = [:]
+        
+        for activity in runningActivities {
+            activitiesInfo[activity.id] = (
+                name: activity.name,
+                deadline: activity.deadline,
+                priority: activity.priority.shortName,
+                colorHex: activity.displayColor.toHex() ?? "#888888"
+            )
+        }
+        
+        Task {
+            await LiveActivityManager.shared.sync(
+                runningActivityIds: runningIds,
+                activitiesInfo: activitiesInfo,
+                memberName: member.name
+            )
+        }
+        #endif
     }
 
     /// Restores the selected member from UserDefaults if available
@@ -168,6 +201,9 @@ final class TeamMemberAppState: BaseAppState, ActivityDataProviding {
 
         // Persist member email to UserDefaults
         UserDefaults.standard.set(member.email, forKey: Self.selectedMemberEmailKey)
+        
+        // Trigger sync of Live Activities
+        syncLiveActivities()
 
         // Update notification profile and link token
         Task {

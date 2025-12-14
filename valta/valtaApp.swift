@@ -9,9 +9,12 @@
 //
 
 import SwiftUI
-import AppKit
 import Firebase
 import FirebaseAuth
+
+#if os(iOS) || os(visionOS) || os(tvOS)
+import UIKit
+#endif
 
 @main
 struct valtaApp: App {
@@ -62,7 +65,9 @@ struct valtaApp: App {
                     }
                 }
         }
+        #if os(macOS)
         .windowStyle(.hiddenTitleBar)
         .windowToolbarStyle(.unified)
+        #endif
     }
 }

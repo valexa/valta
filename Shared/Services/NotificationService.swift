@@ -108,14 +108,19 @@ final class NotificationService: NSObject {
         }
     }
 
-    /// Uploads FCM token to Firestore/backend
+    /// Uploads FCM token to Firestore/backend (macOS only - iOS/iPadOS do not register for push)
     private func uploadFCMToken(_ token: String, userId: String) async {
+        #if os(macOS)
         guard !isTestMode else { return }  // Skip Firestore writes during tests
         do {
             try await FirestoreService.shared.saveFCMToken(token, for: userId)
         } catch {
             print("❌ Error uploading FCM token: \(error.localizedDescription)")
         }
+        #else
+        // On iOS/iPadOS, we do not register FCM tokens to avoid push notifications
+        print("ℹ️ Skipping FCM token upload on iOS/iPadOS")
+        #endif
     }
 
     /// Deletes FCM token from backend (on logout)
@@ -206,8 +211,6 @@ extension NotificationService: MessagingDelegate {
 
 #if os(iOS) || os(visionOS) || os(tvOS)
 import UIKit
-#elseif os(macOS)
-import AppKit
 #endif
 
 // MARK: - Firestore Service (Internal Helper)

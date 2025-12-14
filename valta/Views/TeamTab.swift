@@ -109,7 +109,7 @@ struct TeamTab: View {
                 }
             }
         }
-        .background(Color(NSColor.controlBackgroundColor))
+        .background(Color.controlBackground)
         .searchable(text: $searchText, placement: .toolbarPrincipal, prompt: "Search activities or members...")
     }
 }
@@ -213,7 +213,7 @@ struct TeamTabHeader: View {
             }
         }
         .padding()
-        .background(Color(NSColor.windowBackgroundColor))
+        .background(Color.windowBackground)
     }
 
     private func toggleFilter(_ filter: TeamStatsFilter) {
@@ -287,7 +287,7 @@ struct TeamMemberSection: View {
             }
         }
         .padding(16)
-        .background(Color(NSColor.windowBackgroundColor))
+        .background(Color.windowBackground)
         .cornerRadius(12)
     }
 }

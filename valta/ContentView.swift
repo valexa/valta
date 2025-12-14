@@ -16,7 +16,11 @@ struct ContentView: View {
     var body: some View {
         Group {
             if appState.hasCompletedOnboarding {
+                #if os(iOS)
+                iOSOngoingActivitiesView()
+                #else
                 MainTabView()
+                #endif
             } else {
                 TeamMemberOnboardingView()
             }
