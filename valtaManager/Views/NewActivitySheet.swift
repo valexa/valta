@@ -139,6 +139,7 @@ struct NewActivitySheet: View {
                         .foregroundColor(.secondary)
 
                     NotificationPreview(
+                        activityName: name,
                         priority: priority,
                         deadline: deadline,
                         memberName: selectedMember?.name ?? ""
@@ -258,6 +259,7 @@ struct QuickDeadlineButton: View {
 // MARK: - Notification Preview
 
 struct NotificationPreview: View {
+    let activityName: String
     let priority: ActivityPriority
     let deadline: Date
     let memberName: String
@@ -272,7 +274,7 @@ struct NotificationPreview: View {
                 Text("Notification to \(memberName)")
                     .font(.system(size: 12, weight: .semibold))
 
-                Text("Your manager has assigned \(priority.shortName) activity on \(Date().formatted(date: .abbreviated, time: .shortened)) with deadline \(deadline.formatted(date: .abbreviated, time: .shortened)) to you, please start the activity.")
+                Text("[Manager name] has assigned \(priority.shortName) activity on \(Date().formatted(date: .abbreviated, time: .shortened)) with deadline \(deadline.formatted(date: .abbreviated, time: .shortened)) to you, please start the activity: \(activityName)")
                     .font(.system(size: 11))
                     .foregroundColor(.secondary)
                     .lineLimit(3)

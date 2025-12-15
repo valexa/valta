@@ -291,6 +291,10 @@ struct LogEntryRow: View {
                     isHovered = hovering
                 }
             }
+            .contextMenu {
+                ActivityDetailContextMenu(activity: entry.activity)
+            }
+            .help(entry.activity.description)
 
             if !isLast {
                 Divider()

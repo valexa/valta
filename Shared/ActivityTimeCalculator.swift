@@ -138,7 +138,60 @@ struct ActivityTimeCalculator {
         return endDate.timeIntervalSince(startedAt)
     }
 
+    // MARK: - Current Status Duration
+
+    /// Duration in current status (live for running activities)
+    var currentStatusDuration: TimeInterval {
+        let currentDate = now()
+
+        switch status {
+        case .teamMemberPending:
+            // Time waiting since created
+            return currentDate.timeIntervalSince(createdAt)
+        case .running:
+            // Time since started
+            guard let startedAt = startedAt else {
+                return currentDate.timeIntervalSince(createdAt)
+            }
+            return currentDate.timeIntervalSince(startedAt)
+        case .managerPending:
+            // Time since started (approximates time waiting for approval)
+            guard let startedAt = startedAt else {
+                return currentDate.timeIntervalSince(createdAt)
+            }
+            return currentDate.timeIntervalSince(startedAt)
+        case .completed, .canceled:
+            // Final duration from start to completion
+            guard let startedAt = startedAt else { return 0 }
+            guard let completedAt = completedAt else {
+                return currentDate.timeIntervalSince(startedAt)
+            }
+            return completedAt.timeIntervalSince(startedAt)
+        }
+    }
+
+    /// Formatted current status duration (e.g., "2h 15m", "3d 4h")
+    var currentStatusDurationFormatted: String {
+        formatDuration(currentStatusDuration)
+    }
+
     // MARK: - Private Formatting Helpers
+
+    private func formatDuration(_ interval: TimeInterval) -> String {
+        let absSeconds = abs(interval)
+
+        let days = Int(absSeconds / 86400)
+        let hours = Int((absSeconds.truncatingRemainder(dividingBy: 86400)) / 3600)
+        let minutes = Int((absSeconds.truncatingRemainder(dividingBy: 3600)) / 60)
+
+        if days > 0 {
+            return "\(days)d \(hours)h"
+        } else if hours > 0 {
+            return "\(hours)h \(minutes)m"
+        } else {
+            return "\(minutes)m"
+        }
+    }
 
     private func formatOverdue(_ interval: TimeInterval) -> String {
         if interval < 3600 {

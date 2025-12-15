@@ -368,9 +368,6 @@
 				LastSwiftUpdateCheck = 2620;
 				LastUpgradeCheck = 2620;
 				TargetAttributes = {
-					F51B6C0B2EEF525E00A13B02 = {
-						CreatedOnToolsVersion = 26.2;
-					};
 					F51CBB252EE17C8F00615E23 = {
 						CreatedOnToolsVersion = 26.1.1;
 					};
@@ -544,7 +541,7 @@
 				CODE_SIGN_ENTITLEMENTS = valtaManager/valtaManager.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 6P6BQ65AWN;
 				ENABLE_APP_SANDBOX = YES;
@@ -603,7 +600,7 @@
 				CODE_SIGN_ENTITLEMENTS = valtaManager/valtaManager.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 6P6BQ65AWN;
 				ENABLE_APP_SANDBOX = YES;
@@ -835,7 +832,7 @@
 				CODE_SIGN_ENTITLEMENTS = valta/valta.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 6P6BQ65AWN;
 				ENABLE_APP_SANDBOX = YES;
@@ -895,7 +892,7 @@
 				CODE_SIGN_ENTITLEMENTS = valta/valta.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 6P6BQ65AWN;
 				ENABLE_APP_SANDBOX = YES;

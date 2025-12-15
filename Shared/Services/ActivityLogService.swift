@@ -25,7 +25,7 @@ class ActivityLogService {
                 activity: activity,
                 action: .created,
                 timestamp: activity.createdAt,
-                performedBy: "System"
+                performedBy: activity.managerEmail ?? "Manager"
             ))
 
             // Create log entry for started (if started)
@@ -68,7 +68,7 @@ class ActivityLogService {
                     activity: activity,
                     action: .canceled,
                     timestamp: cancelTimestamp,
-                    performedBy: "System"
+                    performedBy: activity.managerEmail ?? "Manager"
                 ))
             }
         }

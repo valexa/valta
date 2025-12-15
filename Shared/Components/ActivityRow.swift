@@ -9,6 +9,7 @@
 //
 
 import SwiftUI
+import TipKit
 
 // MARK: - Activity Row
 
@@ -19,10 +20,12 @@ struct ActivityRow: View {
     let activity: Activity
     var showAssignee: Bool = false
     var isHighlighted: Bool = false
+    var showTip: Bool = false
     var onStart: (() -> Void)?
     var onComplete: (() -> Void)?
 
     @State private var isHovered = false
+    private let activityRowTip = ActivityRowTip()
 
     var body: some View {
 
@@ -100,6 +103,19 @@ struct ActivityRow: View {
             withAnimation(.easeInOut(duration: 0.15)) {
                 isHovered = hovering
             }
+        }
+        .contextMenu {
+            ActivityDetailContextMenu(activity: activity)
+        }
+        .help(activity.description)
+        .popoverTip(activityRowTip, arrowEdge: .bottom)
+        .task {
+#if os(iOS) || os(macOS) || os(visionOS)
+            try? Tips.configure([
+                .displayFrequency(.immediate),
+                .datastoreLocation(.applicationDefault)
+            ])
+#endif
         }
     }
 

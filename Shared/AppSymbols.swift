@@ -54,6 +54,8 @@ enum AppSymbols {
     static let calendar = "calendar"
     static let calendarBadgeClock = "calendar.badge.clock"
     static let hourglass = "hourglass"
+    static let timer = "timer"
+    static let docText = "doc.text"
 
     // MARK: - Warning & Info Icons
 
