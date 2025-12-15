@@ -268,4 +268,3 @@ struct ActivityFilterTests {
         #expect(ahead[0].outcome == .ahead)
     }
 }
-
