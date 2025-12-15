@@ -9,7 +9,6 @@
 //
 
 import SwiftUI
-import AppKit
 import Firebase
 import FirebaseAuth
 
@@ -62,7 +61,9 @@ struct valtaManagerApp: App {
                     }
                 }
         }
+        #if os(macOS)
         .windowStyle(.hiddenTitleBar)
         .windowToolbarStyle(.unified)
+        #endif
     }
 }

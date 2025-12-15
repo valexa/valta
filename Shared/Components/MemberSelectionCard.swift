@@ -44,8 +44,10 @@ struct MemberSelectionCard: View {
             )
         }
         .buttonStyle(.plain)
+#if os(macOS)
         .disabled(isDisabled)
         .blur(radius: isDisabled ? 1.0 : 0.0)
+#endif
         .onHover { hovering in
             withAnimation(.easeInOut(duration: 0.15)) {
                 isHovered = hovering

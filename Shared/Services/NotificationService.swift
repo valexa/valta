@@ -206,8 +206,6 @@ extension NotificationService: MessagingDelegate {
 
 #if os(iOS) || os(visionOS) || os(tvOS)
 import UIKit
-#elseif os(macOS)
-import AppKit
 #endif
 
 // MARK: - Firestore Service (Internal Helper)
