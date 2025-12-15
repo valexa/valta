@@ -138,7 +138,7 @@ struct ActivitiesTab: View {
                 }
             }
         }
-        .background(Color(NSColor.controlBackgroundColor))
+        .background(Color.controlBackground)
         .searchable(text: $searchText, placement: .toolbar, prompt: "Search activities...")
         .task {
 #if os(iOS) || os(macOS) || os(visionOS)
@@ -272,7 +272,7 @@ struct ActivitiesHeader: View {
             }
         }
         .padding()
-        .background(Color(NSColor.windowBackgroundColor))
+        .background(Color.windowBackground)
     }
 
     private func toggleFilter(_ filter: MyActivitiesFilter) {

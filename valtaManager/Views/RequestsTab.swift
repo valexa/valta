@@ -106,7 +106,7 @@ struct RequestCard: View {
                     }
                     .padding(12)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color(NSColor.windowBackgroundColor))
+                    .background(Color.windowBackground)
                     .cornerRadius(8)
 
                     // Outcome details
@@ -171,9 +171,9 @@ struct RequestCard: View {
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 14)
-            .background(Color(NSColor.windowBackgroundColor).opacity(0.5))
+            .background(Color.windowBackground.opacity(0.5))
         }
-        .background(Color(NSColor.controlBackgroundColor))
+        .background(Color.controlBackground)
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)

@@ -28,7 +28,7 @@ struct TeamCard: View {
                         .font(.system(size: 14))
                         .foregroundColor(.white.opacity(0.6))
                 }
-
+#if os(macOS)
                 // Member preview avatars
                 HStack(spacing: -4) {
                     ForEach(Array(team.members.prefix(10))) { member in
@@ -41,6 +41,7 @@ struct TeamCard: View {
                             .padding(.leading, 12)
                     }
                 }
+#endif
             }
             .overlay(alignment: .topTrailing) {
                 CheckmarkButton(isSelected: isSelected)

@@ -267,4 +267,3 @@ struct ActivityServiceTests {
         #expect(activities[3].status == .completed) // Should remain completed
     }
 }
-
