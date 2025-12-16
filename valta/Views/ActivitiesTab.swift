@@ -17,7 +17,6 @@ enum MyActivitiesFilter: Equatable {
     case all
     case pending
     case running
-    case awaiting
     case outcome(ActivityOutcome)
 }
 
@@ -35,11 +34,9 @@ struct ActivitiesTab: View {
             case .all:
                 activities = appState.myActivities
             case .pending:
-                activities = appState.myActivities.teamMemberPending
+                activities = appState.myActivities.teamMemberPending + appState.myActivities.managerPending
             case .running:
                 activities = appState.myActivities.running
-            case .awaiting:
-                activities = appState.myActivities.managerPending
             case .outcome(let outcome):
                 activities = appState.myActivities.completed.filter { $0.outcome == outcome }
             }
@@ -62,7 +59,6 @@ struct ActivitiesTab: View {
             case .all: return "You don't have any activities assigned yet"
             case .pending: return "No pending activities"
             case .running: return "No running activities"
-            case .awaiting: return "No activities awaiting approval"
             case .outcome(let outcome): return "No \(outcome.rawValue.lowercased()) activities"
             }
         }
@@ -200,7 +196,7 @@ struct ActivitiesHeader: View {
 
                     StatButton(
                         icon: AppSymbols.clock,
-                        value: appState.myActivities.teamMemberPending.count,
+                        value: appState.myActivities.teamMemberPending.count + appState.myActivities.managerPending.count,
                         label: "Pending",
                         color: AppColors.statusTeamMemberPending,
                         isSelected: statsFilter == .pending
@@ -213,14 +209,6 @@ struct ActivitiesHeader: View {
                         color: AppColors.statusRunning,
                         isSelected: statsFilter == .running
                     ) { toggleFilter(.running) }
-
-                    StatButton(
-                        icon: AppSymbols.managerPending,
-                        value: appState.myActivities.managerPending.count,
-                        label: "Awaiting",
-                        color: AppColors.statusManagerPending,
-                        isSelected: statsFilter == .awaiting
-                    ) { toggleFilter(.awaiting) }
 
                     Divider()
                         .frame(height: 30)

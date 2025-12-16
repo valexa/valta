@@ -96,6 +96,11 @@ struct OutcomeBadge: View {
         }
 
         HStack(spacing: 12) {
+            StatusBadge(status: .managerPending, outcome: nil, displayColor: AppColors.statusManagerPending)
+            StatusBadge(status: .teamMemberPending, outcome: nil, displayColor: AppColors.statusTeamMemberPending)
+        }
+
+        HStack(spacing: 12) {
             OutcomeBadge(outcome: .ahead)
             OutcomeBadge(outcome: .jit)
             OutcomeBadge(outcome: .overrun)

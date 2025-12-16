@@ -44,8 +44,8 @@ enum AppColors {
     static let statusCompleted = Color.green
     /// Canceled status - Gray
     static let statusCanceled = Color.gray
-    /// Manager pending - Red (awaiting manager approval)
-    static let statusManagerPending = Color(red: 0.9, green: 0.2, blue: 0.3)
+    /// Manager pending - Magenta (awaiting manager approval)
+    static let statusManagerPending = Color(red: 0.85, green: 0.2, blue: 0.7)
     /// Team member pending - Purple (awaiting team member to start)
     static let statusTeamMemberPending = Color(red: 0.6, green: 0.4, blue: 0.9)
 

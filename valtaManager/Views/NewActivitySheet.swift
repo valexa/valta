@@ -19,8 +19,19 @@ struct NewActivitySheet: View {
     @State private var priority: ActivityPriority = .p2
     @State private var deadline: Date = Date().addingTimeInterval(3600 * 4) // 4 hours from now
 
+    private let maxNameLength = 200
+    private let maxDescriptionLength = 500
+
+    private var nameError: String {
+        name.count > maxNameLength ? "Maximum \(maxNameLength) characters (\(name.count)/\(maxNameLength))" : ""
+    }
+
+    private var descriptionError: String {
+        description.count > maxDescriptionLength ? "Maximum \(maxDescriptionLength) characters (\(description.count)/\(maxDescriptionLength))" : ""
+    }
+
     private var isValid: Bool {
-        !name.isEmpty && !description.isEmpty && selectedMember != nil
+        !name.isEmpty && !description.isEmpty && selectedMember != nil && nameError.isEmpty && descriptionError.isEmpty
     }
 
     var body: some View {
@@ -30,9 +41,7 @@ struct NewActivitySheet: View {
                 Button("Cancel", role: .destructive) {
                     dismiss()
                 }
-                .buttonStyle(.plain)
-                .foregroundColor(.secondary)
-
+                .buttonStyle(.glass)
                 Spacer()
 
                 Text("New Activity")
@@ -44,7 +53,7 @@ struct NewActivitySheet: View {
                     createActivity()
                 }
                 .buttonStyle(.glass)
-                .tint(.green)
+                .tint(AppColors.statusManagerPending.opacity(0.25))
                 .disabled(!isValid)
             }
             .padding()
@@ -78,42 +87,22 @@ struct NewActivitySheet: View {
                     memberSelectionView
 
                     // Activity name
-                    TextField("Activity name", text: $name)
-                        .focusEffectDisabled()
+                    FloatingTextField(title: "Activity name", text: $name, error: nameError)
                         .onChange(of: name) { _, newValue in
                             let sanitized = newValue.sanitizedForCSV
                             if sanitized != newValue {
                                 name = sanitized
                             }
                         }
-                    // Description
-                    ZStack(alignment: .topLeading) {
-                        if description.isEmpty {
-                            Text("Activity description")
-                                .foregroundColor(.secondary.opacity(0.5))
-                                .padding(.top, 8)
-                                .padding(.leading, 8)
-                        }
 
-                        TextEditor(text: $description)
-                            .font(.body)
-                            .frame(minHeight: 80)
-                            .padding(4)
-                            .background(Color.clear)
-                            .scrollContentBackground(.hidden)
-                            .onChange(of: description) { _, newValue in
-                                let sanitized = newValue.sanitizedForCSV
-                                if sanitized != newValue {
-                                    description = sanitized
-                                }
+                    // Description
+                    FloatingTextField(title: "Activity description", text: $description, error: descriptionError, isMultiline: true, minHeight: 100)
+                        .onChange(of: description) { _, newValue in
+                            let sanitized = newValue.sanitizedForCSV
+                            if sanitized != newValue {
+                                description = sanitized
                             }
-                    }
-                    .background(Color(NSColor.textBackgroundColor))
-                    .cornerRadius(6)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6)
-                            .stroke(Color(NSColor.separatorColor), lineWidth: 1)
-                    )
+                        }
 
                     // Priority
                     HStack(spacing: 8) {

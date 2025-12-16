@@ -29,26 +29,21 @@ enum TeamStatsFilter: Equatable {
 struct TeamTab: View {
     @Environment(TeamMemberAppState.self) private var appState
     @State private var searchText: String = ""
-    @State private var statsFilter: TeamStatsFilter? = .all
+    @State private var statsFilter: TeamStatsFilter = .running
 
     var filteredActivities: [Activity] {
         var activities: [Activity]
 
         // Determine base activities based on filter
-        if let filter = statsFilter {
-            switch filter {
-            case .all:
-                activities = appState.team.activities
-            case .pending:
-                activities = appState.allPendingActivities
-            case .running:
-                activities = appState.runningActivities
-            case .outcome(let outcome):
-                activities = appState.completedActivities.filter { $0.outcome == outcome }
-            }
-        } else {
-            // No filter = show active activities
+        switch statsFilter {
+        case .all:
+            activities = appState.team.activities
+        case .pending:
+            activities = appState.allPendingActivities
+        case .running:
             activities = appState.runningActivities
+        case .outcome(let outcome):
+            activities = appState.completedActivities.filter { $0.outcome == outcome }
         }
 
         // Apply search filter
@@ -72,15 +67,12 @@ struct TeamTab: View {
     }
 
     var emptyStateMessage: String {
-        if let filter = statsFilter {
-            switch filter {
-            case .all: return "No activities in your team"
-            case .pending: return "No pending activities"
-            case .running: return "No running activities"
-            case .outcome(let outcome): return "No \(outcome.rawValue.lowercased()) activities"
-            }
+        switch statsFilter {
+        case .all: return "No activities in your team"
+        case .pending: return "No pending activities"
+        case .running: return "No running activities"
+        case .outcome(let outcome): return "No \(outcome.rawValue.lowercased()) activities"
         }
-        return "No active activities in your team right now"
     }
 
     var body: some View {
@@ -120,7 +112,7 @@ struct TeamTab: View {
 struct TeamTabHeader: View {
     @Environment(TeamMemberAppState.self) private var appState
     @Binding var searchText: String
-    @Binding var statsFilter: TeamStatsFilter?
+    @Binding var statsFilter: TeamStatsFilter
 
     var body: some View {
         VStack(spacing: 12) {
@@ -191,27 +183,7 @@ struct TeamTabHeader: View {
                 }
             }
 
-            HStack(spacing: 12) {
-                Spacer()
-                if statsFilter != nil {
-                    Button(action: {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            statsFilter = nil
-                        }
-                    }) {
-                        HStack(spacing: 4) {
-                            Image(symbol: AppSymbols.xmark)
-                                .font(.system(size: 10))
-                            Text("Clear Filter")
-                                .font(.system(size: 12))
-                        }
-                        .foregroundColor(.secondary)
-                    }
-                    .buttonStyle(.plain)
-                }
 
-                Spacer()
-            }
         }
         .padding()
         .background(Color(NSColor.windowBackgroundColor))
@@ -219,11 +191,7 @@ struct TeamTabHeader: View {
 
     private func toggleFilter(_ filter: TeamStatsFilter) {
         withAnimation(.easeInOut(duration: 0.2)) {
-            if statsFilter == filter {
-                statsFilter = nil
-            } else {
-                statsFilter = filter
-            }
+            statsFilter = filter
         }
     }
 }
