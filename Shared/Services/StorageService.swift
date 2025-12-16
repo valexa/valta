@@ -10,7 +10,7 @@
 
 import Foundation
 import FirebaseStorage
-import Combine
+import Observation
 
 // MARK: - Storage Provider Protocol
 
@@ -46,15 +46,16 @@ struct FirebaseStorageProvider: StorageProvider {
 
 // MARK: - Storage Service
 
-class StorageService: ObservableObject {
+@Observable
+class StorageService {
     static let shared = StorageService()
 
     var provider: StorageProvider
     private let activitiesPath = "activities.csv"
     private let teamsPath = "teams.csv"
 
-    @Published var isSyncing = false
-    @Published var lastSyncError: Error?
+    var isSyncing = false
+    var lastSyncError: Error?
 
     init(provider: StorageProvider = FirebaseStorageProvider()) {
         self.provider = provider
