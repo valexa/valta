@@ -102,29 +102,28 @@ Both apps share a unified design system with centralized colors and reusable com
 
 (See Xcode project for file structure)
 
-## Architecture & State Management (Updated)
+## Architecture & State Management
 
 ### Architecture
 
-The architecture is based on MVVM with clearly separated views, view models, and model layers.
+The architecture is based on MVVM with clearly separated views, state classes, and model layers.
 
-- **Models**: Define core business data structures including `Activity`, `TeamMember`, `CompletionRequest`.
-- **ViewModels**: Handle state and business logic, exposing observable properties to views.
-- **Views**: SwiftUI views composed with reusable components and bound to view models.
+- **Models**: Define core business data structures including `Activity`, `Team`, `TeamMember`.
+- **State Classes**: `@Observable` classes (`BaseAppState`, `TeamMemberAppState`, `ManagerAppState`) manage state and business logic with automatic UI updates.
+- **Views**: SwiftUI views composed with reusable components and bound to state via `@Environment`.
 - **Services**: Networking, data persistence, and synchronization layers abstracted behind protocols.
 
 ### State Management
 
-- **ObservableObject**: Used for view models to publish changes.
-- **@Published**: Properties that need to update views.
-- **EnvironmentObject**: For shared app state across views.
-- **Combine**: Reactive framework for asynchronous events and binding.
-- **State restoration**: Persistence of UI state for continuity.
-- **Data flow**: Unidirectional where possible, with actions triggering view model updates, which update models, then views.
+- **@Observable**: Swift 5.9+ Observation framework for automatic UI updates (replaces legacy `ObservableObject`/`@Published`).
+- **@Environment**: Injects shared app state into views.
+- **NotificationCenter**: Data change propagation via `DataManager.dataChangedNotification`.
+- **State restoration**: Persistence of UI state via `UserDefaults` for continuity.
+- **Data flow**: Unidirectional—actions trigger state class updates, which update models, then views automatically re-render.
 
 ### Data Flow Example
 
-- User taps "Start Activity" → View notifies ViewModel → ViewModel updates Activity status → Published changes reflect in UI → Persistence saves updated status.
+User taps "Start Activity" → View calls state method → State updates Activity status → Observable properties update automatically → UI re-renders → Persistence saves updated status to Firebase Storage.
 
 ---
 
