@@ -20,7 +20,6 @@ struct ActivityRow: View {
     let activity: Activity
     var showAssignee: Bool = false
     var isHighlighted: Bool = false
-    var showTip: Bool = false
     var onStart: (() -> Void)?
     var onComplete: (() -> Void)?
 
@@ -109,14 +108,6 @@ struct ActivityRow: View {
         }
         .help(activity.description)
         .popoverTip(activityRowTip, arrowEdge: .bottom)
-        .task {
-#if os(iOS) || os(macOS) || os(visionOS)
-            try? Tips.configure([
-                .displayFrequency(.immediate),
-                .datastoreLocation(.applicationDefault)
-            ])
-#endif
-        }
     }
 
     /// Check if there are any actions that can be shown
