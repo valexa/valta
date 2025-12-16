@@ -20,7 +20,7 @@ Based on `FULL_SPECIFICATION.md`, the following notifications are required:
 **Recipient:** Assigned team member  
 **Message Format:**
 ```
-[Manager name] has assigned p[0/1/2/3] activity on [date, time] with deadline [date, time] to you, please start the activity.
+[Manager name] has assigned p[0/1/2/3] activity on [date, time] with deadline [date, time] to you, please start the activity: [Activity name].
 ```
 
 ### 2. Activity Started (Team Member → All Team Members)
@@ -28,7 +28,7 @@ Based on `FULL_SPECIFICATION.md`, the following notifications are required:
 **Recipient:** All team members in the same team  
 **Message Format:**
 ```
-[Team member name]'s p[0/1/2/3] activity has started on [date, time] with deadline [date, time].
+[Team member name]'s p[0/1/2/3] activity has started on [date, time] with deadline [date, time] for [Activity name].
 ```
 
 ### 3. Completion Requested (Team Member → Manager)

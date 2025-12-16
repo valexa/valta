@@ -71,7 +71,7 @@ final class NotificationSender {
         let createdDate = dateFormatter.string(from: activity.createdAt)
         let deadlineDate = dateFormatter.string(from: activity.deadline)
 
-        let message = "\(managerName) has assigned \(activity.priority.shortName) activity on \(createdDate) with deadline \(deadlineDate) to you, please start the activity: \(activity.name)"
+        let message = "\(managerName) has assigned \(activity.priority.shortName) activity on \(createdDate) with deadline \(deadlineDate) to you, please start the activity: \(activity.name)."
 
         let data: [String: Any] = [
             "type": "activity_assigned",
@@ -98,7 +98,7 @@ final class NotificationSender {
         let startedDate = activity.startedAt.map { dateFormatter.string(from: $0) } ?? "now"
         let deadlineDate = dateFormatter.string(from: activity.deadline)
 
-        let message = "\(activity.assignedMember.name)'s \(activity.priority.shortName) activity has started on \(startedDate) with deadline \(deadlineDate)."
+        let message = "\(activity.assignedMember.name)'s \(activity.priority.shortName) activity has started on \(startedDate) with deadline \(deadlineDate) for \(activity.name)."
 
         // Send member emails for notification lookup
         let memberEmails = team.members.map { $0.email }

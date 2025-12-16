@@ -48,9 +48,8 @@ struct ManagerOnboardingView: View {
         }
         .frame(minWidth: 700, minHeight: 550)
         .task {
-            if dataManager.teams.isEmpty {
-                await dataManager.loadData()
-            }
+            // Always try to reload data first (shows spinner), regardless of cache
+            await dataManager.loadData()
         }
         .onChange(of: dataManager.isLoading) { _, isLoading in
             guard !disableAutoState else { return }
@@ -64,13 +63,8 @@ struct ManagerOnboardingView: View {
         }
         .onAppear {
             guard !disableAutoState else { return }
-            if dataManager.isLoading {
-                state = .loading
-            } else if let error = dataManager.errorMessage {
-                state = .failed(error)
-            } else if !dataManager.teams.isEmpty {
-                state = .loaded
-            }
+            // Always start with loading state to show spinner while data refreshes
+            state = .loading
         }
     }
 

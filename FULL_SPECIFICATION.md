@@ -52,11 +52,11 @@ For p0 activities if the activity outcome is on-time the activity color code is 
 
 Activity notifications are as follows :
 
-[Manager name] has assigned p[0/1/2/3] activity on [date, time] with deadline [date, time] to you, please start the activity.
+[Manager name] has assigned p[0/1/2/3] activity on [date, time] with deadline [date, time] to you, please start the activity: [Activity name].
 
 The notification text above gets sent when a manager assigns a new activity to a team member.
 
-[Team member name]’s p[0/1/2/3] activity has started on [date, time] with deadline [date, time].
+[Team member name]’s p[0/1/2/3] activity has started on [date, time] with deadline [date, time] for [Activity name].
 
 The notification text above gets sent a specific notification to all team members. team member can trigger a activity completion event for their assigned activity which gets sent to the manager for approval.e manager can chose to approve or reject the completion event. Upon approval, the activity status is updated to completed on both the manager's and team member's dashboards.The format is as folowing :
 
