@@ -9,6 +9,7 @@
 //
 
 import SwiftUI
+import TipKit
 
 // MARK: - Activity Row
 
@@ -23,6 +24,7 @@ struct ActivityRow: View {
     var onComplete: (() -> Void)?
 
     @State private var isHovered = false
+    private let activityRowTip = ActivityRowTip()
 
     var body: some View {
 
@@ -101,6 +103,11 @@ struct ActivityRow: View {
                 isHovered = hovering
             }
         }
+        .contextMenu {
+            ActivityDetailContextMenu(activity: activity)
+        }
+        .help(activity.description)
+        .popoverTip(activityRowTip, arrowEdge: .bottom)
     }
 
     /// Check if there are any actions that can be shown

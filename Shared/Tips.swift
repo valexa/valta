@@ -18,3 +18,15 @@ struct AvatarTip: Tip {
         Image(systemName: AppSymbols.person2Fill)
     }
 }
+
+struct ActivityRowTip: Tip {
+    var title: Text {
+        Text("Activity Details")
+    }
+    var message: Text? {
+        Text("Hover for description • Right-click for timeline and duration")
+    }
+    var asset: Image? {
+        Image(systemName: AppSymbols.infoCircle)
+    }
+}

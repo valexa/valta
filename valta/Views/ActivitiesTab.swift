@@ -139,7 +139,7 @@ struct ActivitiesTab: View {
             }
         }
         .background(Color(NSColor.controlBackgroundColor))
-        .searchable(text: $searchText, placement: .toolbar, prompt: "Search activities...")
+        .searchable(text: $searchText, placement: .toolbarPrincipal, prompt: "Search activities...")
         .task {
 #if os(iOS) || os(macOS) || os(visionOS)
             try? Tips.configure([
