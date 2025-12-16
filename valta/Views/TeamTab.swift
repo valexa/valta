@@ -106,6 +106,7 @@ struct TeamTab: View {
                         }
                     }
                     .padding()
+                    .id(appState.dataVersion)
                 }
             }
         }

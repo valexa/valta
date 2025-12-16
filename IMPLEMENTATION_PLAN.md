@@ -306,8 +306,8 @@ valta/
 │   ├── ManagerAppState.swift
 │   └── Views/
 │       ├── OnboardingView.swift
-│       ├── TeamsTab.swift
-│       ├── ActivityCard.swift
+│       ├── ActivitiesTab.swift
+│       ├── ManagerActivityRow.swift
 │       ├── RequestsTab.swift
 │       └── NewActivitySheet.swift
 ├── FULL_SPECIFICATION.md

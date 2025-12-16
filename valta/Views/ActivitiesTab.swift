@@ -93,6 +93,7 @@ struct ActivitiesTab: View {
                         }
                     }
                     .padding()
+                    .id(appState.dataVersion)
                 }
             } else {
                 // Default view - show grouped sections
@@ -135,6 +136,7 @@ struct ActivitiesTab: View {
                         }
                     }
                     .padding()
+                    .id(appState.dataVersion)
                 }
             }
         }

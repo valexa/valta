@@ -1,5 +1,5 @@
 //
-//  TeamsTab.swift
+//  ActivitiesTab.swift
 //  valtaManager
 //
 //  Teams tab showing team overview, activity dashboard, and member management.
@@ -24,7 +24,7 @@ enum StatsFilter: Equatable {
     }
 }
 
-struct TeamsTab: View {
+struct ActivitiesTab: View {
     @Environment(ManagerAppState.self) private var appState
     @State private var searchText: String = ""
     @State private var statusFilter: ActivityStatus?
@@ -76,10 +76,11 @@ struct TeamsTab: View {
                 ScrollView {
                     LazyVStack(spacing: 12) {
                         ForEach(filteredActivities) { activity in
-                            ActivityCard(activity: activity)
+                            ManagerActivityRow(activity: activity)
                         }
                     }
                     .padding()
+                    .id(appState.dataVersion)
                 }
             }
         }
@@ -148,7 +149,7 @@ struct EmptyActivityView: View {
 // MARK: - Preview
 
 #Preview {
-    TeamsTab()
+    ActivitiesTab()
         .environment(ManagerAppState())
         .frame(width: 1000, height: 700)
 }

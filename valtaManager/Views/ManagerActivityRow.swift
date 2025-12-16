@@ -1,5 +1,5 @@
 //
-//  ActivityCard.swift
+//  ManagerActivityRow.swift
 //  valtaManager
 //
 //  Card component displaying an activity with its details, status, and actions.
@@ -9,7 +9,7 @@
 
 import SwiftUI
 
-struct ActivityCard: View {
+struct ManagerActivityRow: View {
     let activity: Activity
     @Environment(ManagerAppState.self) private var appState
     @State private var isHovered = false
@@ -24,7 +24,8 @@ struct ActivityCard: View {
                 VStack {
                     PriorityBadge(priority: activity.priority)
 
-                    if activity.isOverdue {
+                    // Overdue indicator (only for active activities)
+                    if activity.isOverdue && activity.status != .completed && activity.status != .canceled {
                         Image(symbol: AppSymbols.exclamationTriangle)
                             .foregroundColor(AppColors.destructive)
                             .font(.system(size: 14))
@@ -59,14 +60,16 @@ struct ActivityCard: View {
                                 .foregroundColor(.secondary)
                         }
 
-                        // Deadline with progress bar
-                        TimeRemainingLabel(activity: activity, compact: false, showProgressBar: true)
+                        // Deadline with progress bar (only for active activities)
+                        if activity.status != .completed && activity.status != .canceled {
+                            TimeRemainingLabel(activity: activity, compact: false, showProgressBar: true)
+                        }
 
                         // Created date
                         HStack(spacing: 4) {
                             Image(symbol: AppSymbols.calendar)
                                 .font(.system(size: 11))
-                            Text(activity.createdAt.formatted(date: .abbreviated, time: .shortened))
+                            Text(activity.deadline.formatted(date: .abbreviated, time: .shortened))
                                 .font(.system(size: 12))
                         }
                         .foregroundColor(.secondary)
@@ -207,8 +210,8 @@ struct CompleteActivitySheet: View {
 
 #Preview {
     VStack(spacing: 16) {
-        ActivityCard(activity: .mock)
-        ActivityCard(activity: Activity.mockActivities[4])
+        ManagerActivityRow(activity: .mock)
+        ManagerActivityRow(activity: Activity.mockActivities[4])
     }
     .padding()
     .environment(ManagerAppState())

@@ -75,6 +75,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
     ) {
         let userInfo = response.notification.request.content.userInfo
 
+        // Bring app to foreground
+        NSApp.activate(ignoringOtherApps: true)
+
         // Reload data and handle notification tap
         handleNotificationData(userInfo: userInfo)
         handleNotificationTap(userInfo: userInfo)
@@ -97,10 +100,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
     }
 
     private func handleNotificationData(userInfo: [AnyHashable: Any]) {
-        // Trigger data reload for activity-related notifications
+        // Trigger data reload for all activity-related notifications
         if let notificationType = userInfo["type"] as? String {
             switch notificationType {
-            case "activity_assigned", "activity_started", "completion_requested", "completion_approved", "completion_rejected":
+            case "activity_assigned", "activity_started", "activity_completed", "activity_canceled",
+                 "completion_requested", "completion_approved", "completion_rejected":
                 Task {
                     await DataManager.shared.loadData()
                 }
@@ -155,7 +159,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         completionHandler([.banner, .sound, .badge])
     }
 
-    // Handle notification tap
+    // Handle notification tap (app will be brought to foreground automatically on iOS)
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse,
@@ -185,10 +189,11 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     }
 
     private func handleNotificationData(userInfo: [AnyHashable: Any]) {
-        // Trigger data reload for activity-related notifications
+        // Trigger data reload for all activity-related notifications
         if let notificationType = userInfo["type"] as? String {
             switch notificationType {
-            case "activity_assigned", "activity_started", "completion_requested", "completion_approved", "completion_rejected":
+            case "activity_assigned", "activity_started", "activity_completed", "activity_canceled",
+                 "completion_requested", "completion_approved", "completion_rejected":
                 Task {
                     await DataManager.shared.loadData()
                 }

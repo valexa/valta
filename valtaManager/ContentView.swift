@@ -24,6 +24,10 @@ struct ContentView: View {
         .onChange(of: appState.managerPendingActivities.count) { _, newCount in
             updateDockBadge(count: newCount)
         }
+        .onChange(of: appState.dataVersion) { _, _ in
+            // Also update when dataVersion changes (covers mutations not detected by count change)
+            updateDockBadge(count: appState.managerPendingActivities.count)
+        }
         .onAppear {
             updateDockBadge(count: appState.managerPendingActivities.count)
         }
@@ -51,22 +55,22 @@ struct MainTabView: View {
         TabView {
             TabSection("Status") {
                 Tab("All Activities", systemImage: "list.bullet.rectangle") {
-                    TeamsTab()
+                    ActivitiesTab()
                 }
                 .badge(appState.totalActivities)
 
                 Tab("Running", systemImage: "play.fill") {
-                    TeamsTab(statsFilter: .status(.running))
+                    ActivitiesTab(statsFilter: .status(.running))
                 }
                 .badge(appState.runningCount)
 
                 Tab("Pending", systemImage: "clock.fill") {
-                    TeamsTab(statsFilter: .pending)
+                    ActivitiesTab(statsFilter: .pending)
                 }
                 .badge(appState.pendingCount)
 
                 Tab("Completed", systemImage: "checkmark.circle.fill") {
-                    TeamsTab(statsFilter: .status(.completed))
+                    ActivitiesTab(statsFilter: .status(.completed))
                 }
                 .badge(appState.completedCount)
             }
@@ -79,7 +83,7 @@ struct MainTabView: View {
             TabSection("Team Members") {
                 ForEach(appState.team.members) { member in
                     Tab(member.name, systemImage: "person") {
-                        TeamsTab(member: member)
+                        ActivitiesTab(member: member)
                     }
                 }
             }

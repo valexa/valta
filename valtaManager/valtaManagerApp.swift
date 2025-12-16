@@ -39,6 +39,11 @@ struct valtaManagerApp: App {
                 .environment(authService)
                 .environment(notificationService)
                 .task {
+                    // Clear dock badge immediately on launch (reset any stale notification-set badges)
+                    #if os(macOS)
+                    NSApplication.shared.dockTile.badgeLabel = nil
+                    #endif
+                    
                     do {
                         try await authService.signInAnonymously()
                         await dataManager.loadData()

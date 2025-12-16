@@ -88,6 +88,7 @@ struct LogTab: View {
                         }
                     }
                     .padding()
+                    .id(appState.dataVersion)
                 }
             }
         }
@@ -162,8 +163,8 @@ struct LogDateSection: View {
 
             // Entries
             LazyVStack(spacing: 0) {
-                ForEach(Array(entries.enumerated()), id: \.element.id) { index, entry in
-                    LogEntryRow(entry: entry, isLast: index == entries.count - 1)
+                ForEach(entries) { entry in
+                    LogEntryRow(entry: entry)
                 }
             }
             .background(Color(NSColor.windowBackgroundColor))
@@ -176,7 +177,6 @@ struct LogDateSection: View {
 
 struct LogEntryRow: View {
     let entry: ActivityLogEntry
-    let isLast: Bool
     @Environment(TeamMemberAppState.self) private var appState
     @State private var isHovered = false
 
@@ -205,102 +205,82 @@ struct LogEntryRow: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            HStack(alignment: .top, spacing: 12) {
-                // Timeline indicator
-                VStack(spacing: 0) {
-                    Image(symbol: actionIcon)
-                        .font(.system(size: 20))
+        HStack(alignment: .center, spacing: 12) {
+            // Timeline indicator
+            Image(symbol: actionIcon)
+                .font(.system(size: 16))
+                .foregroundColor(actionColor)
+                .frame(width: 20)
+
+            // Content
+            VStack(alignment: .leading, spacing: 4) {
+                // Action description
+                HStack(spacing: 6) {
+                    Text(entry.action.rawValue)
+                        .font(.system(size: 12, weight: .semibold))
                         .foregroundColor(actionColor)
 
-                    if !isLast {
-                        Rectangle()
-                            .fill(Color.secondary.opacity(0.2))
-                            .frame(width: 2)
-                            .frame(maxHeight: .infinity)
-                    }
+                    Text("by \(entry.performedBy)")
+                        .font(.system(size: 12))
+                        .foregroundColor(.secondary)
+
+                    Spacer()
+
+                    Text(entry.timestamp.formatted(date: .omitted, time: .shortened))
+                        .font(.system(size: 11))
+                        .foregroundColor(.secondary)
                 }
-                .frame(width: 24)
 
-                // Content
-                VStack(alignment: .leading, spacing: 8) {
-                    // Action description
-                    HStack(spacing: 8) {
-                        Text(entry.action.rawValue)
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundColor(actionColor)
+                // Activity details
+                HStack(spacing: 8) {
+                    PriorityBadge(priority: entry.activity.priority, compact: true)
 
-                        Text("by \(entry.performedBy)")
-                            .font(.system(size: 13))
+                    Text(entry.activity.name)
+                        .font(.system(size: 12, weight: .medium))
+                        .lineLimit(1)
+
+                    Spacer()
+
+                    // Member info
+                    HStack(spacing: 4) {
+                        MemberAvatar(member: entry.activity.assignedMember, size: 22)
+
+                        Text(entry.activity.assignedMember.name)
+                            .font(.system(size: 11))
                             .foregroundColor(.secondary)
 
-                        Spacer()
-
-                        Text(entry.timestamp.formatted(date: .omitted, time: .shortened))
-                            .font(.system(size: 12))
-                            .foregroundColor(.secondary)
-                    }
-
-                    // Activity details
-                    HStack(spacing: 10) {
-                        PriorityBadge(priority: entry.activity.priority, compact: true)
-
-                        Text(entry.activity.name)
-                            .font(.system(size: 13, weight: .medium))
-                            .lineLimit(1)
-
-                        Spacer()
-
-                        // Member info
-                        HStack(spacing: 6) {
-                            MemberAvatar(member: entry.activity.assignedMember, size: 30)
-
-                            Text(entry.activity.assignedMember.name)
-                                .font(.system(size: 12))
-                                .foregroundColor(.secondary)
-
-                            if isOwnActivity {
-                                Text("(You)")
-                                    .font(.system(size: 10))
-                                    .foregroundColor(.accentColor)
-                            }
+                        if isOwnActivity {
+                            Text("(You)")
+                                .font(.system(size: 10))
+                                .foregroundColor(.accentColor)
                         }
                     }
-                    .padding(10)
-                    .background(isOwnActivity ? Color.accentColor.opacity(0.05) : Color(NSColor.controlBackgroundColor))
-                    .cornerRadius(8)
 
                     // Outcome for completed entries
                     if entry.action == .completed, let outcome = entry.activity.outcome {
-                        HStack(spacing: 6) {
+                        HStack(spacing: 4) {
                             Image(symbol: outcome.icon)
+                                .font(.system(size: 10))
+                            Text(outcome.rawValue)
                                 .font(.system(size: 11))
-                            Text("Outcome: \(outcome.rawValue)")
-                                .font(.system(size: 12))
                         }
                         .foregroundColor(outcome.color)
                     }
                 }
-                .padding(.bottom, 16)
-            }
-            .padding(.horizontal, 16)
-            .padding(.top, 16)
-            .background(isHovered ? Color.accentColor.opacity(0.03) : Color.clear)
-            .onHover { hovering in
-                withAnimation(.easeInOut(duration: 0.15)) {
-                    isHovered = hovering
-                }
-            }
-            .contextMenu {
-                ActivityDetailContextMenu(activity: entry.activity)
-            }
-            .help(entry.activity.description)
-
-            if !isLast {
-                Divider()
-                    .padding(.leading, 52)
             }
         }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(isHovered ? Color.accentColor.opacity(0.03) : Color.clear)
+        .onHover { hovering in
+            withAnimation(.easeInOut(duration: 0.15)) {
+                isHovered = hovering
+            }
+        }
+        .contextMenu {
+            ActivityDetailContextMenu(activity: entry.activity)
+        }
+        .help(entry.activity.description)
     }
 }
 
