@@ -25,6 +25,10 @@ struct ContentView: View {
         .onChange(of: appState.myActivities.allPending.count) { _, newCount in
             updateDockBadge(count: newCount)
         }
+        .onChange(of: appState.dataVersion) { _, _ in
+            // Also update when dataVersion changes (covers mutations not detected by count change)
+            updateDockBadge(count: appState.myActivities.allPending.count)
+        }
         .onAppear {
             updateDockBadge(count: appState.myActivities.allPending.count)
 

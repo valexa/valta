@@ -26,6 +26,7 @@ struct RequestsTab: View {
                     }
                     .padding()
                     .animation(.spring(response: 0.35, dampingFraction: 0.9), value: appState.managerPendingActivities.map(\.id))
+                    .id(appState.dataVersion)
                 }
             }
         }

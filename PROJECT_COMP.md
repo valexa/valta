@@ -291,7 +291,7 @@ Reusable UI components used throughout both apps:
 - Completion summary with animated checkmark
 - Uses `AppGradients.managerBackground` and `AppColors.Manager.*`
 
-#### TeamsTab.swift
+#### ActivitiesTab.swift
 - Left sidebar: team info, interactive stats grid, member list
 - **Stats Grid**: Clickable stat cards that filter the activity list
   - Running (blue), Pending (purple), Completed (green), Total (light gray)
@@ -304,7 +304,7 @@ Reusable UI components used throughout both apps:
 - Activity dashboard with search and filters (status/priority/member)
 - Uses `MemberAvatar` component for all avatars
 
-#### ActivityCard.swift
+#### ManagerActivityRow.swift
 - Priority badges with color coding
 - Status badges with icons
 - Assignee avatars using `MemberAvatar` component

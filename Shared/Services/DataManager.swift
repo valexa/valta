@@ -19,6 +19,7 @@ class DataManager {
     var activities: [Activity] = []
     var currentUser: TeamMember?
     var isLoading = false
+    var isSyncing = false
     var errorMessage: String?
     static let dataChangedNotification = Notification.Name("DataManagerDataChanged")
 
@@ -36,7 +37,11 @@ class DataManager {
 
     @MainActor
     func loadData() async {
-        guard !isLoading else { return }
+        // Don't load while syncing or already loading
+        guard !isLoading && !isSyncing else {
+            print("⏭️ Skipping loadData: isLoading=\(isLoading), isSyncing=\(isSyncing)")
+            return
+        }
 
         isLoading = true
         errorMessage = nil
@@ -95,21 +100,25 @@ class DataManager {
     }
 
     func syncActivities() async {
+        isSyncing = true
         isLoading = true
 
         // Extract all activities from all teams
         let allActivities = teams.flatMap { $0.activities }
+        print("📤 Syncing \(allActivities.count) activities to Firebase...")
+        
         let csvString = csv.serializeActivities(allActivities)
 
         do {
             try await storage.uploadActivities(csvString)
-            print("Successfully uploaded activities")
+            print("✅ Successfully uploaded \(allActivities.count) activities")
         } catch {
-            print("Error uploading activities: \(error.localizedDescription)")
+            print("❌ Error uploading activities: \(error.localizedDescription)")
             errorMessage = "Failed to save changes"
         }
 
         isLoading = false
+        isSyncing = false
     }
 
     func refresh() async {
