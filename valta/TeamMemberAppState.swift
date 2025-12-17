@@ -124,13 +124,13 @@ final class TeamMemberAppState: BaseAppState, ActivityDataProviding {
             updatedActivity = mutableActivity
         }
 
-        // Send notification to all team members using updated state
+        // Send notification to manager using updated state
         let finalActivity = updatedActivity
         Task {
             do {
                 try await NotificationSender.shared.sendActivityStartedNotification(
                     activity: finalActivity,
-                    team: team
+                    managerEmail: finalActivity.managerEmail
                 )
             } catch {
                 print("⚠️ Failed to send activity started notification: \(error.localizedDescription)")

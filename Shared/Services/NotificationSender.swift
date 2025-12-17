@@ -60,9 +60,17 @@ final class NotificationSender {
         self.authChecker = authChecker
     }
 
+    // MARK: - Helper
+
+    /// Returns "P0 - " prefix for P0 activities, empty string otherwise
+    private func priorityPrefix(for activity: Activity) -> String {
+        return activity.priority == .p0 ? "P0 - " : ""
+    }
+
     // MARK: - Notification Types
 
-    /// Sends notification when manager assigns activity to team member
+    /// 1. Sends notification when manager assigns activity to team member
+    /// Recipient: Assigned team member
     func sendActivityAssignedNotification(
         activity: Activity,
         assignedTo member: TeamMember,
@@ -70,8 +78,10 @@ final class NotificationSender {
     ) async throws {
         let createdDate = dateFormatter.string(from: activity.createdAt)
         let deadlineDate = dateFormatter.string(from: activity.deadline)
+        let prefix = priorityPrefix(for: activity)
 
-        let message = "\(managerName) has assigned \(activity.priority.shortName) activity on \(createdDate) with deadline \(deadlineDate) to you, please start the activity: \(activity.name)."
+        // Format: [P0 - ][date] - [Manager] has assigned activity with deadline [date] to you, please start the activity: [Name].
+        let message = "\(prefix)\(createdDate) - \(managerName) has assigned activity with deadline \(deadlineDate) to you, please start the activity: \(activity.name)."
 
         let data: [String: Any] = [
             "type": "activity_assigned",
@@ -85,29 +95,32 @@ final class NotificationSender {
 
         print("📤 Sending notification for member: \(member.name)")
         print("   Member Email: \(member.email)")
-        print("   This is the email that Cloud Function will use to look up the FCM token")
 
         try await callCloudFunction(name: "sendActivityAssignedNotification", data: data)
     }
 
-    /// Sends notification when team member starts activity (to all team members)
+    /// 2. Sends notification when team member starts activity
+    /// Recipient: Manager
     func sendActivityStartedNotification(
         activity: Activity,
-        team: Team
+        managerEmail: String?
     ) async throws {
-        let startedDate = activity.startedAt.map { dateFormatter.string(from: $0) } ?? "now"
+        guard let managerEmail = managerEmail else {
+            print("⚠️ No manager email available, skipping activity started notification")
+            return
+        }
+
+        let startedDate = activity.startedAt.map { dateFormatter.string(from: $0) } ?? dateFormatter.string(from: Date())
         let deadlineDate = dateFormatter.string(from: activity.deadline)
+        let prefix = priorityPrefix(for: activity)
 
-        let message = "\(activity.assignedMember.name)'s \(activity.priority.shortName) activity has started on \(startedDate) with deadline \(deadlineDate) for \(activity.name)."
-
-        // Send member emails for notification lookup
-        let memberEmails = team.members.map { $0.email }
+        // Format: [P0 - ][date] - [Member] has started activity with deadline [date] for [Name].
+        let message = "\(prefix)\(startedDate) - \(activity.assignedMember.name) has started activity with deadline \(deadlineDate) for \(activity.name)."
 
         let data: [String: Any] = [
             "type": "activity_started",
             "activityId": activity.id.uuidString,
-            "teamId": team.id.uuidString,
-            "memberEmails": memberEmails,
+            "managerEmail": managerEmail,
             "memberName": activity.assignedMember.name,
             "priority": activity.priority.shortName,
             "message": message,
@@ -117,11 +130,17 @@ final class NotificationSender {
         try await callCloudFunction(name: "sendActivityStartedNotification", data: data)
     }
 
-    /// Sends notification when team member requests completion approval (to manager)
+    /// 3. Sends notification when team member completes activity (requests approval)
+    /// Recipient: Manager
     func sendCompletionRequestedNotification(
         activity: Activity
     ) async throws {
-        let message = "\(activity.assignedMember.name) has requested completion approval for \(activity.priority.shortName) activity \"\(activity.name)\""
+        let completedDate = activity.completedAt.map { dateFormatter.string(from: $0) } ?? dateFormatter.string(from: Date())
+        let deadlineDate = dateFormatter.string(from: activity.deadline)
+        let prefix = priorityPrefix(for: activity)
+
+        // Format: [P0 - ][date] - [Member] has completed activity with deadline [date] for [Name].
+        let message = "\(prefix)\(completedDate) - \(activity.assignedMember.name) has completed activity with deadline \(deadlineDate) for \(activity.name)."
 
         var data: [String: Any] = [
             "type": "completion_requested",
@@ -139,45 +158,66 @@ final class NotificationSender {
         try await callCloudFunction(name: "sendCompletionRequestedNotification", data: data)
     }
 
-    /// Sends notification when manager completes/approves activity (to all team members)
-    func sendActivityCompletedNotification(
+    /// 4. Sends notification when manager approves activity completion
+    /// Recipient: Assigned team member
+    func sendActivityApprovedNotification(
         activity: Activity,
-        team: Team
+        managerName: String,
+        recipientEmail: String?
     ) async throws {
-        guard let outcome = activity.outcome else {
-            throw NotificationError.missingOutcome
+        guard let recipientEmail = recipientEmail else {
+            print("⚠️ No recipient email available, skipping activity approved notification")
+            return
         }
 
-        let outcomeText = outcome.rawValue.lowercased()
-        let statusColor: String
-        switch outcome {
-        case .ahead:
-            statusColor = "green"
-        case .jit:
-            statusColor = "amber"
-        case .overrun:
-            statusColor = "red"
-        }
+        let approvedDate = dateFormatter.string(from: Date())
+        let prefix = priorityPrefix(for: activity)
 
-        let message = "\(activity.assignedMember.name)'s \(activity.priority.shortName) activity has completed \(outcomeText) with status \(statusColor)"
-
-        // Send member emails for notification lookup
-        let memberEmails = team.members.map { $0.email }
+        // Format: [P0 - ][date] - [Manager] has approved activity: [Name].
+        let message = "\(prefix)\(approvedDate) - \(managerName) has approved activity: \(activity.name)."
 
         let data: [String: Any] = [
-            "type": "activity_completed",
+            "type": "activity_approved",
             "activityId": activity.id.uuidString,
-            "teamId": team.id.uuidString,
-            "memberEmails": memberEmails,
+            "recipientEmail": recipientEmail,
             "memberName": activity.assignedMember.name,
             "priority": activity.priority.shortName,
-            "outcome": outcome.rawValue,
-            "statusColor": statusColor,
             "message": message,
             "activityName": activity.name
         ]
 
-        try await callCloudFunction(name: "sendActivityCompletedNotification", data: data)
+        try await callCloudFunction(name: "sendActivityApprovedNotification", data: data)
+    }
+
+    /// 5. Sends notification when manager rejects activity completion
+    /// Recipient: Assigned team member
+    func sendActivityRejectedNotification(
+        activity: Activity,
+        managerName: String,
+        recipientEmail: String?
+    ) async throws {
+        guard let recipientEmail = recipientEmail else {
+            print("⚠️ No recipient email available, skipping activity rejected notification")
+            return
+        }
+
+        let rejectedDate = dateFormatter.string(from: Date())
+        let prefix = priorityPrefix(for: activity)
+
+        // Format: [P0 - ][date] - [Manager] has sent back your activity: [Name].
+        let message = "\(prefix)\(rejectedDate) - \(managerName) has sent back your activity: \(activity.name)."
+
+        let data: [String: Any] = [
+            "type": "activity_rejected",
+            "activityId": activity.id.uuidString,
+            "recipientEmail": recipientEmail,
+            "memberName": activity.assignedMember.name,
+            "priority": activity.priority.shortName,
+            "message": message,
+            "activityName": activity.name
+        ]
+
+        try await callCloudFunction(name: "sendActivityRejectedNotification", data: data)
     }
 
     // MARK: - Cloud Function Call
@@ -201,15 +241,12 @@ final class NotificationSender {
 
 enum NotificationError: LocalizedError, Equatable {
     case notAuthenticated
-    case missingOutcome
     case cloudFunctionError(String)
 
     var errorDescription: String? {
         switch self {
         case .notAuthenticated:
             return "User is not authenticated"
-        case .missingOutcome:
-            return "Activity outcome is required for completion notification"
         case .cloudFunctionError(let message):
             return "Cloud Function error: \(message)"
         }

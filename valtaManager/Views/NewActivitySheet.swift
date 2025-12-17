@@ -60,31 +60,13 @@ struct NewActivitySheet: View {
 
             // Form
             ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-
-                    // Deadline section
-                    HStack {
-                        DatePicker(
-                            "",
-                            selection: $deadline,
-                            in: Date()...,
-                            displayedComponents: [.date, .hourAndMinute]
-                        )
-                        .datePickerStyle(.field)
-                        .labelsHidden()
-
-                        // Quick deadline buttons
-                        HStack(spacing: 8) {
-                            QuickDeadlineButton(label: "1h") { deadline = Date().addingTimeInterval(3600) }
-                            QuickDeadlineButton(label: "4h") { deadline = Date().addingTimeInterval(3600 * 4) }
-                            QuickDeadlineButton(label: "1d") { deadline = Date().addingTimeInterval(86400) }
-                            QuickDeadlineButton(label: "3d") { deadline = Date().addingTimeInterval(86400 * 3) }
-                            QuickDeadlineButton(label: "1w") { deadline = Date().addingTimeInterval(86400 * 7) }
-                        }
-                    }
+                VStack(alignment: .center, spacing: 16) {
 
                     // Assigned member
                     memberSelectionView
+
+                    // Deadline section
+                    dateSelectionView
 
                     // Activity name
                     FloatingTextField(title: "Activity name", text: $name, error: nameError)
@@ -138,7 +120,7 @@ struct NewActivitySheet: View {
                 .background(Color(NSColor.controlBackgroundColor))
             }
         }
-        .frame(width: 520, height: 520)
+        .frame(width: 520, height: 550)
     }
 
     private func createActivity() {
@@ -155,6 +137,30 @@ struct NewActivitySheet: View {
 
         appState.addActivity(activity)
         dismiss()
+    }
+
+    private var dateSelectionView: some View {
+        HStack {
+            TransparentDatePicker(
+                selection: $deadline,
+                minDate: Date()
+            )
+            .padding(.leading)
+            .frame(width: 160)
+            .padding(4)
+            .background(Color.white.opacity(0.05))
+            .cornerRadius(8)
+
+            // Quick deadline buttons
+            HStack(spacing: 8) {
+                QuickDeadlineButton(label: "1h") { deadline = Date().addingTimeInterval(3600) }
+                QuickDeadlineButton(label: "4h") { deadline = Date().addingTimeInterval(3600 * 4) }
+                QuickDeadlineButton(label: "1d") { deadline = Date().addingTimeInterval(86400) }
+                QuickDeadlineButton(label: "3d") { deadline = Date().addingTimeInterval(86400 * 3) }
+                QuickDeadlineButton(label: "1w") { deadline = Date().addingTimeInterval(86400 * 7) }
+                QuickDeadlineButton(label: "1m") { deadline = Date().addingTimeInterval(86400 * 30) }
+            }
+        }
     }
 
     private var memberSelectionView: some View {
@@ -179,7 +185,8 @@ struct NewActivitySheet: View {
                     }
                 } else {
                     Text("Team member")
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.primary)
+                        .font(.title3)
                 }
             }
         }
