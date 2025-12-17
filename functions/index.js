@@ -84,7 +84,8 @@ async function getTokensForMembers(db, memberIds) {
 }
 
 /**
- * Sends notification when manager assigns activity to team member
+ * 1. Sends notification when manager assigns activity to team member
+ * Recipient: Assigned team member
  */
 exports.sendActivityAssignedNotification = functions.https.onCall(
     async (data, context) => {
@@ -114,7 +115,6 @@ exports.sendActivityAssignedNotification = functions.https.onCall(
           };
         }
 
-        // Prepare notification payload
         const payload = {
           notification: {
             title: "New Activity Assigned",
@@ -133,13 +133,11 @@ exports.sendActivityAssignedNotification = functions.https.onCall(
             payload: {
               aps: {
                 sound: "default",
-                badge: 1,
               },
             },
           },
         };
 
-        // Send notification
         const response = await admin.messaging().send(payload);
         console.log(`✅ Notification sent: ${response}`);
 
@@ -154,17 +152,17 @@ exports.sendActivityAssignedNotification = functions.https.onCall(
 );
 
 /**
- * Sends notification when team member starts activity
- * (to all team members via their emails)
+ * 2. Sends notification when team member starts activity
+ * Recipient: Manager
  */
 exports.sendActivityStartedNotification = functions.https.onCall(
     async (data, context) => {
       assertAuthenticated(context);
-      checkRequired(data, ["activityId", "memberEmails", "message"]);
+      checkRequired(data, ["activityId", "managerEmail", "message"]);
 
       const {
         activityId,
-        memberEmails, // Expect list of emails
+        managerEmail,
         memberName,
         priority,
         message,
@@ -173,20 +171,19 @@ exports.sendActivityStartedNotification = functions.https.onCall(
 
       try {
         const db = admin.firestore();
-        console.log(`🔍 Looking up FCM tokens for ${memberEmails.length} team members`);
+        console.log(`🔍 Looking up FCM token for manager: ${managerEmail}`);
 
-        const tokens = await getTokensForMembers(db, memberEmails);
+        const tokens = await getTokensForMembers(db, [managerEmail]);
 
         if (tokens.length === 0) {
-          console.warn(`No FCM tokens found for team members: ${memberEmails.join(", ")}`);
+          console.warn(`No FCM token found for manager: ${managerEmail}`);
           return {
             success: false,
-            error: "No FCM tokens found",
+            error: "No FCM token found for manager",
           };
         }
 
-        // Prepare multicast message
-        const multicastMessage = {
+        const payload = {
           notification: {
             title: "Activity Started",
             body: message,
@@ -198,30 +195,22 @@ exports.sendActivityStartedNotification = functions.https.onCall(
             priority: priority || "",
             activityName: activityName || "",
           },
+          token: tokens[0],
           apns: {
             payload: {
               aps: {
                 sound: "default",
-                badge: 1,
               },
             },
           },
-          tokens: tokens,
         };
 
-        // Send multicast notification
-        const response = await admin
-            .messaging()
-            .sendEachForMulticast(multicastMessage);
-        console.log(
-            `✅ Sent ${response.successCount} notifications, ` +
-        `${response.failureCount} failed`,
-        );
+        const response = await admin.messaging().send(payload);
+        console.log(`✅ Notification sent to manager: ${response}`);
 
         return {
           success: true,
-          successCount: response.successCount,
-          failureCount: response.failureCount,
+          messageId: response,
         };
       } catch (error) {
         handleError(error);
@@ -230,8 +219,8 @@ exports.sendActivityStartedNotification = functions.https.onCall(
 );
 
 /**
- * Sends notification when team member requests completion approval
- * (to manager)
+ * 3. Sends notification when team member completes activity (requests approval)
+ * Recipient: Manager
  */
 exports.sendCompletionRequestedNotification = functions.https.onCall(
     async (data, context) => {
@@ -250,7 +239,6 @@ exports.sendCompletionRequestedNotification = functions.https.onCall(
       try {
         let token = null;
 
-        // 1. Try targeted lookup if managerEmail is provided
         if (managerEmail) {
           console.log(`🔍 Looking up FCM token for manager: ${managerEmail}`);
           const db = admin.firestore();
@@ -262,10 +250,9 @@ exports.sendCompletionRequestedNotification = functions.https.onCall(
           }
         }
 
-        // 2. Prepare payload
         const payload = {
           notification: {
-            title: "Completion Request",
+            title: "Activity Completed",
             body: message,
           },
           data: {
@@ -279,21 +266,17 @@ exports.sendCompletionRequestedNotification = functions.https.onCall(
             payload: {
               aps: {
                 sound: "default",
-                badge: 1,
               },
             },
           },
         };
 
-        // 3. Send notification
         let response;
         if (token) {
-        // Send to specific device
           payload.token = token;
           response = await admin.messaging().send(payload);
           console.log(`✅ Targeted notification sent to manager ${managerEmail}: ${response}`);
         } else {
-        // Fallback to topic if no managerId or token found
           console.log("⚠️ Falling back to 'managers' topic");
           payload.topic = "managers";
           response = await admin.messaging().send(payload);
@@ -311,80 +294,126 @@ exports.sendCompletionRequestedNotification = functions.https.onCall(
 );
 
 /**
- * Sends notification when manager completes/approves activity
- * (to all team members)
+ * 4. Sends notification when manager approves activity completion
+ * Recipient: Assigned team member
  */
-exports.sendActivityCompletedNotification = functions.https.onCall(
+exports.sendActivityApprovedNotification = functions.https.onCall(
     async (data, context) => {
       assertAuthenticated(context);
-      checkRequired(data, ["activityId", "teamId", "memberEmails", "message"]);
+      checkRequired(data, ["activityId", "recipientEmail", "message"]);
 
       const {
         activityId,
-        teamId,
-        memberEmails, // Expect list of emails
+        recipientEmail,
         memberName,
-        priority,
-        outcome,
-        statusColor,
         message,
         activityName,
       } = data;
 
       try {
         const db = admin.firestore();
-        let tokens = [];
-        console.log(`🔍 Looking up FCM tokens for ${memberEmails.length} team members`);
-        tokens = await getTokensForMembers(db, memberEmails);
+        console.log(`🔍 Looking up FCM token for recipient: ${recipientEmail}`);
+        const tokens = await getTokensForMembers(db, [recipientEmail]);
 
         if (tokens.length === 0) {
-          console.warn(`No FCM tokens found for team: ${teamId}`);
+          console.warn(`No FCM token found for recipient: ${recipientEmail}`);
           return {
             success: false,
-            error: "No FCM tokens found",
+            error: "No FCM token found for recipient",
           };
         }
 
-        // Prepare multicast message
-        const multicastMessage = {
+        const payload = {
           notification: {
-            title: "Activity Completed",
+            title: "Activity Approved",
             body: message,
           },
           data: {
-            type: "activity_completed",
+            type: "activity_approved",
             activityId: activityId,
-            teamId: teamId,
             memberName: memberName || "",
-            priority: priority || "",
-            outcome: outcome || "",
-            statusColor: statusColor || "",
             activityName: activityName || "",
           },
+          token: tokens[0],
           apns: {
             payload: {
               aps: {
                 sound: "default",
-                badge: 1,
               },
             },
           },
-          tokens: tokens,
         };
 
-        // Send multicast notification
-        const response = await admin
-            .messaging()
-            .sendEachForMulticast(multicastMessage);
-        console.log(
-            `✅ Sent ${response.successCount} notifications, ` +
-        `${response.failureCount} failed`,
-        );
+        const response = await admin.messaging().send(payload);
+        console.log(`✅ Approval notification sent to recipient: ${response}`);
 
         return {
           success: true,
-          successCount: response.successCount,
-          failureCount: response.failureCount,
+          messageId: response,
+        };
+      } catch (error) {
+        handleError(error);
+      }
+    },
+);
+
+/**
+ * 5. Sends notification when manager rejects activity completion
+ * Recipient: Assigned team member
+ */
+exports.sendActivityRejectedNotification = functions.https.onCall(
+    async (data, context) => {
+      assertAuthenticated(context);
+      checkRequired(data, ["activityId", "recipientEmail", "message"]);
+
+      const {
+        activityId,
+        recipientEmail,
+        memberName,
+        message,
+        activityName,
+      } = data;
+
+      try {
+        const db = admin.firestore();
+        console.log(`🔍 Looking up FCM token for recipient: ${recipientEmail}`);
+        const tokens = await getTokensForMembers(db, [recipientEmail]);
+
+        if (tokens.length === 0) {
+          console.warn(`No FCM token found for recipient: ${recipientEmail}`);
+          return {
+            success: false,
+            error: "No FCM token found for recipient",
+          };
+        }
+
+        const payload = {
+          notification: {
+            title: "Activity Sent Back",
+            body: message,
+          },
+          data: {
+            type: "activity_rejected",
+            activityId: activityId,
+            memberName: memberName || "",
+            activityName: activityName || "",
+          },
+          token: tokens[0],
+          apns: {
+            payload: {
+              aps: {
+                sound: "default",
+              },
+            },
+          },
+        };
+
+        const response = await admin.messaging().send(payload);
+        console.log(`✅ Rejection notification sent to recipient: ${response}`);
+
+        return {
+          success: true,
+          messageId: response,
         };
       } catch (error) {
         handleError(error);

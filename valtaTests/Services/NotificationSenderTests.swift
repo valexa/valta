@@ -49,21 +49,17 @@ struct NotificationSenderTests {
         sender = NotificationSender(functionProvider: mockProvider, authChecker: mockAuth)
     }
 
-    // MARK: - Activity Assigned Tests
+    // MARK: - 1. Activity Assigned Tests
 
-    @Test func testSendActivityAssigned_FormatsMessageCorrectly() async throws {
-        // Given
-        let createdAt = Date(timeIntervalSince1970: 1733400000) // 2024-12-05 12:00:00 UTC
-        let deadline = Date(timeIntervalSince1970: 1733486400) // 2024-12-06 12:00:00 UTC
-
+    @Test func testSendActivityAssigned_P0HasPrefix() async throws {
+        // Given - P0 activity
         let activity = Activity(
-            name: "Test Activity",
+            name: "Urgent Task",
             description: "Desc",
             assignedMember: testMember,
             priority: .p0,
             status: .teamMemberPending,
-            createdAt: createdAt,
-            deadline: deadline
+            deadline: Date()
         )
 
         // When
@@ -74,95 +70,118 @@ struct NotificationSenderTests {
         )
 
         // Then
-        #expect(mockProvider.calls.count == 1)
-
-        if let call = mockProvider.calls.first {
-            #expect(call.name == "sendActivityAssignedNotification")
-
-            let data = call.data
-            #expect(data["type"] as? String == "activity_assigned")
-            #expect(data["activityId"] as? String == activity.id.uuidString)
-            #expect(data["assignedMemberEmail"] as? String == testMember.email)
-            #expect(data["assignedMemberName"] as? String == testMember.name)
-            #expect(data["priority"] as? String == "P0")
-            #expect(data["activityName"] as? String == "Test Activity")
-
-            let message = data["message"] as? String
-            #expect(message != nil)
-            #expect(message?.contains("Manager Bob") == true)
-            #expect(message?.contains("P0") == true)
-        }
+        let call = try #require(mockProvider.calls.first)
+        let message = call.data["message"] as? String
+        #expect(message?.hasPrefix("P0 - ") == true)
+        #expect(message?.contains("Manager Bob") == true)
+        #expect(message?.contains("has assigned activity with deadline") == true)
+        #expect(message?.contains("Urgent Task") == true)
     }
 
-    // MARK: - Activity Started Tests
+    @Test func testSendActivityAssigned_NonP0NoPrefix() async throws {
+        // Given - P1 activity (no prefix)
+        let activity = Activity(
+            name: "Normal Task",
+            description: "Desc",
+            assignedMember: testMember,
+            priority: .p1,
+            status: .teamMemberPending,
+            deadline: Date()
+        )
 
-    @Test func testSendActivityStarted_WithStartedAt() async throws {
+        // When
+        try await sender.sendActivityAssignedNotification(
+            activity: activity,
+            assignedTo: testMember,
+            managerName: "Manager Bob"
+        )
+
+        // Then
+        let call = try #require(mockProvider.calls.first)
+        let message = call.data["message"] as? String
+        #expect(message?.hasPrefix("P0 - ") == false)
+        #expect(message?.contains("has assigned activity with deadline") == true)
+    }
+
+    // MARK: - 2. Activity Started Tests
+
+    @Test func testSendActivityStarted_P0HasPrefix() async throws {
         // Given
-        let startedAt = Date(timeIntervalSince1970: 1733403600) // 13:00
         let activity = Activity(
             name: "Test Task",
             description: "Desc",
             assignedMember: testMember,
-            priority: .p1,
+            priority: .p0,
             status: .running,
             deadline: Date(),
-            startedAt: startedAt
+            startedAt: Date()
         )
 
         // When
-        try await sender.sendActivityStartedNotification(activity: activity, team: testTeam)
+        try await sender.sendActivityStartedNotification(
+            activity: activity,
+            managerEmail: "manager@example.com"
+        )
 
         // Then
-        let call = try #require(mockProvider.calls.first, "Expected a call to cloud function")
-
+        let call = try #require(mockProvider.calls.first)
         #expect(call.name == "sendActivityStartedNotification")
 
-        let data = call.data
-        #expect(data["type"] as? String == "activity_started")
-        #expect(data["activityId"] as? String == activity.id.uuidString)
-        #expect(data["teamId"] as? String == testTeam.id.uuidString)
-        #expect(data["memberName"] as? String == testMember.name)
-        #expect(data["priority"] as? String == "P1")
-        #expect(data["activityName"] as? String == "Test Task")
-
-        let message = data["message"] as? String
+        let message = call.data["message"] as? String
+        #expect(message?.hasPrefix("P0 - ") == true)
         #expect(message?.contains("Test User") == true)
-        #expect(message?.contains("P1") == true)
+        #expect(message?.contains("has started activity with deadline") == true)
     }
 
-    // MARK: - Completion Requested Tests
+    @Test func testSendActivityStarted_NonP0NoPrefix() async throws {
+        // Given - P2 activity
+        let activity = Activity(
+            name: "Test Task",
+            description: "Desc",
+            assignedMember: testMember,
+            priority: .p2,
+            status: .running,
+            deadline: Date(),
+            startedAt: Date()
+        )
 
-    @Test func testSendCompletionRequested_WithManagerEmail() async throws {
+        // When
+        try await sender.sendActivityStartedNotification(
+            activity: activity,
+            managerEmail: "manager@example.com"
+        )
+
+        // Then
+        let call = try #require(mockProvider.calls.first)
+        let message = call.data["message"] as? String
+        #expect(message?.hasPrefix("P0 - ") == false)
+    }
+
+    // MARK: - 3. Completion Requested Tests
+
+    @Test func testSendCompletionRequested_P0HasPrefix() async throws {
         // Given
-        let managerEmail = "manager@example.com"
         let activity = Activity(
             name: "Important Task",
             description: "Desc",
             assignedMember: testMember,
-            priority: .p2,
+            priority: .p0,
             status: .managerPending,
             deadline: Date(),
-            managerEmail: managerEmail
+            completedAt: Date(),
+            managerEmail: "manager@example.com"
         )
 
         // When
         try await sender.sendCompletionRequestedNotification(activity: activity)
 
         // Then
-        let call = try #require(mockProvider.calls.first, "Expected a call to cloud function")
-
+        let call = try #require(mockProvider.calls.first)
         #expect(call.name == "sendCompletionRequestedNotification")
 
-        let data = call.data
-        #expect(data["type"] as? String == "completion_requested")
-        #expect(data["activityId"] as? String == activity.id.uuidString)
-        #expect(data["managerEmail"] as? String == managerEmail)
-        #expect(data["memberName"] as? String == testMember.name)
-        #expect(data["activityName"] as? String == "Important Task")
-
-        let message = data["message"] as? String
-        #expect(message?.contains("Test User") == true)
-        #expect(message?.contains("Important Task") == true)
+        let message = call.data["message"] as? String
+        #expect(message?.hasPrefix("P0 - ") == true)
+        #expect(message?.contains("has completed activity with deadline") == true)
     }
 
     @Test func testSendCompletionRequested_WithoutManagerEmail() async throws {
@@ -181,15 +200,14 @@ struct NotificationSenderTests {
         try await sender.sendCompletionRequestedNotification(activity: activity)
 
         // Then
-        let call = try #require(mockProvider.calls.first, "Expected a call to cloud function")
-
+        let call = try #require(mockProvider.calls.first)
         let data = call.data
         #expect(data["managerEmail"] == nil)
     }
 
-    // MARK: - Activity Completed Tests
+    // MARK: - 4. Activity Approved Tests
 
-    @Test func testSendActivityCompleted_WithOutcome() async throws {
+    @Test func testSendActivityApproved_P0HasPrefix() async throws {
         // Given
         let activity = Activity(
             name: "Done Task",
@@ -197,73 +215,104 @@ struct NotificationSenderTests {
             assignedMember: testMember,
             priority: .p0,
             status: .completed,
-            outcome: .ahead,
             deadline: Date()
         )
 
         // When
-        try await sender.sendActivityCompletedNotification(activity: activity, team: testTeam)
+        try await sender.sendActivityApprovedNotification(
+            activity: activity,
+            managerName: "Manager Bob",
+            recipientEmail: "recipient@example.com"
+        )
 
         // Then
-        let call = try #require(mockProvider.calls.first, "Expected a call to cloud function")
+        let call = try #require(mockProvider.calls.first)
+        #expect(call.name == "sendActivityApprovedNotification")
 
-        #expect(call.name == "sendActivityCompletedNotification")
-
-        let data = call.data
-        #expect(data["type"] as? String == "activity_completed")
-        #expect(data["activityId"] as? String == activity.id.uuidString)
-        #expect(data["teamId"] as? String == testTeam.id.uuidString)
-        #expect(data["statusColor"] as? String == "green")
-        #expect(data["outcome"] as? String == "Ahead")
-        #expect(data["activityName"] as? String == "Done Task")
-
-        let message = data["message"] as? String
-        #expect(message?.contains("ahead") == true)
-        #expect(message?.contains("green") == true)
+        let message = call.data["message"] as? String
+        #expect(message?.hasPrefix("P0 - ") == true)
+        #expect(message?.contains("Manager Bob") == true)
+        #expect(message?.contains("has approved activity: Done Task") == true)
     }
 
-    @Test func testSendActivityCompleted_MissingOutcome_ThrowsError() async {
-        // Given
+    @Test func testSendActivityApproved_NonP0NoPrefix() async throws {
+        // Given - P3 activity
         let activity = Activity(
             name: "Done Task",
             description: "Desc",
             assignedMember: testMember,
-            priority: .p0,
+            priority: .p3,
             status: .completed,
-            outcome: nil, // Missing outcome
             deadline: Date()
         )
 
-        // When/Then
-        await #expect(throws: NotificationError.missingOutcome) {
-            try await sender.sendActivityCompletedNotification(activity: activity, team: testTeam)
-        }
+        // When
+        try await sender.sendActivityApprovedNotification(
+            activity: activity,
+            managerName: "Manager Bob",
+            recipientEmail: "recipient@example.com"
+        )
+
+        // Then
+        let call = try #require(mockProvider.calls.first)
+        let message = call.data["message"] as? String
+        #expect(message?.hasPrefix("P0 - ") == false)
+        #expect(message?.contains("has approved activity:") == true)
     }
 
-    @Test func testColorMapping() async throws {
-        // Helper to check color mapping
-        func checkColor(outcome: ActivityOutcome, expected: String) async throws {
-            let activity = Activity(
-                name: "Color Task",
-                description: "Desc",
-                assignedMember: testMember,
-                priority: .p0,
-                status: .completed,
-                outcome: outcome,
-                deadline: Date()
-            )
-            mockProvider.calls.removeAll()
-            try await sender.sendActivityCompletedNotification(activity: activity, team: testTeam)
+    // MARK: - 5. Activity Rejected Tests
 
-            let call = try #require(mockProvider.calls.first, "Expected a call to cloud function")
+    @Test func testSendActivityRejected_P0HasPrefix() async throws {
+        // Given
+        let activity = Activity(
+            name: "Rejected Task",
+            description: "Desc",
+            assignedMember: testMember,
+            priority: .p0,
+            status: .running,
+            deadline: Date()
+        )
 
-            let color = call.data["statusColor"] as? String
-            #expect(color == expected)
-        }
+        // When
+        try await sender.sendActivityRejectedNotification(
+            activity: activity,
+            managerName: "Manager Bob",
+            recipientEmail: "recipient@example.com"
+        )
 
-        try await checkColor(outcome: .ahead, expected: "green")
-        try await checkColor(outcome: .jit, expected: "amber")
-        try await checkColor(outcome: .overrun, expected: "red")
+        // Then
+        let call = try #require(mockProvider.calls.first)
+        #expect(call.name == "sendActivityRejectedNotification")
+
+        let message = call.data["message"] as? String
+        #expect(message?.hasPrefix("P0 - ") == true)
+        #expect(message?.contains("Manager Bob") == true)
+        #expect(message?.contains("has sent back your activity: Rejected Task") == true)
+    }
+
+    @Test func testSendActivityRejected_NonP0NoPrefix() async throws {
+        // Given - P1 activity
+        let activity = Activity(
+            name: "Rejected Task",
+            description: "Desc",
+            assignedMember: testMember,
+            priority: .p1,
+            status: .running,
+            deadline: Date()
+        )
+
+        // When
+        try await sender.sendActivityRejectedNotification(
+            activity: activity,
+            managerName: "Manager Bob",
+            recipientEmail: "recipient@example.com"
+        )
+
+        // Then
+        let call = try #require(mockProvider.calls.first)
+        let message = call.data["message"] as? String
+        #expect(message?.hasPrefix("P0 - ") == false)
+        #expect(message?.contains("has sent back your activity:") == true)
     }
 
     // MARK: - Error Handling Tests
@@ -301,13 +350,12 @@ struct NotificationSenderTests {
             deadline: Date()
         )
 
-        // When/Then - use do-catch to verify specific error details
+        // When/Then
         do {
             try await sender.sendCompletionRequestedNotification(activity: activity)
             Issue.record("Expected NotificationError.cloudFunctionError to be thrown")
         } catch let error as NotificationError {
-            // Verify it's the right error case with the expected message
-            #expect(error == .cloudFunctionError("Network failure"), "Expected cloudFunctionError with 'Network failure' message")
+            #expect(error == .cloudFunctionError("Network failure"))
         } catch {
             Issue.record("Expected NotificationError but got: \(type(of: error))")
         }

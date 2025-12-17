@@ -13,38 +13,48 @@ This document outlines the plan for implementing Firebase Cloud Messaging (FCM) 
 
 ## Notification Requirements
 
-Based on `FULL_SPECIFICATION.md`, the following notifications are required:
+Based on `FULL_SPECIFICATION.md`, the following 5 notifications are required.
+
+> **Note:** P0 activities start with "P0 - " prefix. Other priorities have no prefix.
 
 ### 1. Activity Assigned (Manager → Team Member)
 **Trigger:** When manager creates and assigns a new activity  
 **Recipient:** Assigned team member  
 **Message Format:**
 ```
-[Manager name] has assigned p[0/1/2/3] activity on [date, time] with deadline [date, time] to you, please start the activity: [Activity name].
+[P0 - ][date] - [Manager] has assigned activity with deadline [date] to you, please start the activity: [Name].
 ```
 
-### 2. Activity Started (Team Member → All Team Members)
+### 2. Activity Started (Team Member → Manager)
 **Trigger:** When team member starts an assigned activity  
-**Recipient:** All team members in the same team  
-**Message Format:**
-```
-[Team member name]'s p[0/1/2/3] activity has started on [date, time] with deadline [date, time] for [Activity name].
-```
-
-### 3. Completion Requested (Team Member → Manager)
-**Trigger:** When team member requests completion approval  
 **Recipient:** Manager  
 **Message Format:**
 ```
-[Team member name] has requested completion approval for p[0/1/2/3] activity "[Activity name]"
+[P0 - ][date] - [Member] has started activity with deadline [date] for [Name].
 ```
 
-### 4. Activity Completed (Manager → All Team Members)
-**Trigger:** When manager approves/completes an activity  
-**Recipient:** All team members in the same team  
+### 3. Completion Requested (Team Member → Manager)
+**Trigger:** When team member completes activity (requests approval)  
+**Recipient:** Manager  
 **Message Format:**
 ```
-[Team member name]'s p[0/1/2/3] activity has completed [ahead/jit/overrun] with status [red/green/amber]
+[P0 - ][date] - [Member] has completed activity with deadline [date] for [Name].
+```
+
+### 4. Activity Approved (Manager → Assigned Team Member)
+**Trigger:** When manager approves activity completion  
+**Recipient:** Assigned team member  
+**Message Format:**
+```
+[P0 - ][date] - [Manager] has approved activity: [Name].
+```
+
+### 5. Activity Rejected (Manager → Assigned Team Member)
+**Trigger:** When manager rejects activity completion  
+**Recipient:** Assigned team member  
+**Message Format:**
+```
+[P0 - ][date] - [Manager] has sent back your activity: [Name].
 ```
 
 ## Implementation Plan
@@ -181,9 +191,9 @@ func addActivity(_ activity: Activity) {
 **File:** `valta/TeamMemberAppState.swift` → `startActivity()`
 
 **Changes:**
-- After activity status changes to running, notify all team members
-- Get all team members' FCM tokens
-- Send notification to all team members
+- After activity status changes to running, notify manager
+- Get manager's FCM token
+- Send notification to manager
 
 **Implementation:**
 ```swift
@@ -193,7 +203,7 @@ func startActivity(_ activity: Activity) {
     Task {
         await NotificationService.shared.sendActivityStartedNotification(
             activity: activity,
-            team: team
+            managerEmail: activity.managerEmail
         )
     }
 }
@@ -224,8 +234,8 @@ func requestReview(_ activity: Activity) {
 **File:** `valtaManager/AppState.swift` → `approveCompletion()` and `completeActivity()`
 
 **Changes:**
-- After activity is completed, notify all team members
-- Get all team members' FCM tokens
+- After activity is completed, notify assigned team member
+- Get assigned member's FCM token
 - Send notification with outcome information
 
 **Implementation:**
@@ -236,7 +246,7 @@ func approveCompletion(_ activity: Activity) {
     Task {
         await NotificationService.shared.sendActivityCompletedNotification(
             activity: activity,
-            team: team
+            recipientEmail: activity.assignedMember.email
         )
     }
 }

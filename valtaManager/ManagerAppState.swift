@@ -72,15 +72,17 @@ final class ManagerAppState: BaseAppState, ActivityDataProviding {
         }
 
         let finalActivity = updatedActivity
+        let managerName = team.managerEmail ?? "Manager"
         Task {
-            // Send notification to all team members
+            // Send approval notification to assigned team member
             do {
-                try await NotificationSender.shared.sendActivityCompletedNotification(
+                try await NotificationSender.shared.sendActivityApprovedNotification(
                     activity: finalActivity,
-                    team: team
+                    managerName: managerName,
+                    recipientEmail: finalActivity.assignedMember.email
                 )
             } catch {
-                print("⚠️ Failed to send activity completed notification: \(error.localizedDescription)")
+                print("⚠️ Failed to send activity approved notification: \(error.localizedDescription)")
             }
         }
     }
@@ -89,6 +91,20 @@ final class ManagerAppState: BaseAppState, ActivityDataProviding {
         activity.updateInBackend { mutableActivity in
             mutableActivity.status = .running
             mutableActivity.outcome = nil
+        }
+
+        let managerName = team.managerEmail ?? "Manager"
+        Task {
+            // Send rejection notification to assigned team member
+            do {
+                try await NotificationSender.shared.sendActivityRejectedNotification(
+                    activity: activity,
+                    managerName: managerName,
+                    recipientEmail: activity.assignedMember.email
+                )
+            } catch {
+                print("⚠️ Failed to send activity rejected notification: \(error.localizedDescription)")
+            }
         }
     }
 
@@ -106,15 +122,17 @@ final class ManagerAppState: BaseAppState, ActivityDataProviding {
         }
 
         let finalActivity = updatedActivity
+        let managerName = team.managerEmail ?? "Manager"
         Task {
-            // Send notification to all team members
+            // Send approval notification to assigned team member
             do {
-                try await NotificationSender.shared.sendActivityCompletedNotification(
+                try await NotificationSender.shared.sendActivityApprovedNotification(
                     activity: finalActivity,
-                    team: team
+                    managerName: managerName,
+                    recipientEmail: finalActivity.assignedMember.email
                 )
             } catch {
-                print("⚠️ Failed to send activity completed notification: \(error.localizedDescription)")
+                print("⚠️ Failed to send activity approved notification: \(error.localizedDescription)")
             }
         }
     }

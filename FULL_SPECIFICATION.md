@@ -49,20 +49,28 @@ Exceptions :
 
 For p0 activities if the activity outcome is on-time the activity color code is red.
 
+Activity notifications:
 
-Activity notifications are as follows :
+The next notification is sent to the assigned team member when a manager creates a new activity for them with status "team member pending":
+[date, time] - [Manager name] has assigned activity with deadline [date, time] to you, please start the activity: [Activity name].
 
-[Manager name] has assigned p[0/1/2/3] activity on [date, time] with deadline [date, time] to you, please start the activity: [Activity name].
+The next notification is sent to the manager when a team member starts an activity setting the status to running:
+[date, time] - [Team member name] has started activity with deadline [date, time] for [Activity name].
 
-The notification text above gets sent when a manager assigns a new activity to a team member.
+The next notification is sent to the manager when a team member completes an activity setting the status to "manager pending":
+[date, time] - [Team member name] has completed activity with deadline [date, time] for [Activity name].
 
-[Team member name]’s p[0/1/2/3] activity has started on [date, time] with deadline [date, time] for [Activity name].
+The manager can choose to approve or reject the activity with "manager pending" status. 
+Upon approval the activity status is updated to completed sending the next notification to the team member:
+[date, time] - [Manager name] has approved activity: [Activity name].
 
-The notification text above gets sent a specific notification to all team members. team member can trigger a activity completion event for their assigned activity which gets sent to the manager for approval.e manager can chose to approve or reject the completion event. Upon approval, the activity status is updated to completed on both the manager's and team member's dashboards.The format is as folowing :
+Upon rejection the activity status is changed to running.
+[date, time] - [Manager name] has sent back your activity: [Activity name].
 
-[Team member name]’s p[0/1/2/3] activity has completed [ahead/jit/overrun] with status [red/green/amber]
+Exceptions : 
 
-The notification text above gets sent to all team members once the manager has completed an activity.
+For p0 activities all notifications start with "P0 - " 
+
 
 Team Member Onboarding Requirements:
 
