@@ -52,7 +52,7 @@ For p0 activities if the activity outcome is on-time the activity color code is 
 Activity notifications:
 
 The next notification is sent to the assigned team member when a manager creates a new activity for them with status "team member pending":
-[date, time] - [Manager name] has assigned activity with deadline [date, time] to you, please start the activity: [Activity name].
+[date, time] - [Manager name] has assigned you a new activity with deadline [date, time]: [Activity name].
 
 The next notification is sent to the manager when a team member starts an activity setting the status to running:
 [date, time] - [Team member name] has started activity with deadline [date, time] for [Activity name].
@@ -62,14 +62,14 @@ The next notification is sent to the manager when a team member completes an act
 
 The manager can choose to approve or reject the activity with "manager pending" status. 
 Upon approval the activity status is updated to completed sending the next notification to the team member:
-[date, time] - [Manager name] has approved activity: [Activity name].
+[date, time] - [Manager name] has approved your activity: [Activity name].
 
 Upon rejection the activity status is changed to running.
 [date, time] - [Manager name] has sent back your activity: [Activity name].
 
 Exceptions : 
 
-For p0 activities all notifications start with "P0 - " 
+For p0 activities all notifications start with "🔻P0🔻" 
 
 
 Team Member Onboarding Requirements:

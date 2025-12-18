@@ -82,10 +82,13 @@ struct ActivityRow: View {
             }
 
             // Action buttons (visible on hover, only if actions are available)
-            // Show processing state regardless of hover if processing
+            // Animate presence with smooth spring transition
             if isHovered && hasAvailableActions {
                 actionButtons
-                    .transition(.opacity.combined(with: .scale(scale: 0.9)))
+                    .transition(.asymmetric(
+                        insertion: .opacity.combined(with: .scale(scale: 0.92)).animation(.spring(response: 0.25, dampingFraction: 0.8)),
+                        removal: .opacity.animation(.easeOut(duration: 0.15))
+                    ))
             }
         }
         .padding(.horizontal, 12)
@@ -99,7 +102,7 @@ struct ActivityRow: View {
                 .stroke(isHovered ? Color.accentColor.opacity(0.3) : Color.clear, lineWidth: 1)
         )
         .onHover { hovering in
-            withAnimation(.easeInOut(duration: 0.15)) {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                 isHovered = hovering
             }
         }
@@ -130,12 +133,9 @@ struct ActivityRow: View {
                             .font(.system(size: 10, weight: .semibold))
                     }
                     .foregroundColor(.white)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(theme.color(for: .running).gradient)
-                    .cornerRadius(4)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.glassProminent)
+                .tint(theme.color(for: .running).gradient)
             }
 
             if activity.status == .running, let onComplete = onComplete {
@@ -144,17 +144,14 @@ struct ActivityRow: View {
                 }) {
                     HStack(spacing: 3) {
                         Image(symbol: AppSymbols.checkmark)
-                            .font(.system(size: 9))
-                        Text("Done")
+                            .font(.system(size: 9, weight: .bold))
+                        Text("Complete")
                             .font(.system(size: 10, weight: .semibold))
                     }
                     .foregroundColor(.white)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(theme.successGradient)
-                    .cornerRadius(4)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.glassProminent)
+                .tint(theme.color(for: .managerPending).gradient)
             }
         }
     }
@@ -179,7 +176,7 @@ struct CompletionTimeDelta: View {
 
 // MARK: - Preview
 
-#Preview {
+#Preview("States") {
     VStack(spacing: 8) {
         // Running activity
         ActivityRow(
@@ -205,6 +202,27 @@ struct CompletionTimeDelta: View {
         // Completed activity (overrun)
         ActivityRow(
             activity: Activity.mockActivities[10]
+        )
+    }
+    .padding()
+    .frame(width: 700)
+}
+
+#Preview("Action Buttons") {
+    VStack(spacing: 12) {
+        // Pending activity with Start button - hover to see
+        Text("Hover to see action buttons:")
+            .font(.caption)
+            .foregroundColor(.secondary)
+        
+        ActivityRow(
+            activity: Activity.mockActivities[2], // teamMemberPending
+            onStart: { print("Start tapped") }
+        )
+        
+        ActivityRow(
+            activity: .mock, // running
+            onComplete: { print("Done tapped") }
         )
     }
     .padding()
