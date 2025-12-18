@@ -80,9 +80,9 @@ extension ManagerOnboardingView {
 
     @ViewBuilder
     var loadedState: some View {
-        VStack(spacing: 40) {
+        VStack(spacing: AppSpacing.huge) {
             // Header
-            VStack(spacing: 12) {
+            VStack(spacing: AppSpacing.base) {
                 Image(symbol: AppSymbols.selectTeam)
                     .font(AppFont.iconXL)
                     .foregroundColor(.white)
@@ -105,7 +105,7 @@ extension ManagerOnboardingView {
                 .disabled(selectedTeam == nil)
                 .opacity(selectedTeam == nil ? 0.5 : 1.0)
         }
-        .padding(40)
+        .padding(AppSpacing.huge)
     }
 
     @ViewBuilder

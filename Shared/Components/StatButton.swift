@@ -39,8 +39,8 @@ struct StatButton: View {
                         .lineLimit(1)
                 }
             }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 6)
+            .padding(.horizontal, AppSpacing.md)
+            .padding(.vertical, AppSpacing.xs)
             .background(
                 RoundedRectangle(cornerRadius: 8)
                     .fill(isSelected ? color : color.opacity(0.1))

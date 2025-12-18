@@ -64,8 +64,8 @@ struct TimeRemainingLabel: View {
     var showProgressBar: Bool = false
 
     var body: some View {
-        HStack(spacing: 6) {
-            HStack(spacing: 4) {
+        HStack(spacing: AppSpacing.xs) {
+            HStack(spacing: AppSpacing.xxs) {
                 Image(symbol: AppSymbols.clock)
                     .font(AppFont.caption)
                 Text(activity.timeRemaining)
@@ -127,7 +127,7 @@ struct ActivityInfoRow: View {
     var color: Color = .secondary
 
     var body: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: AppSpacing.xxs) {
             Image(symbol: icon)
                 .font(AppFont.caption)
             Text(text)
@@ -146,7 +146,7 @@ struct EmptyStateView: View {
     var iconColor: Color = .secondary
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: AppSpacing.xl) {
             Image(symbol: icon)
                 .font(AppFont.iconXL)
                 .foregroundColor(iconColor)
@@ -171,7 +171,7 @@ struct ErrorView: View {
     let onRetry: () -> Void
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: AppSpacing.xl) {
             Image(symbol: AppSymbols.exclamationTriangle)
                 .font(AppFont.iconXL)
                 .foregroundColor(AppColors.destructive)
@@ -195,7 +195,7 @@ struct LoadingView: View {
     var message: String = "Loading..."
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: AppSpacing.xl) {
             ProgressView()
                 .controlSize(.large)
                 .tint(.white)
@@ -227,7 +227,7 @@ struct SectionHeader: View {
             Spacer()
         }
         .padding(.horizontal)
-        .padding(.vertical, 8)
+        .padding(.vertical, AppSpacing.sm)
     }
 }
 

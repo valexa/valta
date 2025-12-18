@@ -82,7 +82,7 @@ struct LogTab: View {
                 )
             } else {
                 ScrollView {
-                    LazyVStack(spacing: 24) {
+                    LazyVStack(spacing: AppSpacing.xxxl) {
                         ForEach(groupedEntries, id: \.date) { group in
                             LogDateSection(date: group.date, entries: group.entries)
                         }
@@ -149,7 +149,7 @@ struct LogDateSection: View {
     let entries: [ActivityLogEntry]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: AppSpacing.base) {
             // Date header
             HStack {
                 Text(date)
@@ -205,7 +205,7 @@ struct LogEntryRow: View {
     }
 
     var body: some View {
-        HStack(alignment: .center, spacing: 12) {
+        HStack(alignment: .center, spacing: AppSpacing.base) {
             // Timeline indicator
             Image(symbol: actionIcon)
                 .font(AppFont.bodyLarge)
@@ -213,9 +213,9 @@ struct LogEntryRow: View {
                 .frame(width: 20)
 
             // Content
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: AppSpacing.xxs) {
                 // Action description
-                HStack(spacing: 6) {
+                HStack(spacing: AppSpacing.xs) {
                     Text(entry.action.rawValue)
                         .font(AppFont.bodyStandardSemibold)
                         .foregroundColor(actionColor.opacity(0.5))
@@ -232,7 +232,7 @@ struct LogEntryRow: View {
                 }
 
                 // Activity details
-                HStack(spacing: 8) {
+                HStack(spacing: AppSpacing.sm) {
                     PriorityBadge(priority: entry.activity.priority)
 
                     Text(entry.activity.name)
@@ -242,7 +242,7 @@ struct LogEntryRow: View {
                     Spacer()
 
                     // Member info
-                    HStack(spacing: 4) {
+                    HStack(spacing: AppSpacing.xxs) {
                         MemberAvatar(member: entry.activity.assignedMember, size: 22)
 
                         Text(entry.activity.assignedMember.name)
@@ -258,7 +258,7 @@ struct LogEntryRow: View {
 
                     // Outcome for completed entries
                     if entry.action == .completed, let outcome = entry.activity.outcome {
-                        HStack(spacing: 4) {
+                        HStack(spacing: AppSpacing.xxs) {
                             Image(symbol: outcome.icon)
                             .font(AppFont.caption)
                             Text(outcome.rawValue)
@@ -269,11 +269,11 @@ struct LogEntryRow: View {
                 }
             }
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
+        .padding(.horizontal, AppSpacing.base)
+        .padding(.vertical, AppSpacing.sm)
         .background(isHovered ? Color.accentColor.opacity(0.03) : Color.clear)
         .onHover { hovering in
-            withAnimation(.easeInOut(duration: 0.15)) {
+            withAnimation(AppAnimations.easeQuick) {
                 isHovered = hovering
             }
         }

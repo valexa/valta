@@ -74,7 +74,7 @@ struct ActivitiesTab: View {
                 EmptyActivityView()
             } else {
                 ScrollView {
-                    LazyVStack(spacing: 12) {
+                    LazyVStack(spacing: AppSpacing.base) {
                         ForEach(filteredActivities) { activity in
                             ManagerActivityRow(activity: activity)
                         }
@@ -122,7 +122,7 @@ struct EmptyActivityView: View {
     @Environment(ManagerAppState.self) private var appState
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: AppSpacing.xl) {
             Image(symbol: AppSymbols.tray)
                 .font(AppFont.iconXL)
                 .foregroundColor(.secondary)
@@ -135,7 +135,7 @@ struct EmptyActivityView: View {
                 .foregroundColor(.secondary)
 
             Button(action: { appState.showingNewActivitySheet = true }) {
-                HStack(spacing: 6) {
+                HStack(spacing: AppSpacing.xs) {
                     Image(symbol: AppSymbols.plus)
                     Text("New Activity")
                 }

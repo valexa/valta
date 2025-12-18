@@ -83,7 +83,7 @@ struct ActivitiesTab: View {
             } else if statsFilter != nil || !searchText.isEmpty {
                 // Filtered view - show flat list
                 ScrollView {
-                    LazyVStack(spacing: 6) {
+                    LazyVStack(spacing: AppSpacing.xs) {
                         ForEach(filteredActivities) { activity in
                             ActivityRowWithSheet(activity: activity, style: styleForActivity(activity))
                         }
@@ -94,7 +94,7 @@ struct ActivitiesTab: View {
             } else {
                 // Default view - show grouped sections
                 ScrollView {
-                    VStack(spacing: 20) {
+                    VStack(spacing: AppSpacing.xxl) {
                         // Pending activities that need to be started
                         if !appState.myActivities.teamMemberPending.isEmpty {
                             ActivitySection(
@@ -167,14 +167,14 @@ struct ActivitiesHeader: View {
     private let avatarTip = AvatarTip()
 
     var body: some View {
-        VStack(spacing: 12) {
-            HStack(spacing: 20) {
+        VStack(spacing: AppSpacing.base) {
+            HStack(spacing: AppSpacing.xxl) {
                 // User info
                 if let member = appState.currentMember {
-                    HStack(spacing: 12) {
+                    HStack(spacing: AppSpacing.base) {
                         MemberAvatar(member: member, size: 44)
                             .popoverTip(avatarTip, arrowEdge: .top)
-                        VStack(alignment: .leading, spacing: 2) {
+                        VStack(alignment: .leading, spacing: AppSpacing.xxxs) {
                             Text(member.name)
                                 .lineLimit(1)
                                 .truncationMode(.tail)
@@ -185,7 +185,7 @@ struct ActivitiesHeader: View {
                 Spacer()
 
                 // Stats buttons (filterable)
-                HStack(spacing: 12) {
+                HStack(spacing: AppSpacing.base) {
                     StatButton(
                         icon: AppSymbols.trayFullFill,
                         value: appState.myActivities.count,
@@ -243,11 +243,11 @@ struct ActivitiesHeader: View {
             if statsFilter != nil {
                 HStack {
                     Button(action: {
-                        withAnimation(.easeInOut(duration: 0.2)) {
+                        withAnimation(AppAnimations.easeStandard) {
                             statsFilter = nil
                         }
                     }) {
-                        HStack(spacing: 4) {
+                        HStack(spacing: AppSpacing.xxs) {
                             Image(symbol: AppSymbols.xmark)
                             .font(AppFont.caption)
                             Text("Clear Filter")
@@ -266,7 +266,7 @@ struct ActivitiesHeader: View {
     }
 
     private func toggleFilter(_ filter: MyActivitiesFilter) {
-        withAnimation(.easeInOut(duration: 0.2)) {
+        withAnimation(AppAnimations.easeStandard) {
             if statsFilter == filter {
                 statsFilter = nil
             } else {
@@ -297,7 +297,7 @@ struct ActivitySection: View {
     let style: ActivitySectionStyle
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: AppSpacing.sm) {
             HStack {
                 Circle()
                     .fill(style.headerColor)
@@ -333,8 +333,8 @@ struct ActivityRowWithSheet: View {
             activity: activity,
             showAssignee: false,
             isHighlighted: false,
-            onStart: style == .pending ? { withAnimation(.spring(response: 0.35, dampingFraction: 0.9)) { appState.startActivity(activity) } } : nil,
-            onComplete: style == .running ? { withAnimation(.spring(response: 0.35, dampingFraction: 0.9)) { appState.requestReview(activity) } } : nil
+            onStart: style == .pending ? { withAnimation(AppAnimations.springAction) { appState.startActivity(activity) } } : nil,
+            onComplete: style == .running ? { withAnimation(AppAnimations.springAction) { appState.requestReview(activity) } } : nil
         )
     }
 }

@@ -40,7 +40,7 @@ struct FloatingTextField: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: AppSpacing.xxs) {
             ZStack(alignment: .topLeading) {
                 // Background
                 RoundedRectangle(cornerRadius: 8)
@@ -54,16 +54,16 @@ struct FloatingTextField: View {
                 Text(title)
                     .font(isFloating ? .caption : .body)
                     .foregroundColor(isFocused ? .accentColor : .secondary)
-                    .padding(.leading, 12)
-                    .padding(.top, isFloating ? 8 : (isMultiline ? 16 : 18))
-                    .animation(.easeInOut(duration: 0.15), value: isFloating)
+                    .padding(.leading, AppSpacing.base)
+                    .padding(.top, isFloating ? AppSpacing.sm : (isMultiline ? AppSpacing.xl : AppSpacing.xxl))
+                    .animation(AppAnimations.easeQuick, value: isFloating)
 
                 // Text input
                 TextEditor(text: $text)
                     .font(.body)
-                    .padding(.horizontal, 8)
-                    .padding(.top, 24)
-                    .padding(.bottom, 8)
+                    .padding(.horizontal, AppSpacing.sm)
+                    .padding(.top, AppSpacing.xxxl)
+                    .padding(.bottom, AppSpacing.sm)
                     .scrollContentBackground(.hidden)
                     .background(Color.clear)
                     .focused($isFocused)
@@ -80,11 +80,11 @@ struct FloatingTextField: View {
                 Text(error)
                     .font(.caption)
                     .foregroundColor(.red)
-                    .padding(.leading, 4)
+                    .padding(.leading, AppSpacing.xxs)
                     .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
-        .animation(.easeInOut(duration: 0.15), value: error.isEmpty)
+        .animation(AppAnimations.easeQuick, value: error.isEmpty)
     }
 }
 

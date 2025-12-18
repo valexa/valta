@@ -60,7 +60,7 @@ struct NewActivitySheet: View {
 
             // Form
             ScrollView {
-                VStack(alignment: .center, spacing: 16) {
+                VStack(alignment: .center, spacing: AppSpacing.xl) {
 
                     // Assigned member
                     memberSelectionView
@@ -87,7 +87,7 @@ struct NewActivitySheet: View {
                         }
 
                     // Priority
-                    HStack(spacing: 8) {
+                    HStack(spacing: AppSpacing.sm) {
                         ForEach(ActivityPriority.allCases, id: \.self) { p in
                             PriorityOption(
                                 priority: p,
@@ -152,7 +152,7 @@ struct NewActivitySheet: View {
             .datePickerStyle(.compact)
 
             // Quick deadline buttons
-            HStack(spacing: 8) {
+            HStack(spacing: AppSpacing.sm) {
                 QuickDeadlineButton(label: "1h") { deadline = Date().addingTimeInterval(3600) }
                 QuickDeadlineButton(label: "4h") { deadline = Date().addingTimeInterval(3600 * 4) }
                 QuickDeadlineButton(label: "1d") { deadline = Date().addingTimeInterval(86400) }
@@ -178,7 +178,7 @@ struct NewActivitySheet: View {
         } label: {
             HStack {
                 if let member = selectedMember {
-                    HStack(spacing: 8) {
+                    HStack(spacing: AppSpacing.sm) {
                         MemberAvatar(member: member, size: 44)
                         Text(member.name)
                             .foregroundColor(.primary)
@@ -203,7 +203,7 @@ struct PriorityOption: View {
 
     var body: some View {
         Button(action: action) {
-            VStack(spacing: 4) {
+            VStack(spacing: AppSpacing.xxs) {
                 Text(priority.shortName)
                     .font(AppFont.priorityBadge)
 
@@ -212,7 +212,7 @@ struct PriorityOption: View {
             }
             .foregroundColor(isSelected ? .white : priority.color)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 2)
+            .padding(.vertical, AppSpacing.xxxs)
             .background(isSelected ? priority.color : priority.color.opacity(0.1))
             .cornerRadius(8)
             .overlay(
@@ -244,8 +244,8 @@ struct QuickDeadlineButton: View {
             Text(label)
                 .font(AppFont.bodyStandardMedium)
                 .foregroundColor(.secondary)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
+                .padding(.horizontal, AppSpacing.base)
+                .padding(.vertical, AppSpacing.xs)
                 .background(Color(NSColor.controlBackgroundColor))
                 .cornerRadius(6)
         }
@@ -266,12 +266,12 @@ struct NotificationPreview: View {
     }
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: AppSpacing.base) {
             Image(symbol: AppSymbols.bellBadge)
                 .font(AppFont.headerLargeRegular)
                 .foregroundColor(AppColors.warning)
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: AppSpacing.xxs) {
                 Text("Notification to \(memberName)")
                     .font(AppFont.bodyStandardSemibold)
 
@@ -281,7 +281,7 @@ struct NotificationPreview: View {
                     .lineLimit(3)
             }
         }
-        .padding(12)
+        .padding(AppSpacing.base)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(AppColors.warning.opacity(0.1))
         .cornerRadius(8)

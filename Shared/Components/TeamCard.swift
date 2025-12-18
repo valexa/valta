@@ -16,10 +16,10 @@ struct TeamCard: View {
 
     var body: some View {
         Button(action: action) {
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: AppSpacing.base) {
                 Image(symbol: AppSymbols.teamMembers)
                         .font(AppFont.headerLargeRegular)
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: AppSpacing.xxs) {
                     Text(team.name)
                         .font(AppFont.bodyLargeSemibold)
                         .foregroundColor(.white)
@@ -38,7 +38,7 @@ struct TeamCard: View {
                         Text("+\(team.members.count - 10)")
                             .font(.caption2)
                             .foregroundColor(.white.opacity(0.6))
-                            .padding(.leading, 12)
+                            .padding(.leading, AppSpacing.base)
                     }
                 }
 #endif
@@ -46,7 +46,7 @@ struct TeamCard: View {
             .overlay(alignment: .topTrailing) {
                 CheckmarkButton(isSelected: isSelected)
             }
-            .padding(16)
+            .padding(AppSpacing.xl)
             .background(RoundedRectangle(cornerRadius: 16).fill(.regularMaterial))
             .overlay(
                 RoundedRectangle(cornerRadius: 16)

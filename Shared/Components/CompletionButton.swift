@@ -40,7 +40,7 @@ struct StartButton: View {
 
     var body: some View {
         CompletionButton(action: action) {
-            HStack(spacing: 3) {
+            HStack(spacing: AppSpacing.xxs) {
                 Image(symbol: AppSymbols.play)
                     .font(AppFont.caption)
                 Text("Start")
@@ -59,7 +59,7 @@ struct CompleteButton: View {
 
     var body: some View {
         CompletionButton(action: action) {
-            HStack(spacing: 3) {
+            HStack(spacing: AppSpacing.xxs) {
                 Image(symbol: AppSymbols.checkmark)
                     .font(AppFont.captionBold)
                 Text("Complete")

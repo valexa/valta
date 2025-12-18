@@ -19,13 +19,13 @@ struct RequestsTab: View {
                 EmptyRequestsView()
             } else {
                 ScrollView {
-                    LazyVStack(spacing: 16) {
+                    LazyVStack(spacing: AppSpacing.xl) {
                         ForEach(appState.managerPendingActivities) { activity in
                             RequestCard(activity: activity)
                         }
                     }
                     .padding()
-                    .animation(.spring(response: 0.35, dampingFraction: 0.9), value: appState.managerPendingActivities.map(\.id))
+                    .animation(AppAnimations.springAction, value: appState.managerPendingActivities.map(\.id))
                     .id(appState.dataVersion)
                 }
             }
@@ -37,7 +37,7 @@ struct RequestsTab: View {
             ToolbarItem {
                 if !appState.managerPendingActivities.isEmpty {
                     ApproveAllButton {
-                        withAnimation(.spring(response: 0.35, dampingFraction: 0.9)) {
+                        withAnimation(AppAnimations.springAction) {
                             approveAll()
                         }
                     }
@@ -64,11 +64,11 @@ struct RequestCard: View {
         let outcome = activity.calculateOutcome()
 
         return VStack(spacing: 0) {
-            HStack(alignment: .center, spacing: 16) {
+            HStack(alignment: .center, spacing: AppSpacing.xl) {
                 // Requester avatar
                 MemberAvatar(member: activity.assignedMember, size: 48)
 
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: AppSpacing.sm) {
                     // Header
                     HStack {
                         Text(activity.assignedMember.name)
@@ -86,7 +86,7 @@ struct RequestCard: View {
 
                     // Activity details
                     VStack(alignment: .leading) {
-                        HStack(spacing: 8) {
+                        HStack(spacing: AppSpacing.sm) {
                             PriorityBadge(priority: activity.priority)
 
                             Text(activity.name)
@@ -104,26 +104,26 @@ struct RequestCard: View {
                     .cornerRadius(8)
 
                     // Outcome details
-                    HStack(spacing: 8) {
+                    HStack(spacing: AppSpacing.sm) {
                         Text("Activity outcome:")
                             .font(AppFont.bodyStandard)
                             .foregroundColor(.secondary)
 
-                        HStack(spacing: 4) {
+                        HStack(spacing: AppSpacing.xxs) {
                             Image(symbol: outcome.icon)
                             Text(outcome.rawValue)
                         }
                         .font(AppFont.bodyStandardSemibold)
                         .foregroundColor(outcome.color)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
+                        .padding(.horizontal, AppSpacing.sm)
+                        .padding(.vertical, AppSpacing.xxs)
                         .background(outcome.color.opacity(0.15))
                         .cornerRadius(6)
 
                         Spacer()
 
                         // Deadline info
-                        HStack(spacing: 4) {
+                        HStack(spacing: AppSpacing.xxs) {
                             Image(symbol: AppSymbols.calendarBadgeClock)
                                 .font(AppFont.bodyStandard)
                             Text("Deadline: \(activity.deadline.formatted(date: .abbreviated, time: .shortened))")
@@ -135,28 +135,28 @@ struct RequestCard: View {
 
                 Spacer()
             }
-            .padding(20)
+            .padding(AppSpacing.xxl)
 
             Divider()
 
             // Actions
-            HStack(spacing: 12) {
+            HStack(spacing: AppSpacing.base) {
                 Spacer()
 
                 RejectButton {
-                    withAnimation(.spring(response: 0.35, dampingFraction: 0.9)) {
+                    withAnimation(AppAnimations.springAction) {
                         appState.rejectCompletion(activity)
                     }
                 }
 
                 ApproveButton {
-                    withAnimation(.spring(response: 0.35, dampingFraction: 0.9)) {
+                    withAnimation(AppAnimations.springAction) {
                         appState.approveCompletion(activity)
                     }
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 14)
+            .padding(.horizontal, AppSpacing.xxl)
+            .padding(.vertical, AppSpacing.lg)
             .background(Color(NSColor.windowBackgroundColor).opacity(0.5))
         }
         .background(Color(NSColor.controlBackgroundColor))
@@ -167,7 +167,7 @@ struct RequestCard: View {
         )
         .shadow(color: AppColors.shadow.opacity(0.06), radius: 6, y: 2)
         .onHover { hovering in
-            withAnimation(.easeInOut(duration: 0.2)) {
+            withAnimation(AppAnimations.easeStandard) {
                 isHovered = hovering
             }
         }
@@ -178,7 +178,7 @@ struct RequestCard: View {
 
 struct EmptyRequestsView: View {
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: AppSpacing.xl) {
             ZStack {
                 Circle()
                     .fill(AppColors.success.opacity(0.1))

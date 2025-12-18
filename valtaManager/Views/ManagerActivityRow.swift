@@ -19,7 +19,7 @@ struct ManagerActivityRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             // Main content
-            HStack(alignment: .top, spacing: 16) {
+            HStack(alignment: .top, spacing: AppSpacing.xl) {
                 // Priority indicator
                 VStack {
                     PriorityBadge(priority: activity.priority)
@@ -29,12 +29,12 @@ struct ManagerActivityRow: View {
                         Image(symbol: AppSymbols.exclamationTriangle)
                             .foregroundColor(AppColors.destructive)
                             .font(AppFont.bodyStandard)
-                            .padding(.top, 4)
+                            .padding(.top, AppSpacing.xxs)
                     }
                 }
 
                 // Activity info
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: AppSpacing.xs) {
                     HStack {
                         Text(activity.name)
                             .font(AppFont.bodyPrimary)
@@ -50,9 +50,9 @@ struct ManagerActivityRow: View {
                         .foregroundColor(.secondary)
                         .lineLimit(isExpanded ? nil : 2)
 
-                    HStack(spacing: 16) {
+                    HStack(spacing: AppSpacing.xl) {
                         // Assignee
-                        HStack(spacing: 6) {
+                        HStack(spacing: AppSpacing.xs) {
                             MemberAvatar(member: activity.assignedMember, size: 22)
 
                             Text(activity.assignedMember.name)
@@ -66,7 +66,7 @@ struct ManagerActivityRow: View {
                         }
 
                         // Created date
-                        HStack(spacing: 4) {
+                        HStack(spacing: AppSpacing.xxs) {
                             Image(symbol: AppSymbols.calendar)
                                 .font(AppFont.caption)
                             Text(activity.deadline.formatted(date: .abbreviated, time: .shortened))
@@ -80,7 +80,7 @@ struct ManagerActivityRow: View {
 
                 // Actions
                 if isHovered && activity.status != .completed && activity.status != .canceled {
-                    HStack(spacing: 8) {
+                    HStack(spacing: AppSpacing.sm) {
                         if activity.status == .running || activity.status == .managerPending {
                             Button(action: { showingCompleteSheet = true }) {
                                 Image(symbol: AppSymbols.checkmark)
@@ -101,13 +101,13 @@ struct ManagerActivityRow: View {
                     }
                 }
             }
-            .padding(16)
+            .padding(AppSpacing.xl)
 
             // Outcome indicator for completed activities
             if activity.status == .completed, let outcome = activity.outcome {
                 Divider()
 
-                HStack(spacing: 8) {
+                HStack(spacing: AppSpacing.sm) {
                     Image(symbol: outcome.icon)
                         .font(AppFont.bodyStandard)
 
@@ -123,8 +123,8 @@ struct ManagerActivityRow: View {
                     Spacer()
                 }
                 .foregroundColor(outcome.color)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 10)
+                .padding(.horizontal, AppSpacing.xl)
+                .padding(.vertical, AppSpacing.md)
                 .background(outcome.color.opacity(0.1))
             }
         }
@@ -136,12 +136,12 @@ struct ManagerActivityRow: View {
         )
         .shadow(color: AppColors.shadow.opacity(isHovered ? 0.1 : 0.05), radius: isHovered ? 8 : 4, y: 2)
         .onHover { hovering in
-            withAnimation(.easeInOut(duration: 0.2)) {
+            withAnimation(AppAnimations.easeStandard) {
                 isHovered = hovering
             }
         }
         .onTapGesture {
-            withAnimation(.easeInOut(duration: 0.2)) {
+            withAnimation(AppAnimations.easeStandard) {
                 isExpanded.toggle()
             }
         }
@@ -157,9 +157,9 @@ struct CompleteActivitySheet: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: AppSpacing.xxxl) {
             // Header
-            VStack(spacing: 8) {
+            VStack(spacing: AppSpacing.sm) {
                 Image(symbol: AppSymbols.checkmarkSeal)
                     .font(AppFont.iconXL)
                     .foregroundStyle(AppGradients.success)
@@ -175,7 +175,7 @@ struct CompleteActivitySheet: View {
             Divider()
 
             // Info
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: AppSpacing.base) {
                 Text("Are you sure you want to complete this activity?")
                     .font(.headline)
 
@@ -186,7 +186,7 @@ struct CompleteActivitySheet: View {
             Spacer()
 
             // Actions
-            HStack(spacing: 12) {
+            HStack(spacing: AppSpacing.base) {
                 Button("Cancel") {
                     dismiss()
                 }
@@ -201,7 +201,7 @@ struct CompleteActivitySheet: View {
                 .controlSize(.large)
             }
         }
-        .padding(24)
+        .padding(AppSpacing.xxxl)
         .frame(width: 400, height: 320)
     }
 }

@@ -34,7 +34,7 @@ struct StatusFilterMenu: View {
                 }
             }
         } label: {
-            HStack(spacing: 4) {
+            HStack(spacing: AppSpacing.xxs) {
                 Image(symbol: AppSymbols.filter)
                 Text(selection?.rawValue ?? "Status")
                     .lineLimit(1)
@@ -68,7 +68,7 @@ struct PriorityFilterMenu: View {
                 }
             }
         } label: {
-            HStack(spacing: 4) {
+            HStack(spacing: AppSpacing.xxs) {
                 Image(symbol: AppSymbols.flagBadge)
                 Text(selection?.shortName ?? "Priority")
                 Image(symbol: AppSymbols.chevronDown)
@@ -101,7 +101,7 @@ struct OutcomeFilterMenu: View {
                 }
             }
         } label: {
-            HStack(spacing: 4) {
+            HStack(spacing: AppSpacing.xxs) {
                 Image(symbol: AppSymbols.outcome)
                 Text(selection?.rawValue ?? "Outcome")
                 Image(symbol: AppSymbols.chevronDown)
