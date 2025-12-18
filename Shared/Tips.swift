@@ -15,7 +15,7 @@ struct AvatarTip: Tip {
         Text("Make sure you selected the correct user, it can not be changed")
     }
     var asset: Image? {
-        Image(systemName: AppSymbols.person2Fill)
+        Image(systemName: AppSymbols.allActivities)
     }
 }
 

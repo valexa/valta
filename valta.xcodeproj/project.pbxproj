@@ -63,7 +63,6 @@
 		F5AC05662EEAF074004B038F /* IMPLEMENTATION_PLAN.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = IMPLEMENTATION_PLAN.md; sourceTree = "<group>"; };
 		F5AC05672EEAF074004B038F /* NOTIFICATION_SETUP_GUIDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = NOTIFICATION_SETUP_GUIDE.md; sourceTree = "<group>"; };
 		F5AC05682EEAF074004B038F /* PROJECT_COMP.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = PROJECT_COMP.md; sourceTree = "<group>"; };
-		F5AC05692EEAF074004B038F /* PROJECT_RULES.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = PROJECT_RULES.md; sourceTree = "<group>"; };
 		F5AC056A2EEAF074004B038F /* PUSH_NOTIFICATIONS_PLAN.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = PUSH_NOTIFICATIONS_PLAN.md; sourceTree = "<group>"; };
 		F5AC056B2EEAF074004B038F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		F5AC056C2EEAF074004B038F /* teams.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = teams.csv; sourceTree = "<group>"; };
@@ -190,7 +189,6 @@
 				F5AC05662EEAF074004B038F /* IMPLEMENTATION_PLAN.md */,
 				F5AC05672EEAF074004B038F /* NOTIFICATION_SETUP_GUIDE.md */,
 				F5AC05682EEAF074004B038F /* PROJECT_COMP.md */,
-				F5AC05692EEAF074004B038F /* PROJECT_RULES.md */,
 				F5AC056A2EEAF074004B038F /* PUSH_NOTIFICATIONS_PLAN.md */,
 				F5AC056B2EEAF074004B038F /* README.md */,
 				F5AC056C2EEAF074004B038F /* teams.csv */,

@@ -59,11 +59,11 @@ struct MemberSelectionCard: View {
         // Member info
         VStack(alignment: .leading, spacing: 2) {
             Text(member.name)
-                .font(.system(size: 13, weight: isSelected ? .semibold : .medium))
+                .font(isSelected ? AppFont.bodyStandardSemibold : AppFont.bodyStandardMedium)
                 .foregroundColor(.white)
                 .lineLimit(2)
             Text(member.email)
-                .font(.system(size: 11))
+                .font(AppFont.caption)
                 .foregroundColor(.secondary)
                 .lineLimit(1)
             // Show "Logged in elsewhere" for disabled members

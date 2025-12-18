@@ -43,7 +43,7 @@ struct valtaApp: App {
                     #if os(macOS)
                     NSApplication.shared.dockTile.badgeLabel = nil
                     #endif
-                    
+
                     do {
                         try await authService.signInAnonymously()
                         await dataManager.loadData()

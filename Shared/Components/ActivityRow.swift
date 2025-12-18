@@ -30,11 +30,11 @@ struct ActivityRow: View {
 
         HStack(spacing: 10) {
             // Priority badge
-            PriorityBadge(priority: activity.priority, compact: true)
+            PriorityBadge(priority: activity.priority)
 
             // Activity name
             Text(activity.name)
-                .font(.system(size: 13, weight: .medium))
+                .font(AppFont.bodyStandardMedium)
                 .lineLimit(1)
                 .frame(minWidth: 100, alignment: .leading)
 
@@ -43,7 +43,7 @@ struct ActivityRow: View {
                 HStack(spacing: 4) {
                     MemberAvatar(member: activity.assignedMember, size: 20)
                     Text(activity.assignedMember.name.components(separatedBy: " ").first ?? "")
-                        .font(.system(size: 11))
+                        .font(AppFont.caption)
                         .foregroundColor(.secondary)
                         .lineLimit(1)
                 }
@@ -61,7 +61,7 @@ struct ActivityRow: View {
             if activity.isOverdue {
                 Image(symbol: AppSymbols.exclamationTriangle)
                     .foregroundColor(theme.destructive)
-                    .font(.system(size: 11))
+                    .font(AppFont.caption)
             }
 
             // Time delta for completed activities (shows how much ahead/overrun)
@@ -123,35 +123,11 @@ struct ActivityRow: View {
     var actionButtons: some View {
         HStack(spacing: 6) {
             if activity.status == .teamMemberPending, let onStart = onStart {
-                CompletionButton(action: {
-                    onStart()
-                }) {
-                    HStack(spacing: 3) {
-                        Image(symbol: AppSymbols.play)
-                            .font(.system(size: 9))
-                        Text("Start")
-                            .font(.system(size: 10, weight: .semibold))
-                    }
-                    .foregroundColor(.white)
-                }
-                .buttonStyle(.glassProminent)
-                .tint(theme.color(for: .running).gradient)
+                StartButton(action: onStart)
             }
 
             if activity.status == .running, let onComplete = onComplete {
-                CompletionButton(action: {
-                    onComplete()
-                }) {
-                    HStack(spacing: 3) {
-                        Image(symbol: AppSymbols.checkmark)
-                            .font(.system(size: 9, weight: .bold))
-                        Text("Complete")
-                            .font(.system(size: 10, weight: .semibold))
-                    }
-                    .foregroundColor(.white)
-                }
-                .buttonStyle(.glassProminent)
-                .tint(theme.color(for: .managerPending).gradient)
+                CompleteButton(action: onComplete)
             }
         }
     }
@@ -169,7 +145,7 @@ struct CompletionTimeDelta: View {
 
     var body: some View {
         Text(deltaText)
-            .font(.system(size: 10, weight: .medium, design: .monospaced))
+            .font(AppFont.captionMonospaced)
             .foregroundColor(.secondary)
     }
 }
@@ -214,12 +190,12 @@ struct CompletionTimeDelta: View {
         Text("Hover to see action buttons:")
             .font(.caption)
             .foregroundColor(.secondary)
-        
+
         ActivityRow(
             activity: Activity.mockActivities[2], // teamMemberPending
             onStart: { print("Start tapped") }
         )
-        
+
         ActivityRow(
             activity: .mock, // running
             onComplete: { print("Done tapped") }

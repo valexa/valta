@@ -36,14 +36,11 @@ struct RequestsTab: View {
             }
             ToolbarItem {
                 if !appState.managerPendingActivities.isEmpty {
-                    CompletionButton(role: .confirm, action: {
+                    ApproveAllButton {
                         withAnimation(.spring(response: 0.35, dampingFraction: 0.9)) {
                             approveAll()
                         }
-                    }) {
-                        Text("Approve All")
                     }
-                    .buttonStyle(.glassProminent)
                 }
             }
         }
@@ -67,7 +64,7 @@ struct RequestCard: View {
         let outcome = activity.calculateOutcome()
 
         return VStack(spacing: 0) {
-            HStack(alignment: .top, spacing: 16) {
+            HStack(alignment: .center, spacing: 16) {
                 // Requester avatar
                 MemberAvatar(member: activity.assignedMember, size: 48)
 
@@ -75,11 +72,7 @@ struct RequestCard: View {
                     // Header
                     HStack {
                         Text(activity.assignedMember.name)
-                            .font(.system(size: 15, weight: .semibold))
-
-                        Text("requested completion")
-                            .font(.system(size: 15))
-                            .foregroundColor(.secondary)
+                            .font(AppFont.bodyPrimary)
 
                         Spacer()
 
@@ -92,20 +85,20 @@ struct RequestCard: View {
                     }
 
                     // Activity details
-                    VStack(alignment: .leading, spacing: 6) {
+                    VStack(alignment: .leading) {
                         HStack(spacing: 8) {
                             PriorityBadge(priority: activity.priority)
 
                             Text(activity.name)
-                                .font(.system(size: 14, weight: .medium))
+                                .font(AppFont.bodyPrimaryMedium)
                         }
 
                         Text(activity.description)
-                            .font(.system(size: 13))
+                            .font(AppFont.bodyStandard)
                             .foregroundColor(.secondary)
                             .lineLimit(2)
                     }
-                    .padding(12)
+
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(Color(NSColor.windowBackgroundColor))
                     .cornerRadius(8)
@@ -113,14 +106,14 @@ struct RequestCard: View {
                     // Outcome details
                     HStack(spacing: 8) {
                         Text("Activity outcome:")
-                            .font(.system(size: 13))
+                            .font(AppFont.bodyStandard)
                             .foregroundColor(.secondary)
 
                         HStack(spacing: 4) {
                             Image(symbol: outcome.icon)
                             Text(outcome.rawValue)
                         }
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(AppFont.bodyStandardSemibold)
                         .foregroundColor(outcome.color)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
@@ -132,9 +125,9 @@ struct RequestCard: View {
                         // Deadline info
                         HStack(spacing: 4) {
                             Image(symbol: AppSymbols.calendarBadgeClock)
-                                .font(.system(size: 12))
+                                .font(AppFont.bodyStandard)
                             Text("Deadline: \(activity.deadline.formatted(date: .abbreviated, time: .shortened))")
-                                .font(.system(size: 12))
+                                .font(AppFont.bodyStandard)
                         }
                         .foregroundColor(.secondary)
                     }
@@ -150,25 +143,17 @@ struct RequestCard: View {
             HStack(spacing: 12) {
                 Spacer()
 
-                CompletionButton(role: .destructive, action: {
+                RejectButton {
                     withAnimation(.spring(response: 0.35, dampingFraction: 0.9)) {
                         appState.rejectCompletion(activity)
                     }
-                }) {
-                    Text("Reject")
                 }
-                .buttonStyle(.glass)
-                .tint(.orange)
 
-                CompletionButton(role: .confirm, action: {
+                ApproveButton {
                     withAnimation(.spring(response: 0.35, dampingFraction: 0.9)) {
                         appState.approveCompletion(activity)
                     }
-                }) {
-                    Text("Approve")
                 }
-                .buttonStyle(.glass)
-                .tint(.blue)
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 14)
@@ -200,12 +185,12 @@ struct EmptyRequestsView: View {
                     .frame(width: 100, height: 100)
 
                 Image(symbol: AppSymbols.checkmarkSeal)
-                    .font(.system(size: 48))
+                    .font(AppFont.iconXL)
                     .foregroundStyle(AppGradients.success)
             }
 
             Text("All Caught Up!")
-                .font(.system(size: 22, weight: .bold, design: .rounded))
+                .font(AppFont.headerSection)
 
             Text("No pending completion requests from your team")
                 .font(.subheadline)
@@ -217,8 +202,21 @@ struct EmptyRequestsView: View {
 
 // MARK: - Preview
 
-#Preview {
+#Preview("Empty") {
     RequestsTab()
         .environment(ManagerAppState())
         .frame(width: 800, height: 600)
+}
+
+#Preview("With Requests") {
+    // Show RequestCards directly with mock manager-pending activities
+    ScrollView {
+        LazyVStack(spacing: 16) {
+            RequestCard(activity: Activity.mockActivities[3])  // API Rate Limiting - managerPending
+            RequestCard(activity: Activity.mockActivities[8])  // Database Migration - managerPending
+        }
+        .padding()
+    }
+    .environment(ManagerAppState())
+    .frame(width: 800, height: 600)
 }

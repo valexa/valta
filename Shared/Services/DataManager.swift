@@ -106,7 +106,7 @@ class DataManager {
         // Extract all activities from all teams
         let allActivities = teams.flatMap { $0.activities }
         print("📤 Syncing \(allActivities.count) activities to Firebase...")
-        
+
         let csvString = csv.serializeActivities(allActivities)
 
         do {

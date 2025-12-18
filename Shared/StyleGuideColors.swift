@@ -20,12 +20,12 @@ enum AppColors {
 
     /// P0 Critical - Red
     static let priorityP0 = Color(red: 0.9, green: 0.2, blue: 0.3)
-    /// P1 High - Dark Gray
-    static let priorityP1 = Color(red: 0.35, green: 0.35, blue: 0.35)
+    /// P1 High - Light Gray
+    static let priorityP1 = Color(red: 0.72, green: 0.72, blue: 0.72)
     /// P2 Medium - Medium Gray
     static let priorityP2 = Color(red: 0.55, green: 0.55, blue: 0.55)
-    /// P3 Low - Light Gray
-    static let priorityP3 = Color(red: 0.72, green: 0.72, blue: 0.72)
+    /// P3 Low - Dark Gray
+    static let priorityP3 = Color(red: 0.35, green: 0.35, blue: 0.35)
 
     // MARK: - Outcome Colors
 
@@ -41,7 +41,7 @@ enum AppColors {
     /// Running status - Blue
     static let statusRunning = Color.blue
     /// Completed status - Green
-    static let statusCompleted = Color.green
+    static let statusCompleted = Color.mint
     /// Canceled status - Gray
     static let statusCanceled = Color.gray
     /// Manager pending - Magenta (awaiting manager approval)

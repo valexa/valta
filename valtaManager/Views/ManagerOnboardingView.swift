@@ -83,16 +83,16 @@ extension ManagerOnboardingView {
         VStack(spacing: 40) {
             // Header
             VStack(spacing: 12) {
-                Image(symbol: AppSymbols.person3Sequence)
-                    .font(.system(size: 44))
+                Image(symbol: AppSymbols.selectTeam)
+                    .font(AppFont.iconXL)
                     .foregroundColor(.white)
 
                 Text("Select Your Team")
-                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .font(AppFont.headerXL)
                     .foregroundColor(.white)
 
                 Text("Choose a team to manage from the list below")
-                    .font(.system(size: 17))
+                    .font(AppFont.bodyLarge)
                     .foregroundColor(.white.opacity(0.7))
             }
 

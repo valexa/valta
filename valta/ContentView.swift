@@ -68,22 +68,28 @@ struct MainTabView: View {
         TabView(selection: $state.selectedTab) {
             ActivitiesTab()
                 .tabItem {
-                    Label("My Activities", systemImage: "person.fill.checkmark")
+                    Label("My Activities", systemImage: AppSymbols.myActivities)
                 }
                 .tag(TeamMemberTab.activities)
                 .badge(appState.myActiveCount)
 
             TeamTab()
                 .tabItem {
-                    Label("Team", systemImage: "person.3.fill")
+                    Label("Team", systemImage: AppSymbols.myTeam)
                 }
                 .tag(TeamMemberTab.team)
 
             LogTab()
                 .tabItem {
-                    Label("Log", systemImage: "list.bullet.clipboard.fill")
+                    Label("Log", systemImage: AppSymbols.log)
                 }
                 .tag(TeamMemberTab.log)
+
+            HelpTab()
+                .tabItem {
+                    Label("Help", systemImage: AppSymbols.booksVertical)
+                }
+                .tag(TeamMemberTab.help)
         }
         .tabViewStyle(.sidebarAdaptable)
         .frame(minWidth: 1000, minHeight: 800)

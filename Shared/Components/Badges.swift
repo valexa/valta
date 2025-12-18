@@ -15,16 +15,15 @@ struct PriorityBadge: View {
     @Environment(\.theme) private var theme
 
     let priority: ActivityPriority
-    var compact: Bool = false
 
     var body: some View {
         Text(priority.shortName)
-            .font(.system(size: compact ? 10 : 11, weight: .bold, design: .rounded))
+            .font(AppFont.priorityBadge)
             .foregroundColor(.white)
-            .padding(.horizontal, compact ? 6 : 8)
-            .padding(.vertical, compact ? 3 : 4)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 3)
             .background(priority.color(using: theme).gradient)
-            .cornerRadius(compact ? 4 : 6)
+            .cornerRadius(4)
     }
 }
 
@@ -39,10 +38,10 @@ struct StatusBadge: View {
     var body: some View {
         HStack(spacing: 4) {
             Image(symbol: status.icon)
-            .font(.system(size: compact ? 9 : 10))
+            .font(AppFont.caption)
 
             Text(status.rawValue)
-            .font(.system(size: compact ? 10 : 11, weight: .medium))
+            .font(compact ? AppFont.badgeCompact : AppFont.badge)
         }
         .foregroundColor(displayColor)
         .padding(.horizontal, compact ? 6 : 8)
@@ -66,10 +65,10 @@ struct OutcomeBadge: View {
     var body: some View {
         HStack(spacing: 4) {
             Image(symbol: outcome.icon)
-            .font(.system(size: 11))
+            .font(AppFont.caption)
 
             Text(outcome.rawValue)
-            .font(.system(size: 11, weight: .medium))
+            .font(AppFont.badge)
         }
         .foregroundColor(color)
         .padding(.horizontal, 8)

@@ -45,7 +45,7 @@ struct NewActivitySheet: View {
                 Spacer()
 
                 Text("New Activity")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(AppFont.buttonLarge)
 
                 Spacer()
 
@@ -53,7 +53,7 @@ struct NewActivitySheet: View {
                     createActivity()
                 }
                 .buttonStyle(.glass)
-                .tint(AppColors.statusManagerPending.opacity(0.25))
+                .tint(AppColors.statusTeamMemberPending.opacity(0.25))
                 .disabled(!isValid)
             }
             .padding()
@@ -140,16 +140,16 @@ struct NewActivitySheet: View {
     }
 
     private var dateSelectionView: some View {
-        HStack {
-            TransparentDatePicker(
+        VStack {
+            DatePicker(
+                "",
                 selection: $deadline,
-                minDate: Date()
+                in: Date()...,
+                displayedComponents: [.date, .hourAndMinute]
             )
-            .padding(.leading)
-            .frame(width: 160)
-            .padding(4)
-            .background(Color.white.opacity(0.05))
-            .cornerRadius(8)
+            .tint(.red)
+            .labelsHidden()
+            .datePickerStyle(.compact)
 
             // Quick deadline buttons
             HStack(spacing: 8) {
@@ -190,6 +190,7 @@ struct NewActivitySheet: View {
                 }
             }
         }
+        .menuStyle(.borderlessButton)
     }
 }
 
@@ -204,10 +205,10 @@ struct PriorityOption: View {
         Button(action: action) {
             VStack(spacing: 4) {
                 Text(priority.shortName)
-                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .font(AppFont.priorityBadge)
 
                 Text(priorityLabel)
-                    .font(.system(size: 10))
+                    .font(AppFont.caption)
             }
             .foregroundColor(isSelected ? .white : priority.color)
             .frame(maxWidth: .infinity)
@@ -241,7 +242,7 @@ struct QuickDeadlineButton: View {
     var body: some View {
         Button(action: action) {
             Text(label)
-                .font(.system(size: 12, weight: .medium))
+                .font(AppFont.bodyStandardMedium)
                 .foregroundColor(.secondary)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
@@ -267,15 +268,15 @@ struct NotificationPreview: View {
     var body: some View {
         HStack(spacing: 12) {
             Image(symbol: AppSymbols.bellBadge)
-                .font(.system(size: 24))
+                .font(AppFont.headerLargeRegular)
                 .foregroundColor(AppColors.warning)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text("Notification to \(memberName)")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(AppFont.bodyStandardSemibold)
 
                 Text("\(priorityPrefix)\(Date().formatted(date: .abbreviated, time: .shortened)) - [Manager name] has assigned you a new activity with deadline \(deadline.formatted(date: .abbreviated, time: .shortened)): \(activityName).")
-                    .font(.system(size: 11))
+                    .font(AppFont.caption)
                     .foregroundColor(.secondary)
                     .lineLimit(3)
             }

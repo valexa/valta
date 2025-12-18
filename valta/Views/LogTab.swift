@@ -153,7 +153,7 @@ struct LogDateSection: View {
             // Date header
             HStack {
                 Text(date)
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(AppFont.bodyStandardSemibold)
                     .foregroundColor(.secondary)
 
                 Rectangle()
@@ -208,8 +208,8 @@ struct LogEntryRow: View {
         HStack(alignment: .center, spacing: 12) {
             // Timeline indicator
             Image(symbol: actionIcon)
-                .font(.system(size: 16))
-                .foregroundColor(actionColor)
+                .font(AppFont.bodyLarge)
+                .foregroundColor(actionColor.opacity(0.5))
                 .frame(width: 20)
 
             // Content
@@ -217,26 +217,26 @@ struct LogEntryRow: View {
                 // Action description
                 HStack(spacing: 6) {
                     Text(entry.action.rawValue)
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(actionColor)
+                        .font(AppFont.bodyStandardSemibold)
+                        .foregroundColor(actionColor.opacity(0.5))
 
                     Text("by \(entry.performedBy)")
-                        .font(.system(size: 12))
+                        .font(AppFont.bodyStandard)
                         .foregroundColor(.secondary)
 
                     Spacer()
 
                     Text(entry.timestamp.formatted(date: .omitted, time: .shortened))
-                        .font(.system(size: 11))
+                        .font(AppFont.caption)
                         .foregroundColor(.secondary)
                 }
 
                 // Activity details
                 HStack(spacing: 8) {
-                    PriorityBadge(priority: entry.activity.priority, compact: true)
+                    PriorityBadge(priority: entry.activity.priority)
 
                     Text(entry.activity.name)
-                        .font(.system(size: 12, weight: .medium))
+                        .font(AppFont.bodyStandardMedium)
                         .lineLimit(1)
 
                     Spacer()
@@ -246,12 +246,12 @@ struct LogEntryRow: View {
                         MemberAvatar(member: entry.activity.assignedMember, size: 22)
 
                         Text(entry.activity.assignedMember.name)
-                            .font(.system(size: 11))
+                            .font(AppFont.caption)
                             .foregroundColor(.secondary)
 
                         if isOwnActivity {
                             Text("(You)")
-                                .font(.system(size: 10))
+                                .font(AppFont.caption)
                                 .foregroundColor(.accentColor)
                         }
                     }
@@ -260,9 +260,9 @@ struct LogEntryRow: View {
                     if entry.action == .completed, let outcome = entry.activity.outcome {
                         HStack(spacing: 4) {
                             Image(symbol: outcome.icon)
-                                .font(.system(size: 10))
+                            .font(AppFont.caption)
                             Text(outcome.rawValue)
-                                .font(.system(size: 11))
+                                .font(AppFont.caption)
                         }
                         .foregroundColor(outcome.color)
                     }

@@ -114,7 +114,7 @@ extension TeamMemberOnboardingView {
 
             VStack(spacing: 12) {
                 Text(currentStep == .selectTeam ? "Select Your Team" : "Select Your Name")
-                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .font(AppFont.headerXL)
                     .foregroundColor(.white)
             }
 
@@ -136,9 +136,9 @@ extension TeamMemberOnboardingView {
                     }) {
                         HStack(spacing: 8) {
                             Image(symbol: AppSymbols.arrowLeft)
-                                .font(.system(size: 14, weight: .semibold))
+                                .font(AppFont.bodyPrimary)
                             Text("Back")
-                                .font(.system(size: 16, weight: .semibold))
+                                .font(AppFont.buttonLarge)
                         }
                         .foregroundColor(.white.opacity(0.7))
                     }
@@ -148,10 +148,10 @@ extension TeamMemberOnboardingView {
                 Button(action: handleContinue) {
                     HStack(spacing: 8) {
                         Text("Continue")
-                            .font(.system(size: 16, weight: .semibold))
+                            .font(AppFont.buttonLarge)
 
                         Image(symbol: AppSymbols.arrowRight)
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(AppFont.bodyPrimary)
                     }
                     .foregroundColor(.white)
                 }
@@ -213,7 +213,7 @@ struct MemberSelectionView: View {
     var body: some View {
         VStack(spacing: 16) {
             Text("Team: \(team.name)")
-                .font(.system(size: 14, weight: .medium))
+                .font(AppFont.bodyPrimaryMedium)
                 .foregroundColor(.white.opacity(0.6))
 
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 200))], spacing: 20) {

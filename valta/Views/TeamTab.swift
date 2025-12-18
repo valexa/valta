@@ -85,7 +85,7 @@ struct TeamTab: View {
             // Content
             if groupedActivities.isEmpty {
                 EmptyStateView(
-                    icon: AppSymbols.person3,
+                    icon: AppSymbols.teamMembers,
                     title: "No Team Activities",
                     message: emptyStateMessage,
                     iconColor: AppColors.statusRunning
@@ -119,7 +119,7 @@ struct TeamTabHeader: View {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Team Activities")
-                        .font(.system(size: 22, weight: .bold, design: .rounded))
+                        .font(AppFont.headerSection)
 
                     Text(appState.team.name)
                         .font(.subheadline)
@@ -131,7 +131,7 @@ struct TeamTabHeader: View {
                 // Team stats (filterable)
                 HStack(spacing: 12) {
                     StatButton(
-                        icon: AppSymbols.person2Fill,
+                        icon: AppSymbols.allActivities,
                         value: appState.team.activities.count,
                         label: "All",
                         color: AppColors.statTotal,
@@ -183,7 +183,6 @@ struct TeamTabHeader: View {
                 }
             }
 
-
         }
         .padding()
         .background(Color(NSColor.windowBackgroundColor))
@@ -218,11 +217,11 @@ struct TeamMemberSection: View {
                     VStack(alignment: .leading, spacing: 2) {
                         HStack(spacing: 6) {
                             Text(member.name)
-                                .font(.system(size: 15, weight: .semibold))
+                                .font(AppFont.bodyPrimary)
 
                             if isCurrentUser {
                                 Text("(You)")
-                                    .font(.system(size: 12))
+                                    .font(AppFont.bodyStandard)
                                     .foregroundColor(.accentColor)
                                     .padding(.horizontal, 6)
                                     .padding(.vertical, 2)
@@ -232,14 +231,14 @@ struct TeamMemberSection: View {
                         }
 
                         Text("\(activities.count) activit\(activities.count == 1 ? "y" : "ies")")
-                            .font(.system(size: 12))
+                            .font(AppFont.bodyStandard)
                             .foregroundColor(.secondary)
                     }
 
                     Spacer()
 
                     Image(symbol: isExpanded ? AppSymbols.chevronDown : AppSymbols.chevronRight)
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(AppFont.bodyStandardSemibold)
                         .foregroundColor(.secondary)
                 }
             }

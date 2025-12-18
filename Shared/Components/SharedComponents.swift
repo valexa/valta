@@ -67,9 +67,9 @@ struct TimeRemainingLabel: View {
         HStack(spacing: 6) {
             HStack(spacing: 4) {
                 Image(symbol: AppSymbols.clock)
-                    .font(.system(size: compact ? 10 : 11))
+                    .font(AppFont.caption)
                 Text(activity.timeRemaining)
-                    .font(.system(size: compact ? 11 : 12, weight: activity.isOverdue ? .semibold : .regular))
+                    .font(activity.isOverdue ? AppFont.bodyStandardSemibold : AppFont.bodySmall)
             }
             .foregroundColor(activity.isOverdue ? theme.destructive : .secondary)
 
@@ -129,9 +129,9 @@ struct ActivityInfoRow: View {
     var body: some View {
         HStack(spacing: 4) {
             Image(symbol: icon)
-                .font(.system(size: 11))
+                .font(AppFont.caption)
             Text(text)
-                .font(.system(size: 12))
+                .font(AppFont.bodyStandard)
         }
         .foregroundColor(color)
     }
@@ -148,11 +148,11 @@ struct EmptyStateView: View {
     var body: some View {
         VStack(spacing: 16) {
             Image(symbol: icon)
-                .font(.system(size: 48))
+                .font(AppFont.iconXL)
                 .foregroundColor(iconColor)
 
             Text(title)
-                .font(.system(size: 20, weight: .semibold, design: .rounded))
+                .font(AppFont.headerSectionSemibold)
 
             Text(message)
                 .font(.subheadline)
@@ -173,7 +173,7 @@ struct ErrorView: View {
     var body: some View {
         VStack(spacing: 16) {
             Image(symbol: AppSymbols.exclamationTriangle)
-                .font(.system(size: 44))
+                .font(AppFont.iconXL)
                 .foregroundColor(AppColors.destructive)
             Text(title)
                 .font(.headline)
@@ -215,12 +215,12 @@ struct SectionHeader: View {
     var body: some View {
         HStack {
             Text(title)
-                .font(.system(size: 13, weight: .semibold))
+                .font(AppFont.bodyStandardSemibold)
                 .foregroundColor(.secondary)
 
             if let count = count {
                 Text("(\(count))")
-                    .font(.system(size: 12))
+                    .font(AppFont.bodyStandard)
                     .foregroundColor(.secondary.opacity(0.7))
             }
 
@@ -258,7 +258,7 @@ struct SectionHeader: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("ActivityInfoRow").font(.caption).foregroundColor(.secondary)
             ActivityInfoRow(icon: AppSymbols.clock, text: "2 hours remaining")
-            ActivityInfoRow(icon: AppSymbols.person2Fill, text: "Assigned to John", color: .blue)
+            ActivityInfoRow(icon: AppSymbols.allActivities, text: "Assigned to John", color: .blue)
         }
 
         Divider()

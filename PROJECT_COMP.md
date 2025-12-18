@@ -178,7 +178,7 @@ Centralized SF Symbol names used throughout both apps.
 - Action icons: `play`, `checkmark`, `xmark`, `plus`, etc.
 - Navigation: `arrowRight`, `arrowLeft`, `chevronDown`
 - Time/Calendar: `clock`, `calendar`, `hourglass`
-- People/Team: `person3Sequence`, `personBadgePlus`
+- People/Team: `selectTeam`, `teamMembers`, `allActivities`
 - UI: `magnifyingGlass`, `filter`, `flag`, `tray`
 
 **Usage:** `Image(symbol: AppSymbols.checkmark)` instead of `Image(systemName: "checkmark")`
@@ -385,9 +385,9 @@ Reusable UI components used throughout both apps:
 | Priority | Color | Usage |
 |----------|-------|-------|
 | P0 Critical | `AppColors.priorityP0` | Red |
-| P1 High | `AppColors.priorityP1` | Dark Gray (0.35) |
+| P1 High | `AppColors.priorityP1` | Light Gray (0.72) |
 | P2 Medium | `AppColors.priorityP2` | Medium Gray (0.55) |
-| P3 Low | `AppColors.priorityP3` | Light Gray (0.72) |
+| P3 Low | `AppColors.priorityP3` | Dark Gray (0.35) |
 
 #### Outcome Colors
 | Outcome | Color | Usage |

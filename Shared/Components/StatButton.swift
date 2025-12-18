@@ -25,16 +25,16 @@ struct StatButton: View {
         Button(action: action) {
             HStack(spacing: 6) {
                 Image(symbol: icon)
-                    .font(.system(size: 12))
+                    .font(AppFont.bodyStandard)
                     .foregroundColor(isSelected ? .white : color)
 
                 VStack(alignment: .leading, spacing: 0) {
                     Text("\(value)")
-                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .font(AppFont.statMedium)
                         .foregroundColor(isSelected ? .white : color)
 
                     Text(label)
-                        .font(.system(size: 9))
+                        .font(AppFont.caption)
                         .foregroundColor(isSelected ? .white.opacity(0.8) : .secondary)
                         .lineLimit(1)
                 }
@@ -54,33 +54,93 @@ struct StatButton: View {
     }
 }
 
-// MARK: - Preview
+// MARK: - Previews
 
-#Preview {
-    HStack(spacing: 12) {
-        StatButton(
-            icon: AppSymbols.clock,
-            value: 3,
-            label: "Pending",
-            color: AppColors.statusTeamMemberPending,
-            isSelected: false
-        ) {}
+#Preview("All States") {
+    VStack(spacing: 16) {
+        // Unselected states
+        Text("Unselected").font(.caption).foregroundColor(.secondary)
+        HStack(spacing: 12) {
+            StatButton(
+                icon: AppSymbols.trayFullFill,
+                value: 10,
+                label: "All",
+                color: AppColors.statTotal,
+                isSelected: false
+            ) {}
 
-        StatButton(
-            icon: AppSymbols.running,
-            value: 5,
-            label: "Running",
-            color: AppColors.statusRunning,
-            isSelected: true
-        ) {}
+            StatButton(
+                icon: AppSymbols.clock,
+                value: 3,
+                label: "Pending",
+                color: AppColors.statusTeamMemberPending,
+                isSelected: false
+            ) {}
 
-        StatButton(
-            icon: AppSymbols.outcomeAhead,
-            value: 2,
-            label: "Ahead",
-            color: AppColors.outcomeAhead,
-            isSelected: false
-        ) {}
+            StatButton(
+                icon: AppSymbols.running,
+                value: 5,
+                label: "Running",
+                color: AppColors.statusRunning,
+                isSelected: false
+            ) {}
+        }
+
+        // Selected states
+        Text("Selected").font(.caption).foregroundColor(.secondary)
+        HStack(spacing: 12) {
+            StatButton(
+                icon: AppSymbols.trayFullFill,
+                value: 10,
+                label: "All",
+                color: AppColors.statTotal,
+                isSelected: true
+            ) {}
+
+            StatButton(
+                icon: AppSymbols.clock,
+                value: 3,
+                label: "Pending",
+                color: AppColors.statusTeamMemberPending,
+                isSelected: true
+            ) {}
+
+            StatButton(
+                icon: AppSymbols.running,
+                value: 5,
+                label: "Running",
+                color: AppColors.statusRunning,
+                isSelected: true
+            ) {}
+        }
+
+        // Outcome colors
+        Text("Outcomes").font(.caption).foregroundColor(.secondary)
+        HStack(spacing: 12) {
+            StatButton(
+                icon: AppSymbols.outcomeAhead,
+                value: 2,
+                label: "Ahead",
+                color: AppColors.outcomeAhead,
+                isSelected: false
+            ) {}
+
+            StatButton(
+                icon: AppSymbols.outcomeJIT,
+                value: 1,
+                label: "JIT",
+                color: AppColors.outcomeJIT,
+                isSelected: true
+            ) {}
+
+            StatButton(
+                icon: AppSymbols.outcomeOverrun,
+                value: 4,
+                label: "Overrun",
+                color: AppColors.outcomeOverrun,
+                isSelected: false
+            ) {}
+        }
     }
     .padding()
 }

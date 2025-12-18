@@ -186,4 +186,5 @@ enum TeamMemberTab: Hashable {
     case activities
     case team
     case log
+    case help
 }
