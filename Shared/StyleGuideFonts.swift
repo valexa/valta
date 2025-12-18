@@ -92,9 +92,6 @@ enum AppFont {
     /// Small body semibold
     static let bodySmallSemibold = Font.system(size: AppFontSize.bodySmall, weight: .semibold)
 
-    /// Caption semibold
-    static let bodyCaptionSemibold = Font.system(size: AppFontSize.caption, weight: .semibold)
-
     // MARK: - Captions
 
     /// Caption text

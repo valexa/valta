@@ -159,8 +159,6 @@ User taps "Start Activity" → View calls state method → State updates Activit
 - `PUSH_NOTIFICATIONS_PLAN.md` - Push notification specific plan
 - `NOTIFICATION_SETUP_GUIDE.md` - Push notification setup guide
 - `PROJECT_COMP.md` - Detailed implementation summary
-- `PROJECT_RULES.md` - Detailed AI rules
-
 
 ## Agent Rules
 

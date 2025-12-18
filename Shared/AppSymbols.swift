@@ -53,12 +53,9 @@ enum AppSymbols {
     // MARK: - Time & Calendar Icons
 
     static let clock = "clock"
-    static let clockFill = "clock.fill"
     static let calendar = "calendar"
     static let calendarBadgeClock = "calendar.badge.clock"
-    static let hourglass = "hourglass"
     static let timer = "timer"
-    static let docText = "doc.text"
 
     // MARK: - Warning & Info Icons
 
@@ -68,23 +65,21 @@ enum AppSymbols {
 
     // MARK: - People & Team Icons
 
-    static let person3Sequence = "person.3.sequence.fill"
-    static let person3 = "person.3"
-    static let personBadgePlus = "person.badge.plus"
-    static let person2Fill = "person.2.fill"
+    static let myActivities = "person.fill.checkmark"
+    static let myTeam = "person.2.crop.square.stack"
+    static let log = "server.rack"
+    static let selectTeam = "person.2.crop.square.stack"
+    static let teamMembers = "figure.2"
+    static let allActivities = "person.crop.square.on.square.angled.fill"
 
     // MARK: - UI Icons
 
-    static let magnifyingGlass = "magnifyingglass"
-    static let ellipsisCircle = "ellipsis.circle"
     static let filter = "line.3.horizontal.decrease.circle"
     static let flagFill = "flag.fill"
     static let flagSlash = "flag.slash"
     static let flag = "flag"
     static let flagBadge = "flag.badge.ellipsis"
-    static let flagCheckered = "flag.checkered"
     static let tray = "tray"
-    static let listBullet = "list.bullet.rectangle"
     static let listBulletClipboard = "list.bullet.clipboard"
     static let trayFullFill = "tray.full.fill"
 }

@@ -36,14 +36,11 @@ struct RequestsTab: View {
             }
             ToolbarItem {
                 if !appState.managerPendingActivities.isEmpty {
-                    CompletionButton(role: .confirm, action: {
+                    ApproveAllButton {
                         withAnimation(.spring(response: 0.35, dampingFraction: 0.9)) {
                             approveAll()
                         }
-                    }) {
-                        Text("Approve All")
                     }
-                    .buttonStyle(.glassProminent)
                 }
             }
         }
@@ -146,25 +143,17 @@ struct RequestCard: View {
             HStack(spacing: 12) {
                 Spacer()
 
-                CompletionButton(role: .destructive, action: {
+                RejectButton {
                     withAnimation(.spring(response: 0.35, dampingFraction: 0.9)) {
                         appState.rejectCompletion(activity)
                     }
-                }) {
-                    Text("Reject")
                 }
-                .buttonStyle(.glass)
-                .tint(AppColors.statusRunning)
 
-                CompletionButton(role: .confirm, action: {
+                ApproveButton {
                     withAnimation(.spring(response: 0.35, dampingFraction: 0.9)) {
                         appState.approveCompletion(activity)
                     }
-                }) {
-                    Text("Approve")
                 }
-                .buttonStyle(.glass)
-                .tint(AppColors.statusCompleted)
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 14)

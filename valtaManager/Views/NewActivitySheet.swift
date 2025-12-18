@@ -140,16 +140,16 @@ struct NewActivitySheet: View {
     }
 
     private var dateSelectionView: some View {
-        HStack {
-            TransparentDatePicker(
+        VStack {
+            DatePicker(
+                "",
                 selection: $deadline,
-                minDate: Date()
+                in: Date()...,
+                displayedComponents: [.date, .hourAndMinute]
             )
-            .padding(.leading)
-            .frame(width: 160)
-            .padding(4)
-            .background(Color.white.opacity(0.05))
-            .cornerRadius(8)
+            .tint(.red)
+            .labelsHidden()
+            .datePickerStyle(.compact)
 
             // Quick deadline buttons
             HStack(spacing: 8) {
@@ -190,6 +190,7 @@ struct NewActivitySheet: View {
                 }
             }
         }
+        .menuStyle(.borderlessButton)
     }
 }
 

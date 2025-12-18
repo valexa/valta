@@ -17,32 +17,26 @@ struct HelpTab: View {
 
     var body: some View {
         ScrollView {
-            VStack {
+            VStack(alignment: .center) {
                 Text("Activity Lifecycle")
                 .font(AppFont.headerLarge)
                 .padding(.top, 10)
 
                 // Main lifecycle diagram
                 LifecycleDiagram()
-                    .padding(.horizontal)
 
-                // Legend
-                LifecycleLegend()
-                    .padding(.horizontal)
+                Text("Legend")
+                    .font(AppFont.headerLarge)
+                    .padding(.top, 10)
 
-                // Outcomes
-                OutcomesLegend()
-                    .padding(.horizontal)
-
-                // Priorities
-                PrioritiesLegend()
-                    .padding(.horizontal)
-
+                HStack {
+                    LifecycleLegend()
+                    PrioritiesLegend()
+                    OutcomesLegend()
+                }
                 Spacer(minLength: 40)
             }
-            .frame(maxWidth: .infinity)
         }
-        .background(Color(NSColor.controlBackgroundColor))
     }
 }
 
@@ -50,7 +44,7 @@ struct HelpTab: View {
 
 struct LifecycleDiagram: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 10) {
             // Row 1: Manager creates → Team Member Pending
             HStack(spacing: 12) {
                 ActorBadge(actor: "Manager", icon: "person.badge.key.fill")
@@ -70,18 +64,7 @@ struct LifecycleDiagram: View {
             HStack(spacing: 12) {
                 ActorBadge(actor: "Team Member", icon: "person.fill")
 
-                CompletionButton(action: {
-                }) {
-                    HStack(spacing: 3) {
-                        Image(symbol: AppSymbols.play)
-                            .font(AppFont.caption)
-                        Text("Start")
-                            .font(AppFont.captionSemibold)
-                    }
-                    .foregroundColor(.white)
-                }
-                .buttonStyle(.glassProminent)
-                .tint(AppColors.statusRunning.opacity(0.25))
+                StartButton(action: {})
 
                 ActionArrow(label: "starts work")
 
@@ -94,18 +77,7 @@ struct LifecycleDiagram: View {
             HStack(spacing: 12) {
                 ActorBadge(actor: "Team Member", icon: "person.fill")
 
-                CompletionButton(action: {
-                }) {
-                    HStack(spacing: 3) {
-                        Image(symbol: AppSymbols.checkmark)
-                            .font(AppFont.captionBold)
-                        Text("Complete")
-                            .font(AppFont.captionSemibold)
-                    }
-                    .foregroundColor(.white)
-                }
-                .buttonStyle(.glassProminent)
-                .tint(AppColors.statusManagerPending.opacity(0.25))
+                CompleteButton(action: {})
 
                 ActionArrow(label: "requests review")
 
@@ -116,9 +88,8 @@ struct LifecycleDiagram: View {
 
             // Row 4: Manager approves/rejects
             VStack(spacing: 16) {
-                HStack(spacing: 40) {
+                HStack(alignment: .top, spacing: 40) {
                     ActorBadge(actor: "Manager", icon: "person.badge.key.fill")
-                        .padding(.bottom)
                     // Approve path
                     VStack(spacing: 8) {
                         HStack(spacing: 8) {
@@ -153,12 +124,7 @@ struct LifecycleDiagram: View {
                 }
             }
         }
-        .padding(24)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(NSColor.windowBackgroundColor))
-                .shadow(color: AppColors.shadow.opacity(0.1), radius: 8, x: 0, y: 2)
-        )
+        .padding(20)
     }
 }
 
@@ -208,13 +174,11 @@ struct ActionArrow: View {
 
     var body: some View {
         HStack(spacing: 4) {
-            Rectangle()
-                .fill(Color.secondary.opacity(0.3))
-                .frame(width: 100, height: 2)
+            Image(symbol: AppSymbols.arrowRight)
+                .foregroundColor(.secondary)
             Text(label)
                 .font(AppFont.caption)
                 .foregroundColor(.secondary)
-
             Image(symbol: AppSymbols.arrowRight)
                 .foregroundColor(.secondary)
         }
@@ -230,21 +194,12 @@ struct ConnectorLine: View {
     }
 }
 
-private struct Line: Shape {
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        path.move(to: CGPoint(x: rect.midX, y: rect.minY))
-        path.addLine(to: CGPoint(x: rect.midX, y: rect.maxY))
-        return path
-    }
-}
-
 // MARK: - Lifecycle Legend
 
 struct LifecycleLegend: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Status Reference")
+        VStack(alignment: .center, spacing: 16) {
+            Text("Activity Statuses")
                 .font(AppFont.bodyPrimary)
 
             LazyVGrid(columns: [
@@ -291,6 +246,7 @@ struct LifecycleLegend: View {
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color(NSColor.windowBackgroundColor))
         )
+        .fixedSize(horizontal: true, vertical: false)
     }
 }
 
@@ -298,7 +254,7 @@ struct LifecycleLegend: View {
 
 struct OutcomesLegend: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .center, spacing: 16) {
             Text("Completion Outcomes")
                 .font(AppFont.bodyPrimary)
 
@@ -332,6 +288,7 @@ struct OutcomesLegend: View {
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color(NSColor.windowBackgroundColor))
         )
+        .fixedSize(horizontal: true, vertical: false)
     }
 }
 
@@ -339,7 +296,7 @@ struct OutcomesLegend: View {
 
 struct PrioritiesLegend: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .center, spacing: 16) {
             Text("Priority Levels")
                 .font(AppFont.bodyPrimary)
 
@@ -380,6 +337,7 @@ struct PrioritiesLegend: View {
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color(NSColor.windowBackgroundColor))
         )
+        .fixedSize(horizontal: true, vertical: false)
     }
 }
 

@@ -123,35 +123,11 @@ struct ActivityRow: View {
     var actionButtons: some View {
         HStack(spacing: 6) {
             if activity.status == .teamMemberPending, let onStart = onStart {
-                CompletionButton(action: {
-                    onStart()
-                }) {
-                    HStack(spacing: 3) {
-                        Image(symbol: AppSymbols.play)
-                            .font(AppFont.caption)
-                        Text("Start")
-                            .font(AppFont.captionSemibold)
-                    }
-                    .foregroundColor(.white)
-                }
-                .buttonStyle(.glassProminent)
-                .tint(theme.color(for: .running).opacity(0.25))
+                StartButton(action: onStart)
             }
 
             if activity.status == .running, let onComplete = onComplete {
-                CompletionButton(action: {
-                    onComplete()
-                }) {
-                    HStack(spacing: 3) {
-                        Image(symbol: AppSymbols.checkmark)
-                            .font(AppFont.captionBold)
-                        Text("Complete")
-                            .font(AppFont.captionSemibold)
-                    }
-                    .foregroundColor(.white)
-                }
-                .buttonStyle(.glassProminent)
-                .tint(theme.color(for: .managerPending).opacity(0.25))
+                CompleteButton(action: onComplete)
             }
         }
     }
@@ -228,4 +204,3 @@ struct CompletionTimeDelta: View {
     .padding()
     .frame(width: 700)
 }
-

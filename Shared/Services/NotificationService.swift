@@ -92,19 +92,41 @@ final class NotificationService: NSObject {
     }
 
     /// Retrieves the current FCM token (manual fetch)
+    /// Includes retry logic for when APNS token is not yet available
     func retrieveFCMToken() async {
-        do {
-            let token = try await Messaging.messaging().token()
-            await MainActor.run {
-                self.fcmToken = token
-            }
+        // Retry up to 5 times with exponential backoff
+        // APNS token registration can take a moment after registerForRemoteNotifications()
+        let maxRetries = 5
+        var delay: UInt64 = 500_000_000 // 0.5 seconds in nanoseconds
 
-            // Upload token only if member email is registered
-            if let memberEmail = self.registeredMemberEmail {
-                await uploadFCMToken(token, userId: memberEmail)
+        for attempt in 1...maxRetries {
+            do {
+                let token = try await Messaging.messaging().token()
+                await MainActor.run {
+                    self.fcmToken = token
+                }
+                print("✅ FCM token retrieved on attempt \(attempt)")
+
+                // Upload token only if member email is registered
+                if let memberEmail = self.registeredMemberEmail {
+                    await uploadFCMToken(token, userId: memberEmail)
+                }
+                return // Success - exit the function
+            } catch {
+                let nsError = error as NSError
+                // Check if it's the "No APNS token" error
+                let isAPNSError = nsError.localizedDescription.contains("APNS") ||
+                                  nsError.localizedDescription.contains("No APNS token")
+
+                if isAPNSError && attempt < maxRetries {
+                    print("⏳ APNS token not ready, retrying in \(delay / 1_000_000)ms (attempt \(attempt)/\(maxRetries))...")
+                    try? await Task.sleep(nanoseconds: delay)
+                    delay *= 2 // Exponential backoff
+                } else {
+                    print("❌ Error retrieving FCM token: \(error.localizedDescription)")
+                    return
+                }
             }
-        } catch {
-            print("❌ Error retrieving FCM token: \(error.localizedDescription)")
         }
     }
 
@@ -161,6 +183,10 @@ final class NotificationService: NSObject {
 
         if let token = fcmToken {
             await uploadFCMToken(token, userId: email)
+        } else {
+            // Token not yet available - proactively retrieve it
+            // This handles the race condition where email is registered before token arrives
+            await retrieveFCMToken()
         }
     }
 

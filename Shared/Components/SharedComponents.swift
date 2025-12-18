@@ -69,7 +69,7 @@ struct TimeRemainingLabel: View {
                 Image(symbol: AppSymbols.clock)
                     .font(AppFont.caption)
                 Text(activity.timeRemaining)
-                    .font(activity.isOverdue ? AppFont.bodyStandardSemibold : AppFont.bodyStandard)
+                    .font(activity.isOverdue ? AppFont.bodyStandardSemibold : AppFont.bodySmall)
             }
             .foregroundColor(activity.isOverdue ? theme.destructive : .secondary)
 
@@ -258,7 +258,7 @@ struct SectionHeader: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("ActivityInfoRow").font(.caption).foregroundColor(.secondary)
             ActivityInfoRow(icon: AppSymbols.clock, text: "2 hours remaining")
-            ActivityInfoRow(icon: AppSymbols.person2Fill, text: "Assigned to John", color: .blue)
+            ActivityInfoRow(icon: AppSymbols.allActivities, text: "Assigned to John", color: .blue)
         }
 
         Divider()

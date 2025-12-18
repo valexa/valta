@@ -209,7 +209,7 @@ struct LogEntryRow: View {
             // Timeline indicator
             Image(symbol: actionIcon)
                 .font(AppFont.bodyLarge)
-                .foregroundColor(actionColor)
+                .foregroundColor(actionColor.opacity(0.5))
                 .frame(width: 20)
 
             // Content
@@ -218,7 +218,7 @@ struct LogEntryRow: View {
                 HStack(spacing: 6) {
                     Text(entry.action.rawValue)
                         .font(AppFont.bodyStandardSemibold)
-                        .foregroundColor(actionColor)
+                        .foregroundColor(actionColor.opacity(0.5))
 
                     Text("by \(entry.performedBy)")
                         .font(AppFont.bodyStandard)

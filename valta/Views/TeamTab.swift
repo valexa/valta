@@ -85,7 +85,7 @@ struct TeamTab: View {
             // Content
             if groupedActivities.isEmpty {
                 EmptyStateView(
-                    icon: AppSymbols.person3,
+                    icon: AppSymbols.teamMembers,
                     title: "No Team Activities",
                     message: emptyStateMessage,
                     iconColor: AppColors.statusRunning
@@ -131,7 +131,7 @@ struct TeamTabHeader: View {
                 // Team stats (filterable)
                 HStack(spacing: 12) {
                     StatButton(
-                        icon: AppSymbols.person2Fill,
+                        icon: AppSymbols.allActivities,
                         value: appState.team.activities.count,
                         label: "All",
                         color: AppColors.statTotal,
@@ -182,7 +182,6 @@ struct TeamTabHeader: View {
                     ) { toggleFilter(.outcome(.overrun)) }
                 }
             }
-
 
         }
         .padding()

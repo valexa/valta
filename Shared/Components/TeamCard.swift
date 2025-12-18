@@ -17,7 +17,7 @@ struct TeamCard: View {
     var body: some View {
         Button(action: action) {
             VStack(alignment: .leading, spacing: 12) {
-                Image(symbol: AppSymbols.person3)
+                Image(symbol: AppSymbols.teamMembers)
                         .font(AppFont.headerLargeRegular)
                 VStack(alignment: .leading, spacing: 4) {
                     Text(team.name)
