@@ -67,7 +67,7 @@ struct RequestCard: View {
         let outcome = activity.calculateOutcome()
 
         return VStack(spacing: 0) {
-            HStack(alignment: .top, spacing: 16) {
+            HStack(alignment: .center, spacing: 16) {
                 // Requester avatar
                 MemberAvatar(member: activity.assignedMember, size: 48)
 
@@ -76,10 +76,6 @@ struct RequestCard: View {
                     HStack {
                         Text(activity.assignedMember.name)
                             .font(AppFont.bodyPrimary)
-
-                        Text("requested completion")
-                            .font(.system(size: AppFontSize.bodyPrimary))
-                            .foregroundColor(.secondary)
 
                         Spacer()
 
@@ -92,7 +88,7 @@ struct RequestCard: View {
                     }
 
                     // Activity details
-                    VStack(alignment: .leading, spacing: 6) {
+                    VStack(alignment: .leading) {
                         HStack(spacing: 8) {
                             PriorityBadge(priority: activity.priority)
 
@@ -105,7 +101,7 @@ struct RequestCard: View {
                             .foregroundColor(.secondary)
                             .lineLimit(2)
                     }
-                    .padding(12)
+
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(Color(NSColor.windowBackgroundColor))
                     .cornerRadius(8)
