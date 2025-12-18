@@ -84,6 +84,12 @@ struct MainTabView: View {
                     Label("Log", systemImage: "list.bullet.clipboard.fill")
                 }
                 .tag(TeamMemberTab.log)
+
+            HelpTab()
+                .tabItem {
+                    Label("Help", systemImage: AppSymbols.booksVertical)
+                }
+                .tag(TeamMemberTab.help)
         }
         .tabViewStyle(.sidebarAdaptable)
         .frame(minWidth: 1000, minHeight: 800)

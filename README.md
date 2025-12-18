@@ -161,6 +161,21 @@ User taps "Start Activity" → View calls state method → State updates Activit
 - `PROJECT_COMP.md` - Detailed implementation summary
 - `PROJECT_RULES.md` - Detailed AI rules
 
+
+## Agent Rules
+
+.agent/workflows/:
+
+Workflow	Slash Command
+/data-persistence	CSV storage, Firestore FCM tokens
+/state-management	Observation framework rules
+/data-sync	updateInBackend pattern
+/ui-design	macOS platform, performance
+/coding-standards	SwiftLint configuration
+/testing	Swift Testing framework
+/symbol-centralization	AppSymbols mediator
+These are available as slash commands and should be automatically loaded when relevant.
+
 ## License
 
 See [LICENSE](LICENSE) file.

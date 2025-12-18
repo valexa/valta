@@ -135,7 +135,7 @@ struct ActivityRow: View {
                     .foregroundColor(.white)
                 }
                 .buttonStyle(.glassProminent)
-                .tint(theme.color(for: .running).gradient)
+                .tint(theme.color(for: .running).opacity(0.25))
             }
 
             if activity.status == .running, let onComplete = onComplete {
@@ -151,7 +151,7 @@ struct ActivityRow: View {
                     .foregroundColor(.white)
                 }
                 .buttonStyle(.glassProminent)
-                .tint(theme.color(for: .managerPending).gradient)
+                .tint(theme.color(for: .managerPending).opacity(0.25))
             }
         }
     }
@@ -214,12 +214,12 @@ struct CompletionTimeDelta: View {
         Text("Hover to see action buttons:")
             .font(.caption)
             .foregroundColor(.secondary)
-        
+
         ActivityRow(
             activity: Activity.mockActivities[2], // teamMemberPending
             onStart: { print("Start tapped") }
         )
-        
+
         ActivityRow(
             activity: .mock, // running
             onComplete: { print("Done tapped") }
@@ -228,3 +228,4 @@ struct CompletionTimeDelta: View {
     .padding()
     .frame(width: 700)
 }
+

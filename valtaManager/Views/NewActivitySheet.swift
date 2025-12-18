@@ -53,7 +53,7 @@ struct NewActivitySheet: View {
                     createActivity()
                 }
                 .buttonStyle(.glass)
-                .tint(AppColors.statusManagerPending.opacity(0.25))
+                .tint(AppColors.statusTeamMemberPending.opacity(0.25))
                 .disabled(!isValid)
             }
             .padding()

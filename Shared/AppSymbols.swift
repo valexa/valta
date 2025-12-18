@@ -41,10 +41,14 @@ enum AppSymbols {
 
     // MARK: - Navigation Icons
 
-    static let arrowRight = "arrow.right"
-    static let arrowLeft = "arrow.left"
+    static let arrowRight = "arrow.right.circle.dotted"
+    static let arrowLeft = "arrow.left.circle.dotted"
+    static let arrowDown = "arrow.down.circle.dotted"
+    static let arrowTurn = "arrow.turn.down.right"
+    static let arrowUturnBackward = "arrow.uturn.backward.circle.fill"
     static let chevronDown = "chevron.down"
     static let chevronRight = "chevron.right"
+    static let booksVertical = "books.vertical"
 
     // MARK: - Time & Calendar Icons
 

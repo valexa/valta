@@ -158,7 +158,7 @@ struct RequestCard: View {
                     Text("Reject")
                 }
                 .buttonStyle(.glass)
-                .tint(.orange)
+                .tint(AppColors.statusRunning)
 
                 CompletionButton(role: .confirm, action: {
                     withAnimation(.spring(response: 0.35, dampingFraction: 0.9)) {
@@ -168,7 +168,7 @@ struct RequestCard: View {
                     Text("Approve")
                 }
                 .buttonStyle(.glass)
-                .tint(.blue)
+                .tint(AppColors.statusCompleted)
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 14)
@@ -217,8 +217,21 @@ struct EmptyRequestsView: View {
 
 // MARK: - Preview
 
-#Preview {
+#Preview("Empty") {
     RequestsTab()
         .environment(ManagerAppState())
         .frame(width: 800, height: 600)
+}
+
+#Preview("With Requests") {
+    // Show RequestCards directly with mock manager-pending activities
+    ScrollView {
+        LazyVStack(spacing: 16) {
+            RequestCard(activity: Activity.mockActivities[3])  // API Rate Limiting - managerPending
+            RequestCard(activity: Activity.mockActivities[8])  // Database Migration - managerPending
+        }
+        .padding()
+    }
+    .environment(ManagerAppState())
+    .frame(width: 800, height: 600)
 }
