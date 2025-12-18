@@ -25,7 +25,7 @@ struct StatButton: View {
         Button(action: action) {
             HStack(spacing: 6) {
                 Image(symbol: icon)
-                    .font(.system(size: AppFontSize.bodyStandard))
+                    .font(AppFont.bodyStandard)
                     .foregroundColor(isSelected ? .white : color)
 
                 VStack(alignment: .leading, spacing: 0) {
@@ -34,7 +34,7 @@ struct StatButton: View {
                         .foregroundColor(isSelected ? .white : color)
 
                     Text(label)
-                        .font(.system(size: AppFontSize.caption))
+                        .font(AppFont.caption)
                         .foregroundColor(isSelected ? .white.opacity(0.8) : .secondary)
                         .lineLimit(1)
                 }

@@ -207,7 +207,7 @@ struct PriorityOption: View {
                     .font(AppFont.priorityBadge)
 
                 Text(priorityLabel)
-                    .font(.system(size: AppFontSize.caption))
+                    .font(AppFont.caption)
             }
             .foregroundColor(isSelected ? .white : priority.color)
             .frame(maxWidth: .infinity)
@@ -267,7 +267,7 @@ struct NotificationPreview: View {
     var body: some View {
         HStack(spacing: 12) {
             Image(symbol: AppSymbols.bellBadge)
-                .font(.system(size: AppFontSize.headerLarge))
+                .font(AppFont.headerLargeRegular)
                 .foregroundColor(AppColors.warning)
 
             VStack(alignment: .leading, spacing: 4) {

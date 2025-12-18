@@ -59,7 +59,7 @@ struct MemberSelectionCard: View {
         // Member info
         VStack(alignment: .leading, spacing: 2) {
             Text(member.name)
-                .font(.system(size: AppFontSize.bodyStandard, weight: isSelected ? .semibold : .medium))
+                .font(isSelected ? AppFont.bodyStandardSemibold : AppFont.bodyStandardMedium)
                 .foregroundColor(.white)
                 .lineLimit(2)
             Text(member.email)

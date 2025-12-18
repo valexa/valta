@@ -18,14 +18,14 @@ struct TeamCard: View {
         Button(action: action) {
             VStack(alignment: .leading, spacing: 12) {
                 Image(symbol: AppSymbols.person3)
-                        .font(.system(size: AppFontSize.headerLarge))
+                        .font(AppFont.headerLargeRegular)
                 VStack(alignment: .leading, spacing: 4) {
                     Text(team.name)
                         .font(AppFont.bodyLargeSemibold)
                         .foregroundColor(.white)
 
                     Text("\(team.members.count) members")
-                        .font(.system(size: AppFontSize.bodyStandard))
+                        .font(AppFont.bodyStandard)
                         .foregroundColor(.white.opacity(0.6))
                 }
 #if os(macOS)

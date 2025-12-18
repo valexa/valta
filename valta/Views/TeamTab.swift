@@ -222,7 +222,7 @@ struct TeamMemberSection: View {
 
                             if isCurrentUser {
                                 Text("(You)")
-                                    .font(.system(size: AppFontSize.bodyStandard))
+                                    .font(AppFont.bodyStandard)
                                     .foregroundColor(.accentColor)
                                     .padding(.horizontal, 6)
                                     .padding(.vertical, 2)
@@ -232,7 +232,7 @@ struct TeamMemberSection: View {
                         }
 
                         Text("\(activities.count) activit\(activities.count == 1 ? "y" : "ies")")
-                            .font(.system(size: AppFontSize.bodyStandard))
+                            .font(AppFont.bodyStandard)
                             .foregroundColor(.secondary)
                     }
 

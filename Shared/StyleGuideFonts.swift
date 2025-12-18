@@ -47,14 +47,25 @@ enum AppFontSize {
 /// Pre-configured font styles for common use cases
 enum AppFont {
 
+    // MARK: - Icons
+
+    /// Extra large icons (onboarding, empty states)
+    static let iconXL = Font.system(size: AppFontSize.iconXL)
+    /// Large icons
+    static let iconLarge = Font.system(size: AppFontSize.iconLarge)
+
     // MARK: - Headers
 
     /// Extra large header (onboarding main title), bold rounded
     static let headerXL = Font.system(size: AppFontSize.headerXL, weight: .bold, design: .rounded)
     /// Large header, bold rounded
     static let headerLarge = Font.system(size: AppFontSize.headerLarge, weight: .bold, design: .rounded)
+    /// Large header, regular (for icons/emojis at header size)
+    static let headerLargeRegular = Font.system(size: AppFontSize.headerLarge)
     /// Section header, bold rounded
     static let headerSection = Font.system(size: AppFontSize.headerSection, weight: .bold, design: .rounded)
+    /// Section header, semibold rounded
+    static let headerSectionSemibold = Font.system(size: AppFontSize.headerSection, weight: .semibold, design: .rounded)
 
     // MARK: - Body Text
 
@@ -76,9 +87,9 @@ enum AppFont {
 
     /// Small body
     static let bodySmall = Font.system(size: AppFontSize.bodySmall)
-    /// Standard body medium
+    /// Small body medium
     static let bodySmallMedium = Font.system(size: AppFontSize.bodySmall, weight: .medium)
-    /// Standard body semibold
+    /// Small body semibold
     static let bodySmallSemibold = Font.system(size: AppFontSize.bodySmall, weight: .semibold)
 
     /// Caption semibold
@@ -92,6 +103,10 @@ enum AppFont {
     static let captionMedium = Font.system(size: AppFontSize.caption, weight: .medium)
     /// Caption semibold
     static let captionSemibold = Font.system(size: AppFontSize.caption, weight: .semibold)
+    /// Caption bold
+    static let captionBold = Font.system(size: AppFontSize.caption, weight: .bold)
+    /// Caption medium monospaced (for time deltas)
+    static let captionMonospaced = Font.system(size: AppFontSize.caption, weight: .medium, design: .monospaced)
 
     // MARK: - Badges
 

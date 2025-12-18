@@ -208,7 +208,7 @@ struct LogEntryRow: View {
         HStack(alignment: .center, spacing: 12) {
             // Timeline indicator
             Image(symbol: actionIcon)
-                .font(.system(size: AppFontSize.bodyLarge))
+                .font(AppFont.bodyLarge)
                 .foregroundColor(actionColor)
                 .frame(width: 20)
 
@@ -221,7 +221,7 @@ struct LogEntryRow: View {
                         .foregroundColor(actionColor)
 
                     Text("by \(entry.performedBy)")
-                        .font(.system(size: AppFontSize.bodyStandard))
+                        .font(AppFont.bodyStandard)
                         .foregroundColor(.secondary)
 
                     Spacer()
@@ -260,7 +260,7 @@ struct LogEntryRow: View {
                     if entry.action == .completed, let outcome = entry.activity.outcome {
                         HStack(spacing: 4) {
                             Image(symbol: outcome.icon)
-                                .font(.system(size: AppFontSize.caption))
+                            .font(AppFont.caption)
                             Text(outcome.rawValue)
                                 .font(AppFont.caption)
                         }

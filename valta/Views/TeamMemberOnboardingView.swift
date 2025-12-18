@@ -114,7 +114,7 @@ extension TeamMemberOnboardingView {
 
             VStack(spacing: 12) {
                 Text(currentStep == .selectTeam ? "Select Your Team" : "Select Your Name")
-                    .font(.system(size: AppFontSize.headerXL, weight: .bold, design: .rounded))
+                    .font(AppFont.headerXL)
                     .foregroundColor(.white)
             }
 

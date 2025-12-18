@@ -128,9 +128,9 @@ struct RequestCard: View {
                         // Deadline info
                         HStack(spacing: 4) {
                             Image(symbol: AppSymbols.calendarBadgeClock)
-                                .font(.system(size: AppFontSize.bodyStandard))
+                                .font(AppFont.bodyStandard)
                             Text("Deadline: \(activity.deadline.formatted(date: .abbreviated, time: .shortened))")
-                                .font(.system(size: AppFontSize.bodyStandard))
+                                .font(AppFont.bodyStandard)
                         }
                         .foregroundColor(.secondary)
                     }
@@ -196,7 +196,7 @@ struct EmptyRequestsView: View {
                     .frame(width: 100, height: 100)
 
                 Image(symbol: AppSymbols.checkmarkSeal)
-                    .font(.system(size: AppFontSize.iconXL))
+                    .font(AppFont.iconXL)
                     .foregroundStyle(AppGradients.success)
             }
 

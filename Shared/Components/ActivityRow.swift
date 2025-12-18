@@ -61,7 +61,7 @@ struct ActivityRow: View {
             if activity.isOverdue {
                 Image(symbol: AppSymbols.exclamationTriangle)
                     .foregroundColor(theme.destructive)
-                    .font(.system(size: AppFontSize.caption))
+                    .font(AppFont.caption)
             }
 
             // Time delta for completed activities (shows how much ahead/overrun)
@@ -128,7 +128,7 @@ struct ActivityRow: View {
                 }) {
                     HStack(spacing: 3) {
                         Image(symbol: AppSymbols.play)
-                            .font(.system(size: AppFontSize.caption))
+                            .font(AppFont.caption)
                         Text("Start")
                             .font(AppFont.captionSemibold)
                     }
@@ -144,7 +144,7 @@ struct ActivityRow: View {
                 }) {
                     HStack(spacing: 3) {
                         Image(symbol: AppSymbols.checkmark)
-                            .font(.system(size: AppFontSize.caption, weight: .bold))
+                            .font(AppFont.captionBold)
                         Text("Complete")
                             .font(AppFont.captionSemibold)
                     }
@@ -169,7 +169,7 @@ struct CompletionTimeDelta: View {
 
     var body: some View {
         Text(deltaText)
-            .font(.system(size: AppFontSize.caption, weight: .medium, design: .monospaced))
+            .font(AppFont.captionMonospaced)
             .foregroundColor(.secondary)
     }
 }

@@ -38,7 +38,7 @@ struct StatusBadge: View {
     var body: some View {
         HStack(spacing: 4) {
             Image(symbol: status.icon)
-            .font(.system(size: AppFontSize.caption))
+            .font(AppFont.caption)
 
             Text(status.rawValue)
             .font(compact ? AppFont.badgeCompact : AppFont.badge)
@@ -65,7 +65,7 @@ struct OutcomeBadge: View {
     var body: some View {
         HStack(spacing: 4) {
             Image(symbol: outcome.icon)
-            .font(.system(size: AppFontSize.caption))
+            .font(AppFont.caption)
 
             Text(outcome.rawValue)
             .font(AppFont.badge)

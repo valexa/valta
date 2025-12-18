@@ -249,9 +249,9 @@ struct ActivitiesHeader: View {
                     }) {
                         HStack(spacing: 4) {
                             Image(symbol: AppSymbols.xmark)
-                                .font(.system(size: AppFontSize.caption))
+                            .font(AppFont.caption)
                             Text("Clear Filter")
-                                .font(.system(size: AppFontSize.bodyStandard))
+                            .font(AppFont.bodyStandard)
                         }
                         .foregroundColor(.secondary)
                     }

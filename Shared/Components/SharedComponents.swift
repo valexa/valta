@@ -67,9 +67,9 @@ struct TimeRemainingLabel: View {
         HStack(spacing: 6) {
             HStack(spacing: 4) {
                 Image(symbol: AppSymbols.clock)
-                    .font(.system(size: AppFontSize.caption))
+                    .font(AppFont.caption)
                 Text(activity.timeRemaining)
-                    .font(.system(size: AppFontSize.bodyStandard, weight: activity.isOverdue ? .semibold : .regular))
+                    .font(activity.isOverdue ? AppFont.bodyStandardSemibold : AppFont.bodyStandard)
             }
             .foregroundColor(activity.isOverdue ? theme.destructive : .secondary)
 
@@ -129,9 +129,9 @@ struct ActivityInfoRow: View {
     var body: some View {
         HStack(spacing: 4) {
             Image(symbol: icon)
-                .font(.system(size: AppFontSize.caption))
+                .font(AppFont.caption)
             Text(text)
-                .font(.system(size: AppFontSize.bodyStandard))
+                .font(AppFont.bodyStandard)
         }
         .foregroundColor(color)
     }
@@ -148,11 +148,11 @@ struct EmptyStateView: View {
     var body: some View {
         VStack(spacing: 16) {
             Image(symbol: icon)
-                .font(.system(size: AppFontSize.iconXL))
+                .font(AppFont.iconXL)
                 .foregroundColor(iconColor)
 
             Text(title)
-                .font(.system(size: AppFontSize.headerSection, weight: .semibold, design: .rounded))
+                .font(AppFont.headerSectionSemibold)
 
             Text(message)
                 .font(.subheadline)
@@ -173,7 +173,7 @@ struct ErrorView: View {
     var body: some View {
         VStack(spacing: 16) {
             Image(symbol: AppSymbols.exclamationTriangle)
-                .font(.system(size: AppFontSize.iconXL))
+                .font(AppFont.iconXL)
                 .foregroundColor(AppColors.destructive)
             Text(title)
                 .font(.headline)
@@ -220,7 +220,7 @@ struct SectionHeader: View {
 
             if let count = count {
                 Text("(\(count))")
-                    .font(.system(size: AppFontSize.bodyStandard))
+                    .font(AppFont.bodyStandard)
                     .foregroundColor(.secondary.opacity(0.7))
             }
 

@@ -19,7 +19,7 @@ struct HelpTab: View {
         ScrollView {
             VStack {
                 Text("Activity Lifecycle")
-                .font(.system(size: AppFontSize.headerLarge, weight: .bold))
+                .font(AppFont.headerLarge)
                 .padding(.top, 10)
 
                 // Main lifecycle diagram
@@ -74,7 +74,7 @@ struct LifecycleDiagram: View {
                 }) {
                     HStack(spacing: 3) {
                         Image(symbol: AppSymbols.play)
-                            .font(.system(size: AppFontSize.caption))
+                            .font(AppFont.caption)
                         Text("Start")
                             .font(AppFont.captionSemibold)
                     }
@@ -98,7 +98,7 @@ struct LifecycleDiagram: View {
                 }) {
                     HStack(spacing: 3) {
                         Image(symbol: AppSymbols.checkmark)
-                            .font(.system(size: AppFontSize.caption, weight: .bold))
+                            .font(AppFont.captionBold)
                         Text("Complete")
                             .font(AppFont.captionSemibold)
                     }
@@ -125,7 +125,7 @@ struct LifecycleDiagram: View {
                             Image(symbol: AppSymbols.completed)
                                 .foregroundColor(AppColors.statusCompleted)
                             Text("Approve")
-                                .font(.system(size: AppFontSize.bodyStandard, weight: .semibold))
+                                .font(AppFont.bodyStandardSemibold)
                                 .foregroundColor(AppColors.statusCompleted)
                         }
 
@@ -141,7 +141,7 @@ struct LifecycleDiagram: View {
                             Image(symbol: AppSymbols.arrowUturnBackward)
                                 .foregroundColor(AppColors.statusRunning)
                             Text("Reject")
-                                .font(.system(size: AppFontSize.bodyStandard, weight: .semibold))
+                                .font(AppFont.bodyStandardSemibold)
                                 .foregroundColor(AppColors.statusRunning)
                         }
 
@@ -170,7 +170,7 @@ struct StateBadge: View {
     var body: some View {
         HStack(spacing: 6) {
             Image(systemName: status.icon)
-                .font(.system(size: AppFontSize.bodySmall))
+                .font(AppFont.bodySmall)
             Text(status.rawValue)
                 .font(AppFont.bodySmallSemibold)
         }
@@ -191,7 +191,7 @@ struct ActorBadge: View {
     var body: some View {
         VStack(spacing: 4) {
             Image(systemName: icon)
-                .font(.system(size: AppFontSize.bodyLarge))
+                .font(AppFont.bodyLarge)
                 .foregroundColor(.secondary)
             Text(actor)
                 .font(AppFont.captionMedium)
@@ -400,7 +400,7 @@ struct LegendItem: View {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 4) {
                     Image(systemName: icon)
-                        .font(.system(size: AppFontSize.caption))
+                        .font(AppFont.caption)
                     Text(title)
                         .font(AppFont.badge)
                 }

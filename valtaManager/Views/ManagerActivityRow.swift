@@ -28,7 +28,7 @@ struct ManagerActivityRow: View {
                     if activity.isOverdue && activity.status != .completed && activity.status != .canceled {
                         Image(symbol: AppSymbols.exclamationTriangle)
                             .foregroundColor(AppColors.destructive)
-                            .font(.system(size: AppFontSize.bodyStandard))
+                            .font(AppFont.bodyStandard)
                             .padding(.top, 4)
                     }
                 }
@@ -56,7 +56,7 @@ struct ManagerActivityRow: View {
                             MemberAvatar(member: activity.assignedMember, size: 22)
 
                             Text(activity.assignedMember.name)
-                                .font(.system(size: AppFontSize.bodyStandard))
+                                .font(AppFont.bodyStandard)
                                 .foregroundColor(.secondary)
                         }
 
@@ -70,7 +70,7 @@ struct ManagerActivityRow: View {
                             Image(symbol: AppSymbols.calendar)
                                 .font(AppFont.caption)
                             Text(activity.deadline.formatted(date: .abbreviated, time: .shortened))
-                                .font(.system(size: AppFontSize.bodyStandard))
+                                .font(AppFont.bodyStandard)
                         }
                         .foregroundColor(.secondary)
 
@@ -84,7 +84,7 @@ struct ManagerActivityRow: View {
                         if activity.status == .running || activity.status == .managerPending {
                             Button(action: { showingCompleteSheet = true }) {
                                 Image(symbol: AppSymbols.checkmark)
-                                    .font(.system(size: AppFontSize.bodyStandard, weight: .bold))
+                                    .font(AppFont.bodyStandardSemibold)
                             }
                             .buttonStyle(.glass)
                             .foregroundColor(AppColors.success)
@@ -93,7 +93,7 @@ struct ManagerActivityRow: View {
 
                         Button(action: { appState.cancelActivity(activity) }) {
                             Image(symbol: AppSymbols.xmark)
-                                .font(.system(size: AppFontSize.bodyStandard, weight: .bold))
+                                .font(AppFont.bodyStandardSemibold)
                         }
                         .buttonStyle(.glass)
                         .foregroundColor(AppColors.destructive)
@@ -109,7 +109,7 @@ struct ManagerActivityRow: View {
 
                 HStack(spacing: 8) {
                     Image(symbol: outcome.icon)
-                        .font(.system(size: AppFontSize.bodyStandard))
+                        .font(AppFont.bodyStandard)
 
                     Text("Completed \(outcome.rawValue)")
                         .font(AppFont.bodyStandardMedium)
@@ -117,7 +117,7 @@ struct ManagerActivityRow: View {
                     if let completedAt = activity.completedAt {
                         Text("•")
                         Text(completedAt.formatted(date: .abbreviated, time: .shortened))
-                            .font(.system(size: AppFontSize.bodyStandard))
+                            .font(AppFont.bodyStandard)
                     }
 
                     Spacer()
@@ -161,11 +161,11 @@ struct CompleteActivitySheet: View {
             // Header
             VStack(spacing: 8) {
                 Image(symbol: AppSymbols.checkmarkSeal)
-                    .font(.system(size: AppFontSize.iconXL))
+                    .font(AppFont.iconXL)
                     .foregroundStyle(AppGradients.success)
 
                 Text("Complete Activity")
-                    .font(.system(size: AppFontSize.headerSection, weight: .bold, design: .rounded))
+                    .font(AppFont.headerSection)
 
                 Text(activity.name)
                     .font(.subheadline)
