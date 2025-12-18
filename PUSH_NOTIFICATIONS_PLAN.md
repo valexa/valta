@@ -15,14 +15,14 @@ This document outlines the plan for implementing Firebase Cloud Messaging (FCM) 
 
 Based on `FULL_SPECIFICATION.md`, the following 5 notifications are required.
 
-> **Note:** P0 activities start with "P0 - " prefix. Other priorities have no prefix.
+> **Note:** P0 activities start with "🔻P0🔻" prefix. Other priorities have no prefix.
 
 ### 1. Activity Assigned (Manager → Team Member)
 **Trigger:** When manager creates and assigns a new activity  
 **Recipient:** Assigned team member  
 **Message Format:**
 ```
-[P0 - ][date] - [Manager] has assigned activity with deadline [date] to you, please start the activity: [Name].
+[🔻P0🔻][date] - [Manager] has assigned you a new activity with deadline [date]: [Name].
 ```
 
 ### 2. Activity Started (Team Member → Manager)
@@ -30,7 +30,7 @@ Based on `FULL_SPECIFICATION.md`, the following 5 notifications are required.
 **Recipient:** Manager  
 **Message Format:**
 ```
-[P0 - ][date] - [Member] has started activity with deadline [date] for [Name].
+[🔻P0🔻][date] - [Member] has started activity with deadline [date] for [Name].
 ```
 
 ### 3. Completion Requested (Team Member → Manager)
@@ -38,7 +38,7 @@ Based on `FULL_SPECIFICATION.md`, the following 5 notifications are required.
 **Recipient:** Manager  
 **Message Format:**
 ```
-[P0 - ][date] - [Member] has completed activity with deadline [date] for [Name].
+[🔻P0🔻][date] - [Member] has completed activity with deadline [date] for [Name].
 ```
 
 ### 4. Activity Approved (Manager → Assigned Team Member)
@@ -46,7 +46,7 @@ Based on `FULL_SPECIFICATION.md`, the following 5 notifications are required.
 **Recipient:** Assigned team member  
 **Message Format:**
 ```
-[P0 - ][date] - [Manager] has approved activity: [Name].
+[🔻P0🔻][date] - [Manager] has approved your activity: [Name].
 ```
 
 ### 5. Activity Rejected (Manager → Assigned Team Member)
@@ -54,7 +54,7 @@ Based on `FULL_SPECIFICATION.md`, the following 5 notifications are required.
 **Recipient:** Assigned team member  
 **Message Format:**
 ```
-[P0 - ][date] - [Manager] has sent back your activity: [Name].
+[🔻P0🔻][date] - [Manager] has sent back your activity: [Name].
 ```
 
 ## Implementation Plan

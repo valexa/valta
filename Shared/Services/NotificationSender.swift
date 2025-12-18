@@ -62,9 +62,9 @@ final class NotificationSender {
 
     // MARK: - Helper
 
-    /// Returns "P0 - " prefix for P0 activities, empty string otherwise
+    /// Returns "🔻P0🔻" prefix for P0 activities, empty string otherwise
     private func priorityPrefix(for activity: Activity) -> String {
-        return activity.priority == .p0 ? "P0 - " : ""
+        return activity.priority == .p0 ? "🔻P0🔻" : ""
     }
 
     // MARK: - Notification Types
@@ -80,8 +80,8 @@ final class NotificationSender {
         let deadlineDate = dateFormatter.string(from: activity.deadline)
         let prefix = priorityPrefix(for: activity)
 
-        // Format: [P0 - ][date] - [Manager] has assigned activity with deadline [date] to you, please start the activity: [Name].
-        let message = "\(prefix)\(createdDate) - \(managerName) has assigned activity with deadline \(deadlineDate) to you, please start the activity: \(activity.name)."
+        // Format: [🔻P0🔻][date] - [Manager] has assigned you a new activity with deadline [date]: [Name].
+        let message = "\(prefix)\(createdDate) - \(managerName) has assigned you a new activity with deadline \(deadlineDate): \(activity.name)."
 
         let data: [String: Any] = [
             "type": "activity_assigned",
@@ -173,8 +173,8 @@ final class NotificationSender {
         let approvedDate = dateFormatter.string(from: Date())
         let prefix = priorityPrefix(for: activity)
 
-        // Format: [P0 - ][date] - [Manager] has approved activity: [Name].
-        let message = "\(prefix)\(approvedDate) - \(managerName) has approved activity: \(activity.name)."
+        // Format: [P0 - ][date] - [Manager] has approved your activity: [Name].
+        let message = "\(prefix)\(approvedDate) - \(managerName) has approved your activity: \(activity.name)."
 
         let data: [String: Any] = [
             "type": "activity_approved",

@@ -72,9 +72,9 @@ struct NotificationSenderTests {
         // Then
         let call = try #require(mockProvider.calls.first)
         let message = call.data["message"] as? String
-        #expect(message?.hasPrefix("P0 - ") == true)
+        #expect(message?.hasPrefix("🔻P0🔻") == true)
         #expect(message?.contains("Manager Bob") == true)
-        #expect(message?.contains("has assigned activity with deadline") == true)
+        #expect(message?.contains("has assigned you a new activity with deadline") == true)
         #expect(message?.contains("Urgent Task") == true)
     }
 
@@ -99,8 +99,8 @@ struct NotificationSenderTests {
         // Then
         let call = try #require(mockProvider.calls.first)
         let message = call.data["message"] as? String
-        #expect(message?.hasPrefix("P0 - ") == false)
-        #expect(message?.contains("has assigned activity with deadline") == true)
+        #expect(message?.hasPrefix("🔻P0🔻") == false)
+        #expect(message?.contains("has assigned you a new activity with deadline") == true)
     }
 
     // MARK: - 2. Activity Started Tests
@@ -128,7 +128,7 @@ struct NotificationSenderTests {
         #expect(call.name == "sendActivityStartedNotification")
 
         let message = call.data["message"] as? String
-        #expect(message?.hasPrefix("P0 - ") == true)
+        #expect(message?.hasPrefix("🔻P0🔻") == true)
         #expect(message?.contains("Test User") == true)
         #expect(message?.contains("has started activity with deadline") == true)
     }
@@ -154,7 +154,7 @@ struct NotificationSenderTests {
         // Then
         let call = try #require(mockProvider.calls.first)
         let message = call.data["message"] as? String
-        #expect(message?.hasPrefix("P0 - ") == false)
+        #expect(message?.hasPrefix("🔻P0🔻") == false)
     }
 
     // MARK: - 3. Completion Requested Tests
@@ -180,7 +180,7 @@ struct NotificationSenderTests {
         #expect(call.name == "sendCompletionRequestedNotification")
 
         let message = call.data["message"] as? String
-        #expect(message?.hasPrefix("P0 - ") == true)
+        #expect(message?.hasPrefix("🔻P0🔻") == true)
         #expect(message?.contains("has completed activity with deadline") == true)
     }
 
@@ -230,9 +230,9 @@ struct NotificationSenderTests {
         #expect(call.name == "sendActivityApprovedNotification")
 
         let message = call.data["message"] as? String
-        #expect(message?.hasPrefix("P0 - ") == true)
+        #expect(message?.hasPrefix("🔻P0🔻") == true)
         #expect(message?.contains("Manager Bob") == true)
-        #expect(message?.contains("has approved activity: Done Task") == true)
+        #expect(message?.contains("has approved your activity: Done Task") == true)
     }
 
     @Test func testSendActivityApproved_NonP0NoPrefix() async throws {
@@ -256,8 +256,8 @@ struct NotificationSenderTests {
         // Then
         let call = try #require(mockProvider.calls.first)
         let message = call.data["message"] as? String
-        #expect(message?.hasPrefix("P0 - ") == false)
-        #expect(message?.contains("has approved activity:") == true)
+        #expect(message?.hasPrefix("🔻P0🔻") == false)
+        #expect(message?.contains("has approved your activity:") == true)
     }
 
     // MARK: - 5. Activity Rejected Tests
@@ -285,7 +285,7 @@ struct NotificationSenderTests {
         #expect(call.name == "sendActivityRejectedNotification")
 
         let message = call.data["message"] as? String
-        #expect(message?.hasPrefix("P0 - ") == true)
+        #expect(message?.hasPrefix("🔻P0🔻") == true)
         #expect(message?.contains("Manager Bob") == true)
         #expect(message?.contains("has sent back your activity: Rejected Task") == true)
     }
@@ -311,7 +311,7 @@ struct NotificationSenderTests {
         // Then
         let call = try #require(mockProvider.calls.first)
         let message = call.data["message"] as? String
-        #expect(message?.hasPrefix("P0 - ") == false)
+        #expect(message?.hasPrefix("🔻P0🔻") == false)
         #expect(message?.contains("has sent back your activity:") == true)
     }
 

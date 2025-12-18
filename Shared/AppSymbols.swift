@@ -34,7 +34,6 @@ enum AppSymbols {
     static let checkmark = "checkmark"
     static let checkmarkSeal = "checkmark.seal.fill"
     static let xmark = "xmark"
-    static let xmarkCircle = "xmark.circle"
     static let xmarkCircleFill = "xmark.circle.fill"
     static let plus = "plus"
     static let plusCircleFill = "plus.circle.fill"

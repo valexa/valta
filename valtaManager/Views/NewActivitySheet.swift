@@ -260,6 +260,10 @@ struct NotificationPreview: View {
     let deadline: Date
     let memberName: String
 
+    private var priorityPrefix: String {
+        priority == .p0 ? "🔻P0🔻" : ""
+    }
+
     var body: some View {
         HStack(spacing: 12) {
             Image(symbol: AppSymbols.bellBadge)
@@ -270,7 +274,7 @@ struct NotificationPreview: View {
                 Text("Notification to \(memberName)")
                     .font(.system(size: 12, weight: .semibold))
 
-                Text("[Manager name] has assigned \(priority.shortName) activity on \(Date().formatted(date: .abbreviated, time: .shortened)) with deadline \(deadline.formatted(date: .abbreviated, time: .shortened)) to you, please start the activity: \(activityName)")
+                Text("\(priorityPrefix)\(Date().formatted(date: .abbreviated, time: .shortened)) - [Manager name] has assigned you a new activity with deadline \(deadline.formatted(date: .abbreviated, time: .shortened)): \(activityName).")
                     .font(.system(size: 11))
                     .foregroundColor(.secondary)
                     .lineLimit(3)

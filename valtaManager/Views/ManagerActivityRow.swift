@@ -84,18 +84,18 @@ struct ManagerActivityRow: View {
                         if activity.status == .running || activity.status == .managerPending {
                             Button(action: { showingCompleteSheet = true }) {
                                 Image(symbol: AppSymbols.checkmark)
-                                    .font(.system(size: 18))
+                                    .font(.system(size: 14, weight: .bold))
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.glass)
                             .foregroundColor(AppColors.success)
                             .help("Complete Activity")
                         }
 
                         Button(action: { appState.cancelActivity(activity) }) {
-                            Image(symbol: AppSymbols.xmarkCircle)
-                                .font(.system(size: 18))
+                            Image(symbol: AppSymbols.xmark)
+                                .font(.system(size: 14, weight: .bold))
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.glass)
                         .foregroundColor(AppColors.destructive)
                         .help("Cancel Activity")
                     }
