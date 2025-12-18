@@ -11,9 +11,20 @@ import Foundation
 import FirebaseAuth
 import Observation
 
+// MARK: - Auth Providing Protocol
+
+/// Protocol for authentication operations
+@MainActor
+protocol AuthProviding {
+    var isAuthenticated: Bool { get }
+    func signInAnonymously() async throws
+}
+
+// MARK: - Auth Service
+
 @Observable
 @MainActor
-final class AuthService {
+final class AuthService: AuthProviding {
     static let shared = AuthService()
 
     var isAuthenticated = false
