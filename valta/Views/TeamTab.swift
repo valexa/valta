@@ -119,7 +119,7 @@ struct TeamTabHeader: View {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Team Activities")
-                        .font(.system(size: 22, weight: .bold, design: .rounded))
+                        .font(AppFont.headerSection)
 
                     Text(appState.team.name)
                         .font(.subheadline)
@@ -218,11 +218,11 @@ struct TeamMemberSection: View {
                     VStack(alignment: .leading, spacing: 2) {
                         HStack(spacing: 6) {
                             Text(member.name)
-                                .font(.system(size: 15, weight: .semibold))
+                                .font(AppFont.bodyPrimary)
 
                             if isCurrentUser {
                                 Text("(You)")
-                                    .font(.system(size: 12))
+                                    .font(.system(size: AppFontSize.bodyStandard))
                                     .foregroundColor(.accentColor)
                                     .padding(.horizontal, 6)
                                     .padding(.vertical, 2)
@@ -232,14 +232,14 @@ struct TeamMemberSection: View {
                         }
 
                         Text("\(activities.count) activit\(activities.count == 1 ? "y" : "ies")")
-                            .font(.system(size: 12))
+                            .font(.system(size: AppFontSize.bodyStandard))
                             .foregroundColor(.secondary)
                     }
 
                     Spacer()
 
                     Image(symbol: isExpanded ? AppSymbols.chevronDown : AppSymbols.chevronRight)
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(AppFont.bodyStandardSemibold)
                         .foregroundColor(.secondary)
                 }
             }

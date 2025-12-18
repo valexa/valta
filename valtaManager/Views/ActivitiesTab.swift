@@ -124,7 +124,7 @@ struct EmptyActivityView: View {
     var body: some View {
         VStack(spacing: 16) {
             Image(symbol: AppSymbols.tray)
-                .font(.system(size: 48))
+                .font(.system(size: AppFontSize.iconXL))
                 .foregroundColor(.secondary)
 
             Text("No Activities")

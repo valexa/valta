@@ -174,6 +174,7 @@ Workflow	Slash Command
 /coding-standards	SwiftLint configuration
 /testing	Swift Testing framework
 /symbol-centralization	AppSymbols mediator
+/font-centralization	AppFonts mediator
 These are available as slash commands and should be automatically loaded when relevant.
 
 ## License

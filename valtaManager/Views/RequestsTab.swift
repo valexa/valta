@@ -75,10 +75,10 @@ struct RequestCard: View {
                     // Header
                     HStack {
                         Text(activity.assignedMember.name)
-                            .font(.system(size: 15, weight: .semibold))
+                            .font(AppFont.bodyPrimary)
 
                         Text("requested completion")
-                            .font(.system(size: 15))
+                            .font(.system(size: AppFontSize.bodyPrimary))
                             .foregroundColor(.secondary)
 
                         Spacer()
@@ -97,11 +97,11 @@ struct RequestCard: View {
                             PriorityBadge(priority: activity.priority)
 
                             Text(activity.name)
-                                .font(.system(size: 14, weight: .medium))
+                                .font(AppFont.bodyPrimaryMedium)
                         }
 
                         Text(activity.description)
-                            .font(.system(size: 13))
+                            .font(AppFont.bodyStandard)
                             .foregroundColor(.secondary)
                             .lineLimit(2)
                     }
@@ -113,14 +113,14 @@ struct RequestCard: View {
                     // Outcome details
                     HStack(spacing: 8) {
                         Text("Activity outcome:")
-                            .font(.system(size: 13))
+                            .font(AppFont.bodyStandard)
                             .foregroundColor(.secondary)
 
                         HStack(spacing: 4) {
                             Image(symbol: outcome.icon)
                             Text(outcome.rawValue)
                         }
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(AppFont.bodyStandardSemibold)
                         .foregroundColor(outcome.color)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
@@ -132,9 +132,9 @@ struct RequestCard: View {
                         // Deadline info
                         HStack(spacing: 4) {
                             Image(symbol: AppSymbols.calendarBadgeClock)
-                                .font(.system(size: 12))
+                                .font(.system(size: AppFontSize.bodyStandard))
                             Text("Deadline: \(activity.deadline.formatted(date: .abbreviated, time: .shortened))")
-                                .font(.system(size: 12))
+                                .font(.system(size: AppFontSize.bodyStandard))
                         }
                         .foregroundColor(.secondary)
                     }
@@ -200,12 +200,12 @@ struct EmptyRequestsView: View {
                     .frame(width: 100, height: 100)
 
                 Image(symbol: AppSymbols.checkmarkSeal)
-                    .font(.system(size: 48))
+                    .font(.system(size: AppFontSize.iconXL))
                     .foregroundStyle(AppGradients.success)
             }
 
             Text("All Caught Up!")
-                .font(.system(size: 22, weight: .bold, design: .rounded))
+                .font(AppFont.headerSection)
 
             Text("No pending completion requests from your team")
                 .font(.subheadline)

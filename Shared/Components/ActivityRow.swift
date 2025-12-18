@@ -30,11 +30,11 @@ struct ActivityRow: View {
 
         HStack(spacing: 10) {
             // Priority badge
-            PriorityBadge(priority: activity.priority, compact: true)
+            PriorityBadge(priority: activity.priority)
 
             // Activity name
             Text(activity.name)
-                .font(.system(size: 13, weight: .medium))
+                .font(AppFont.bodyStandardMedium)
                 .lineLimit(1)
                 .frame(minWidth: 100, alignment: .leading)
 
@@ -43,7 +43,7 @@ struct ActivityRow: View {
                 HStack(spacing: 4) {
                     MemberAvatar(member: activity.assignedMember, size: 20)
                     Text(activity.assignedMember.name.components(separatedBy: " ").first ?? "")
-                        .font(.system(size: 11))
+                        .font(AppFont.caption)
                         .foregroundColor(.secondary)
                         .lineLimit(1)
                 }
@@ -61,7 +61,7 @@ struct ActivityRow: View {
             if activity.isOverdue {
                 Image(symbol: AppSymbols.exclamationTriangle)
                     .foregroundColor(theme.destructive)
-                    .font(.system(size: 11))
+                    .font(.system(size: AppFontSize.caption))
             }
 
             // Time delta for completed activities (shows how much ahead/overrun)
@@ -128,9 +128,9 @@ struct ActivityRow: View {
                 }) {
                     HStack(spacing: 3) {
                         Image(symbol: AppSymbols.play)
-                            .font(.system(size: 9))
+                            .font(.system(size: AppFontSize.caption))
                         Text("Start")
-                            .font(.system(size: 10, weight: .semibold))
+                            .font(AppFont.captionSemibold)
                     }
                     .foregroundColor(.white)
                 }
@@ -144,9 +144,9 @@ struct ActivityRow: View {
                 }) {
                     HStack(spacing: 3) {
                         Image(symbol: AppSymbols.checkmark)
-                            .font(.system(size: 9, weight: .bold))
+                            .font(.system(size: AppFontSize.caption, weight: .bold))
                         Text("Complete")
-                            .font(.system(size: 10, weight: .semibold))
+                            .font(AppFont.captionSemibold)
                     }
                     .foregroundColor(.white)
                 }
@@ -169,7 +169,7 @@ struct CompletionTimeDelta: View {
 
     var body: some View {
         Text(deltaText)
-            .font(.system(size: 10, weight: .medium, design: .monospaced))
+            .font(.system(size: AppFontSize.caption, weight: .medium, design: .monospaced))
             .foregroundColor(.secondary)
     }
 }

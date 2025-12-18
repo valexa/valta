@@ -23,7 +23,7 @@ struct CheckmarkButton: View {
         Button(action: {}) {
             if isSelected {
                 Image(symbol: AppSymbols.checkmark)
-                    .font(.system(size: 14, weight: .bold))
+                    .font(.system(size: AppFontSize.bodyStandard, weight: .bold))
             } else {
                 Rectangle()
                     .foregroundColor(.clear)

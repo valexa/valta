@@ -249,9 +249,9 @@ struct ActivitiesHeader: View {
                     }) {
                         HStack(spacing: 4) {
                             Image(symbol: AppSymbols.xmark)
-                                .font(.system(size: 10))
+                                .font(.system(size: AppFontSize.caption))
                             Text("Clear Filter")
-                                .font(.system(size: 12))
+                                .font(.system(size: AppFontSize.bodyStandard))
                         }
                         .foregroundColor(.secondary)
                     }
@@ -304,11 +304,11 @@ struct ActivitySection: View {
                     .frame(width: 6, height: 6)
 
                 Text(title)
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(AppFont.bodyStandardSemibold)
                     .foregroundColor(.secondary)
 
                 Text("(\(activities.count))")
-                    .font(.system(size: 11))
+                    .font(AppFont.caption)
                     .foregroundColor(.secondary.opacity(0.7))
             }
 
