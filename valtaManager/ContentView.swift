@@ -54,35 +54,39 @@ struct MainTabView: View {
     var body: some View {
         TabView {
             TabSection("Status") {
-                Tab("All Activities", systemImage: "list.bullet.rectangle") {
+                Tab("All Activities", systemImage: AppSymbols.tabAllActivities) {
                     ActivitiesTab()
                 }
                 .badge(appState.totalActivities)
 
-                Tab("Running", systemImage: "play.fill") {
+                Tab("Running", systemImage: AppSymbols.tabRunning) {
                     ActivitiesTab(statsFilter: .status(.running))
                 }
                 .badge(appState.runningCount)
 
-                Tab("Pending", systemImage: "clock.fill") {
+                Tab("Pending", systemImage: AppSymbols.tabPending) {
                     ActivitiesTab(statsFilter: .pending)
                 }
                 .badge(appState.pendingCount)
 
-                Tab("Completed", systemImage: "checkmark.circle.fill") {
+                Tab("Completed", systemImage: AppSymbols.tabCompleted) {
                     ActivitiesTab(statsFilter: .status(.completed))
                 }
                 .badge(appState.completedCount)
             }
 
-            Tab("Requests", systemImage: "checkmark.rectangle.stack") {
+            Tab("Requests", systemImage: AppSymbols.tabRequests) {
                 RequestsTab()
             }
             .badge(appState.managerPendingActivities.count)
 
+            Tab("Analytics", systemImage: AppSymbols.tabAnalytics) {
+                AnalyticsTab()
+            }
+
             TabSection("Team Members") {
                 ForEach(appState.team.members) { member in
-                    Tab(member.name, systemImage: "person") {
+                    Tab(member.name, systemImage: AppSymbols.tabPerson) {
                         ActivitiesTab(member: member)
                     }
                 }

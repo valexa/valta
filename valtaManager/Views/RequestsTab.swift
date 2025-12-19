@@ -179,16 +179,10 @@ struct RequestCard: View {
 struct EmptyRequestsView: View {
     var body: some View {
         VStack(spacing: AppSpacing.xl) {
-            ZStack {
-                Circle()
-                    .fill(AppColors.success.opacity(0.1))
-                    .frame(width: 100, height: 100)
-
-                Image(symbol: AppSymbols.checkmarkSeal)
-                    .font(AppFont.iconXL)
-                    .foregroundStyle(AppGradients.success)
-            }
-
+            Image(symbol: AppSymbols.checkmarkSeal)
+                .font(AppFont.iconXL)
+                .padding()
+                .glassEffect()
             Text("All Caught Up!")
                 .font(AppFont.headerSection)
 

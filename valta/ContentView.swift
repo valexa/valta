@@ -81,7 +81,7 @@ struct MainTabView: View {
 
             LogTab()
                 .tabItem {
-                    Label("Log", systemImage: AppSymbols.log)
+                    Label("Log", systemImage: AppSymbols.tabLog)
                 }
                 .tag(TeamMemberTab.log)
 

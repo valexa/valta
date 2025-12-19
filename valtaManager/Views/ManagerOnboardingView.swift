@@ -83,7 +83,7 @@ extension ManagerOnboardingView {
         VStack(spacing: AppSpacing.huge) {
             // Header
             VStack(spacing: AppSpacing.base) {
-                Image(symbol: AppSymbols.selectTeam)
+                Image(symbol: AppSymbols.myTeam)
                     .font(AppFont.iconXL)
                     .foregroundColor(.white)
 
