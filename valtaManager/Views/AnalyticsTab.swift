@@ -83,9 +83,9 @@ struct OutcomesTimelineChart: View {
                     .foregroundStyle(by: .value("Outcome", point.outcome.displayName))
                 }
                 .chartForegroundStyleScale([
-                    "Ahead": Color.green,
-                    "Just In Time": Color.orange,
-                    "Overrun": Color.red
+                    "Ahead": AppColors.outcomeAhead,
+                    "Just In Time": AppColors.outcomeJIT,
+                    "Overrun": AppColors.outcomeOverrun
                 ])
                 .chartXAxis {
                     AxisMarks(values: .stride(by: .day)) { value in
@@ -100,7 +100,7 @@ struct OutcomesTimelineChart: View {
                 .frame(height: 250)
                 .padding()
                 .background(
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: AppCornerRadius.lg)
                         .fill(Color(NSColor.controlBackgroundColor))
                 )
             }
@@ -119,7 +119,7 @@ struct OutcomesTimelineChart: View {
         .frame(height: 200)
         .frame(maxWidth: .infinity)
         .background(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: AppCornerRadius.lg)
                 .fill(Color(NSColor.controlBackgroundColor))
         )
     }
@@ -206,7 +206,7 @@ struct ActivityTimelineChart: View {
                 .frame(height: 250)
                 .padding()
                 .background(
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: AppCornerRadius.lg)
                         .fill(Color(NSColor.controlBackgroundColor))
                 )
             }
@@ -225,7 +225,7 @@ struct ActivityTimelineChart: View {
         .frame(height: 200)
         .frame(maxWidth: .infinity)
         .background(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: AppCornerRadius.lg)
                 .fill(Color(NSColor.controlBackgroundColor))
         )
     }

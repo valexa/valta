@@ -129,9 +129,9 @@ struct ManagerActivityRow: View {
             }
         }
         .background(Color(NSColor.controlBackgroundColor))
-        .cornerRadius(12)
+        .cornerRadius(AppCornerRadius.lg)
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: AppCornerRadius.lg)
                 .stroke(isHovered ? Color.accentColor.opacity(0.3) : Color.clear, lineWidth: 2)
         )
         .shadow(color: AppColors.shadow.opacity(isHovered ? 0.1 : 0.05), radius: isHovered ? 8 : 4, y: 2)

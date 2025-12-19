@@ -226,7 +226,7 @@ struct TeamMemberSection: View {
                                     .padding(.horizontal, AppSpacing.xs)
                                     .padding(.vertical, AppSpacing.xxxs)
                                     .background(Color.accentColor.opacity(0.1))
-                                    .cornerRadius(4)
+                                    .cornerRadius(AppCornerRadius.xs)
                             }
                         }
 
@@ -256,7 +256,7 @@ struct TeamMemberSection: View {
         }
         .padding(AppSpacing.xl)
         .background(Color(NSColor.windowBackgroundColor))
-        .cornerRadius(12)
+        .cornerRadius(AppCornerRadius.lg)
     }
 }
 

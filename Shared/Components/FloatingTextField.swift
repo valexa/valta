@@ -43,10 +43,10 @@ struct FloatingTextField: View {
         VStack(alignment: .leading, spacing: AppSpacing.xxs) {
             ZStack(alignment: .topLeading) {
                 // Background
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: AppCornerRadius.md)
                     .fill(backgroundColor)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: AppCornerRadius.md)
                             .stroke(borderColor, lineWidth: isFocused ? 2 : 1)
                     )
 

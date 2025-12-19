@@ -35,11 +35,11 @@ struct MemberSelectionCard: View {
             }
             .frame(width: 220, height: 60, alignment: .center)
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: AppCornerRadius.lg)
                     .fill(isSelected ? Color.white.opacity(0.12) : (isHovered ? Color.white.opacity(0.08) : Color.white.opacity(0.05)))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: AppCornerRadius.lg)
                     .stroke(isSelected ? .blue.opacity(0.5) : Color.white.opacity(0.1), lineWidth: 1)
             )
         }

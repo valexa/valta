@@ -94,11 +94,11 @@ struct ActivityRow: View {
         .padding(.horizontal, AppSpacing.base)
         .padding(.vertical, AppSpacing.sm)
         .background(
-            RoundedRectangle(cornerRadius: 8)
+            RoundedRectangle(cornerRadius: AppCornerRadius.md)
                 .fill(isHighlighted ? Color.accentColor.opacity(0.05) : Color(NSColor.controlBackgroundColor))
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 8)
+            RoundedRectangle(cornerRadius: AppCornerRadius.md)
                 .stroke(isHovered ? Color.accentColor.opacity(0.3) : Color.clear, lineWidth: 1)
         )
         .onHover { hovering in

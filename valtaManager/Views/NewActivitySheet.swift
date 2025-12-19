@@ -214,9 +214,9 @@ struct PriorityOption: View {
             .frame(maxWidth: .infinity)
             .padding(.vertical, AppSpacing.xxxs)
             .background(isSelected ? priority.color : priority.color.opacity(0.1))
-            .cornerRadius(8)
+            .cornerRadius(AppCornerRadius.md)
             .overlay(
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: AppCornerRadius.md)
                     .stroke(priority.color, lineWidth: isSelected ? 0 : 1)
             )
         }
@@ -247,7 +247,7 @@ struct QuickDeadlineButton: View {
                 .padding(.horizontal, AppSpacing.base)
                 .padding(.vertical, AppSpacing.xs)
                 .background(Color(NSColor.controlBackgroundColor))
-                .cornerRadius(6)
+                .cornerRadius(AppCornerRadius.sm)
         }
         .buttonStyle(.plain)
     }
@@ -284,7 +284,7 @@ struct NotificationPreview: View {
         .padding(AppSpacing.base)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(AppColors.warning.opacity(0.1))
-        .cornerRadius(8)
+        .cornerRadius(AppCornerRadius.md)
     }
 }
 

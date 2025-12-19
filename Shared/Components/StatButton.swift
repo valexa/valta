@@ -42,11 +42,11 @@ struct StatButton: View {
             .padding(.horizontal, AppSpacing.md)
             .padding(.vertical, AppSpacing.xs)
             .background(
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: AppCornerRadius.md)
                     .fill(isSelected ? color : color.opacity(0.1))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: AppCornerRadius.md)
                     .stroke(isSelected ? color : Color.clear, lineWidth: 1)
             )
         }

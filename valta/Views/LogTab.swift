@@ -168,7 +168,7 @@ struct LogDateSection: View {
                 }
             }
             .background(Color(NSColor.windowBackgroundColor))
-            .cornerRadius(12)
+            .cornerRadius(AppCornerRadius.lg)
         }
     }
 }

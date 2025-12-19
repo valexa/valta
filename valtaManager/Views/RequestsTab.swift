@@ -101,7 +101,7 @@ struct RequestCard: View {
 
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(Color(NSColor.windowBackgroundColor))
-                    .cornerRadius(8)
+                    .cornerRadius(AppCornerRadius.md)
 
                     // Outcome details
                     HStack(spacing: AppSpacing.sm) {
@@ -118,7 +118,7 @@ struct RequestCard: View {
                         .padding(.horizontal, AppSpacing.sm)
                         .padding(.vertical, AppSpacing.xxs)
                         .background(outcome.color.opacity(0.15))
-                        .cornerRadius(6)
+                        .cornerRadius(AppCornerRadius.sm)
 
                         Spacer()
 
@@ -160,9 +160,9 @@ struct RequestCard: View {
             .background(Color(NSColor.windowBackgroundColor).opacity(0.5))
         }
         .background(Color(NSColor.controlBackgroundColor))
-        .cornerRadius(12)
+        .cornerRadius(AppCornerRadius.lg)
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: AppCornerRadius.lg)
                 .stroke(isHovered ? Color.accentColor.opacity(0.3) : Color.clear, lineWidth: 2)
         )
         .shadow(color: AppColors.shadow.opacity(0.06), radius: 6, y: 2)

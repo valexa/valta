@@ -144,7 +144,7 @@ struct StateBadge: View {
         .padding(.horizontal, AppSpacing.base)
         .padding(.vertical, AppSpacing.sm)
         .background(status.color.opacity(0.15))
-        .cornerRadius(8)
+        .cornerRadius(AppCornerRadius.md)
     }
 }
 
@@ -243,7 +243,7 @@ struct LifecycleLegend: View {
         }
         .padding(AppSpacing.xxl)
         .background(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: AppCornerRadius.lg)
                 .fill(Color(NSColor.windowBackgroundColor))
         )
         .fixedSize(horizontal: true, vertical: false)
@@ -285,7 +285,7 @@ struct OutcomesLegend: View {
         }
         .padding(AppSpacing.xxl)
         .background(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: AppCornerRadius.lg)
                 .fill(Color(NSColor.windowBackgroundColor))
         )
         .fixedSize(horizontal: true, vertical: false)
@@ -334,7 +334,7 @@ struct PrioritiesLegend: View {
         }
         .padding(AppSpacing.xxl)
         .background(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: AppCornerRadius.lg)
                 .fill(Color(NSColor.windowBackgroundColor))
         )
         .fixedSize(horizontal: true, vertical: false)

@@ -47,9 +47,9 @@ struct TeamCard: View {
                 CheckmarkButton(isSelected: isSelected)
             }
             .padding(AppSpacing.xl)
-            .background(RoundedRectangle(cornerRadius: 16).fill(.regularMaterial))
+            .background(RoundedRectangle(cornerRadius: AppCornerRadius.xl).fill(.regularMaterial))
             .overlay(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: AppCornerRadius.xl)
                     .stroke(
                         isSelected ? AppColors.TeamMember.primary : Color.white.opacity(0.1),
                         lineWidth: 1

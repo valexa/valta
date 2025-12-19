@@ -21,9 +21,9 @@ struct PriorityBadge: View {
             .font(AppFont.priorityBadge)
             .foregroundColor(.white)
             .padding(.horizontal, AppSpacing.xs)
-            .padding(.vertical, 3)
+            .padding(.vertical, AppSpacing.xs)
             .background(priority.color(using: theme).gradient)
-            .cornerRadius(4)
+            .cornerRadius(AppCornerRadius.xs)
     }
 }
 
@@ -45,9 +45,9 @@ struct StatusBadge: View {
         }
         .foregroundColor(displayColor)
         .padding(.horizontal, compact ? AppSpacing.xs : AppSpacing.sm)
-        .padding(.vertical, compact ? 3 : AppSpacing.xxs)
+        .padding(.vertical, compact ? AppSpacing.xxxs : AppSpacing.xxs)
         .background(displayColor.opacity(0.15))
-        .cornerRadius(compact ? 4 : 6)
+        .cornerRadius(compact ? AppCornerRadius.xs : AppCornerRadius.sm)
     }
 }
 
@@ -74,7 +74,7 @@ struct OutcomeBadge: View {
         .padding(.horizontal, AppSpacing.sm)
         .padding(.vertical, AppSpacing.xxs)
         .background(color.opacity(0.15))
-        .cornerRadius(6)
+        .cornerRadius(AppCornerRadius.sm)
     }
 }
 
