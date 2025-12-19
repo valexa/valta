@@ -28,18 +28,18 @@ struct MemberSelectionCard: View {
 
     var button: some View {
         Button(action: { action?() }) {
-            HStack(spacing: 12) {
+            HStack(spacing: AppSpacing.base) {
                 MemberAvatar(member: member, size: avatarSize)
                     .padding(.leading)
                 info
             }
             .frame(width: 220, height: 60, alignment: .center)
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: AppCornerRadius.lg)
                     .fill(isSelected ? Color.white.opacity(0.12) : (isHovered ? Color.white.opacity(0.08) : Color.white.opacity(0.05)))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: AppCornerRadius.lg)
                     .stroke(isSelected ? .blue.opacity(0.5) : Color.white.opacity(0.1), lineWidth: 1)
             )
         }
@@ -49,7 +49,7 @@ struct MemberSelectionCard: View {
         .blur(radius: isDisabled ? 1.0 : 0.0)
 #endif
         .onHover { hovering in
-            withAnimation(.easeInOut(duration: 0.15)) {
+            withAnimation(AppAnimations.easeQuick) {
                 isHovered = hovering
             }
         }
@@ -57,7 +57,7 @@ struct MemberSelectionCard: View {
 
     var info: some View {
         // Member info
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: AppSpacing.xxxs) {
             Text(member.name)
                 .font(isSelected ? AppFont.bodyStandardSemibold : AppFont.bodyStandardMedium)
                 .foregroundColor(.white)

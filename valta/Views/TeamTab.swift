@@ -92,7 +92,7 @@ struct TeamTab: View {
                 )
             } else {
                 ScrollView {
-                    LazyVStack(spacing: 24) {
+                    LazyVStack(spacing: AppSpacing.xxxl) {
                         ForEach(groupedActivities, id: \.member.id) { group in
                             TeamMemberSection(member: group.member, activities: group.activities)
                         }
@@ -115,7 +115,7 @@ struct TeamTabHeader: View {
     @Binding var statsFilter: TeamStatsFilter
 
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: AppSpacing.base) {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Team Activities")
@@ -129,7 +129,7 @@ struct TeamTabHeader: View {
                 Spacer()
 
                 // Team stats (filterable)
-                HStack(spacing: 12) {
+                HStack(spacing: AppSpacing.base) {
                     StatButton(
                         icon: AppSymbols.allActivities,
                         value: appState.team.activities.count,
@@ -189,7 +189,7 @@ struct TeamTabHeader: View {
     }
 
     private func toggleFilter(_ filter: TeamStatsFilter) {
-        withAnimation(.easeInOut(duration: 0.2)) {
+        withAnimation(AppAnimations.easeStandard) {
             statsFilter = filter
         }
     }
@@ -208,14 +208,14 @@ struct TeamMemberSection: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: AppSpacing.base) {
             // Member header
-            Button(action: { withAnimation(.spring(duration: 0.3)) { isExpanded.toggle() } }) {
-                HStack(spacing: 12) {
+            Button(action: { withAnimation(AppAnimations.springInteractive) { isExpanded.toggle() } }) {
+                HStack(spacing: AppSpacing.base) {
                     MemberAvatar(member: member, size: 40)
 
                     VStack(alignment: .leading, spacing: 2) {
-                        HStack(spacing: 6) {
+                        HStack(spacing: AppSpacing.xs) {
                             Text(member.name)
                                 .font(AppFont.bodyPrimary)
 
@@ -223,10 +223,10 @@ struct TeamMemberSection: View {
                                 Text("(You)")
                                     .font(AppFont.bodyStandard)
                                     .foregroundColor(.accentColor)
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
+                                    .padding(.horizontal, AppSpacing.xs)
+                                    .padding(.vertical, AppSpacing.xxxs)
                                     .background(Color.accentColor.opacity(0.1))
-                                    .cornerRadius(4)
+                                    .cornerRadius(AppCornerRadius.xs)
                             }
                         }
 
@@ -246,7 +246,7 @@ struct TeamMemberSection: View {
 
             // Activities
             if isExpanded {
-                LazyVStack(spacing: 8) {
+                LazyVStack(spacing: AppSpacing.sm) {
                     ForEach(activities) { activity in
                         TeamActivityRow(activity: activity, isOwnActivity: isCurrentUser)
                     }
@@ -254,9 +254,9 @@ struct TeamMemberSection: View {
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
-        .padding(16)
+        .padding(AppSpacing.xl)
         .background(Color(NSColor.windowBackgroundColor))
-        .cornerRadius(12)
+        .cornerRadius(AppCornerRadius.lg)
     }
 }
 

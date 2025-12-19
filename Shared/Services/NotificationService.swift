@@ -24,6 +24,7 @@ final class NotificationService: NSObject {
 
     var fcmToken: String?
     var isPermissionGranted: Bool = false
+    private var isRetrievingToken: Bool = false
     var notificationPermissionStatus: UNAuthorizationStatus = .notDetermined
 
     /// Returns true when running in a unit test environment.
@@ -94,6 +95,14 @@ final class NotificationService: NSObject {
     /// Retrieves the current FCM token (manual fetch)
     /// Includes retry logic for when APNS token is not yet available
     func retrieveFCMToken() async {
+        // Prevent concurrent retrieval attempts
+        guard !isRetrievingToken else {
+            print("⏭️ FCM token retrieval already in progress, skipping duplicate call")
+            return
+        }
+        isRetrievingToken = true
+        defer { isRetrievingToken = false }
+
         // Retry up to 5 times with exponential backoff
         // APNS token registration can take a moment after registerForRemoteNotifications()
         let maxRetries = 5

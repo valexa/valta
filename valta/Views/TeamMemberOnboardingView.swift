@@ -96,7 +96,7 @@ struct TeamMemberOnboardingView: View {
             }
         case .selectMember:
             if let member = selectedMember {
-                withAnimation(.spring(duration: 0.5)) {
+                withAnimation(AppAnimations.springSlow) {
                     appState.selectMember(member)
                 }
             }
@@ -110,9 +110,9 @@ extension TeamMemberOnboardingView {
 
     @ViewBuilder
     var loadedState: some View {
-        VStack(spacing: 40) {
+        VStack(spacing: AppSpacing.huge) {
 
-            VStack(spacing: 12) {
+            VStack(spacing: AppSpacing.base) {
                 Text(currentStep == .selectTeam ? "Select Your Team" : "Select Your Name")
                     .font(AppFont.headerXL)
                     .foregroundColor(.white)
@@ -126,7 +126,7 @@ extension TeamMemberOnboardingView {
             }
 
             // Navigation buttons
-            HStack(spacing: 16) {
+            HStack(spacing: AppSpacing.xl) {
                 if currentStep == .selectMember {
                     Button(action: {
                         withAnimation {
@@ -134,7 +134,7 @@ extension TeamMemberOnboardingView {
                             selectedMember = nil
                         }
                     }) {
-                        HStack(spacing: 8) {
+                        HStack(spacing: AppSpacing.sm) {
                             Image(symbol: AppSymbols.arrowLeft)
                                 .font(AppFont.bodyPrimary)
                             Text("Back")
@@ -146,7 +146,7 @@ extension TeamMemberOnboardingView {
                 }
 
                 Button(action: handleContinue) {
-                    HStack(spacing: 8) {
+                    HStack(spacing: AppSpacing.sm) {
                         Text("Continue")
                             .font(AppFont.buttonLarge)
 
@@ -160,7 +160,7 @@ extension TeamMemberOnboardingView {
                 .disabled(!canContinue)
             }
         }
-        .padding(40)
+        .padding(AppSpacing.huge)
     }
 
     @ViewBuilder
@@ -211,7 +211,7 @@ struct MemberSelectionView: View {
     var loggedInEmails: Set<String> = []
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: AppSpacing.xl) {
             Text("Team: \(team.name)")
                 .font(AppFont.bodyPrimaryMedium)
                 .foregroundColor(.white.opacity(0.6))

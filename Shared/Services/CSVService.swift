@@ -17,7 +17,18 @@ struct TeamMemberEntry {
     let managerEmail: String?
 }
 
-class CSVService {
+// MARK: - CSV Parsing Protocol
+
+/// Protocol for CSV parsing and serialization operations
+protocol CSVParsing {
+    func parseActivities(csvString: String, teamMembers: [TeamMember]) -> [Activity]
+    func serializeActivities(_ activities: [Activity]) -> String
+    func parseTeams(csvString: String) -> [TeamMemberEntry]
+}
+
+// MARK: - CSV Service
+
+class CSVService: CSVParsing {
     static let shared = CSVService()
 
     private let dateFormatter: ISO8601DateFormatter = {

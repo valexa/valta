@@ -24,14 +24,14 @@ struct TeamSelectionView: View {
                         team: team,
                         isSelected: selectedTeam?.id == team.id
                     ) {
-                        withAnimation(.spring(duration: 0.3)) {
+                        withAnimation(AppAnimations.springInteractive) {
                             selectedTeam = team
                         }
                     }
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
+            .padding(.horizontal, AppSpacing.xxl)
+            .padding(.vertical, AppSpacing.xl)
         }
         .scrollClipDisabled()
         .frame(maxWidth: .infinity, maxHeight: .infinity)

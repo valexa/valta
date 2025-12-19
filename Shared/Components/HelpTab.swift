@@ -20,14 +20,14 @@ struct HelpTab: View {
             VStack(alignment: .center) {
                 Text("Activity Lifecycle")
                 .font(AppFont.headerLarge)
-                .padding(.top, 10)
+                .padding(.top, AppSpacing.md)
 
                 // Main lifecycle diagram
                 LifecycleDiagram()
 
                 Text("Legend")
                     .font(AppFont.headerLarge)
-                    .padding(.top, 10)
+                    .padding(.top, AppSpacing.md)
 
                 HStack {
                     LifecycleLegend()
@@ -44,9 +44,9 @@ struct HelpTab: View {
 
 struct LifecycleDiagram: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: AppSpacing.md) {
             // Row 1: Manager creates → Team Member Pending
-            HStack(spacing: 12) {
+            HStack(spacing: AppSpacing.base) {
                 ActorBadge(actor: "Manager", icon: "person.badge.key.fill")
 
                 Button("Create", role: .confirm) {}
@@ -61,7 +61,7 @@ struct LifecycleDiagram: View {
             ConnectorLine()
 
             // Row 2: Team Member starts → Running
-            HStack(spacing: 12) {
+            HStack(spacing: AppSpacing.base) {
                 ActorBadge(actor: "Team Member", icon: "person.fill")
 
                 StartButton(action: {})
@@ -74,7 +74,7 @@ struct LifecycleDiagram: View {
             ConnectorLine()
 
             // Row 3: Team Member completes → Manager Pending
-            HStack(spacing: 12) {
+            HStack(spacing: AppSpacing.base) {
                 ActorBadge(actor: "Team Member", icon: "person.fill")
 
                 CompleteButton(action: {})
@@ -87,12 +87,12 @@ struct LifecycleDiagram: View {
             ConnectorLine()
 
             // Row 4: Manager approves/rejects
-            VStack(spacing: 16) {
-                HStack(alignment: .top, spacing: 40) {
+            VStack(spacing: AppSpacing.xl) {
+                HStack(alignment: .top, spacing: AppSpacing.huge) {
                     ActorBadge(actor: "Manager", icon: "person.badge.key.fill")
                     // Approve path
-                    VStack(spacing: 8) {
-                        HStack(spacing: 8) {
+                    VStack(spacing: AppSpacing.sm) {
+                        HStack(spacing: AppSpacing.sm) {
                             Image(symbol: AppSymbols.completed)
                                 .foregroundColor(AppColors.statusCompleted)
                             Text("Approve")
@@ -107,8 +107,8 @@ struct LifecycleDiagram: View {
                     }
 
                     // Reject path
-                    VStack(spacing: 8) {
-                        HStack(spacing: 8) {
+                    VStack(spacing: AppSpacing.sm) {
+                        HStack(spacing: AppSpacing.sm) {
                             Image(symbol: AppSymbols.arrowUturnBackward)
                                 .foregroundColor(AppColors.statusRunning)
                             Text("Reject")
@@ -124,7 +124,7 @@ struct LifecycleDiagram: View {
                 }
             }
         }
-        .padding(20)
+        .padding(AppSpacing.xxl)
     }
 }
 
@@ -134,17 +134,17 @@ struct StateBadge: View {
     let status: ActivityStatus
 
     var body: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: AppSpacing.xs) {
             Image(systemName: status.icon)
                 .font(AppFont.bodySmall)
             Text(status.rawValue)
                 .font(AppFont.bodySmallSemibold)
         }
         .foregroundColor(status.color)
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
+        .padding(.horizontal, AppSpacing.base)
+        .padding(.vertical, AppSpacing.sm)
         .background(status.color.opacity(0.15))
-        .cornerRadius(8)
+        .cornerRadius(AppCornerRadius.md)
     }
 }
 
@@ -155,7 +155,7 @@ struct ActorBadge: View {
     let icon: String
 
     var body: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: AppSpacing.xxs) {
             Image(systemName: icon)
                 .font(AppFont.bodyLarge)
                 .foregroundColor(.secondary)
@@ -173,7 +173,7 @@ struct ActionArrow: View {
     let label: String
 
     var body: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: AppSpacing.xxs) {
             Image(symbol: AppSymbols.arrowRight)
                 .foregroundColor(.secondary)
             Text(label)
@@ -241,9 +241,9 @@ struct LifecycleLegend: View {
                 )
             }
         }
-        .padding(20)
+        .padding(AppSpacing.xxl)
         .background(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: AppCornerRadius.lg)
                 .fill(Color(NSColor.windowBackgroundColor))
         )
         .fixedSize(horizontal: true, vertical: false)
@@ -283,9 +283,9 @@ struct OutcomesLegend: View {
                 )
             }
         }
-        .padding(20)
+        .padding(AppSpacing.xxl)
         .background(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: AppCornerRadius.lg)
                 .fill(Color(NSColor.windowBackgroundColor))
         )
         .fixedSize(horizontal: true, vertical: false)
@@ -332,9 +332,9 @@ struct PrioritiesLegend: View {
                 )
             }
         }
-        .padding(20)
+        .padding(AppSpacing.xxl)
         .background(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: AppCornerRadius.lg)
                 .fill(Color(NSColor.windowBackgroundColor))
         )
         .fixedSize(horizontal: true, vertical: false)
@@ -350,13 +350,13 @@ struct LegendItem: View {
     let description: String
 
     var body: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: AppSpacing.md) {
             Circle()
                 .fill(color)
                 .frame(width: 8, height: 8)
 
-            VStack(alignment: .leading, spacing: 2) {
-                HStack(spacing: 4) {
+            VStack(alignment: .leading, spacing: AppSpacing.xxxs) {
+                HStack(spacing: AppSpacing.xxs) {
                     Image(systemName: icon)
                         .font(AppFont.caption)
                     Text(title)

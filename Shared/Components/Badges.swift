@@ -20,10 +20,10 @@ struct PriorityBadge: View {
         Text(priority.shortName)
             .font(AppFont.priorityBadge)
             .foregroundColor(.white)
-            .padding(.horizontal, 6)
-            .padding(.vertical, 3)
+            .padding(.horizontal, AppSpacing.xs)
+            .padding(.vertical, AppSpacing.xs)
             .background(priority.color(using: theme).gradient)
-            .cornerRadius(4)
+            .cornerRadius(AppCornerRadius.xs)
     }
 }
 
@@ -36,7 +36,7 @@ struct StatusBadge: View {
     var compact: Bool = false
 
     var body: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: AppSpacing.xxs) {
             Image(symbol: status.icon)
             .font(AppFont.caption)
 
@@ -44,10 +44,10 @@ struct StatusBadge: View {
             .font(compact ? AppFont.badgeCompact : AppFont.badge)
         }
         .foregroundColor(displayColor)
-        .padding(.horizontal, compact ? 6 : 8)
-        .padding(.vertical, compact ? 3 : 4)
+        .padding(.horizontal, compact ? AppSpacing.xs : AppSpacing.sm)
+        .padding(.vertical, compact ? AppSpacing.xxxs : AppSpacing.xxs)
         .background(displayColor.opacity(0.15))
-        .cornerRadius(compact ? 4 : 6)
+        .cornerRadius(compact ? AppCornerRadius.xs : AppCornerRadius.sm)
     }
 }
 
@@ -63,7 +63,7 @@ struct OutcomeBadge: View {
     }
 
     var body: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: AppSpacing.xxs) {
             Image(symbol: outcome.icon)
             .font(AppFont.caption)
 
@@ -71,10 +71,10 @@ struct OutcomeBadge: View {
             .font(AppFont.badge)
         }
         .foregroundColor(color)
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
+        .padding(.horizontal, AppSpacing.sm)
+        .padding(.vertical, AppSpacing.xxs)
         .background(color.opacity(0.15))
-        .cornerRadius(6)
+        .cornerRadius(AppCornerRadius.sm)
     }
 }
 

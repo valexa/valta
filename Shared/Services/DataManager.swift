@@ -30,10 +30,17 @@ class DataManager {
         NotificationCenter.default.post(name: Self.dataChangedNotification, object: nil)
     }
 
-    private let storage = StorageService.shared
-    private let csv = CSVService.shared
+    // MARK: - Dependencies (injectable for testing)
+
+    private let storage: StorageService
+    private let csv: CSVParsing
 
     // MARK: - Initialization
+
+    init(storage: StorageService = .shared, csv: CSVParsing = CSVService.shared) {
+        self.storage = storage
+        self.csv = csv
+    }
 
     @MainActor
     func loadData() async {

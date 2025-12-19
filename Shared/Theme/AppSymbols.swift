@@ -48,7 +48,6 @@ enum AppSymbols {
     static let arrowUturnBackward = "arrow.uturn.backward.circle.fill"
     static let chevronDown = "chevron.down"
     static let chevronRight = "chevron.right"
-    static let booksVertical = "books.vertical"
 
     // MARK: - Time & Calendar Icons
 
@@ -67,9 +66,7 @@ enum AppSymbols {
 
     static let myActivities = "person.fill.checkmark"
     static let myTeam = "person.2.crop.square.stack"
-    static let log = "server.rack"
-    static let selectTeam = "person.2.crop.square.stack"
-    static let teamMembers = "figure.2"
+    static let teamMembers = "rectangle.3.group.bubble"
     static let allActivities = "person.crop.square.on.square.angled.fill"
 
     // MARK: - UI Icons
@@ -82,6 +79,18 @@ enum AppSymbols {
     static let tray = "tray"
     static let listBulletClipboard = "list.bullet.clipboard"
     static let trayFullFill = "tray.full.fill"
+
+    // MARK: - Tab Navigation Icons
+
+    static let tabAllActivities = "list.bullet.rectangle"
+    static let tabRunning = "play.fill"
+    static let tabPending = "clock.fill"
+    static let tabCompleted = "checkmark.circle.fill"
+    static let tabRequests = "checkmark.rectangle.stack"
+    static let tabAnalytics = "chart.bar.xaxis"
+    static let tabPerson = "person"
+    static let tabLog = "server.rack"
+    static let booksVertical = "books.vertical"
 }
 
 // MARK: - Image Extension
