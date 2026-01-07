@@ -325,6 +325,12 @@ Reusable UI components used throughout both apps:
 - Deadline picker with quick-set buttons (1h, 4h, 1d, 3d, 1w)
 - Notification preview
 
+#### AnalyticsTab.swift
+- **Outcomes Timeline Chart**: Bar chart showing completed activities grouped by day and outcome
+- **Activity Timeline Chart**: Line chart showing created/started/completed counts over time
+- Uses Swift Charts with custom color scales for outcomes
+- Empty states when no data available
+
 ---
 
 ## Team Member App (`valta/`)

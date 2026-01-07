@@ -157,7 +157,7 @@ final class ManagerAppState: BaseAppState, ActivityDataProviding {
         teamService.addActivity(newActivity, to: &dataManager.teams[teamIndex])
 
         Task {
-            await dataManager.syncActivities()
+            await dataManager.saveActivity(newActivity)
 
             // Send notification to assigned team member
             do {
