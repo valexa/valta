@@ -2,6 +2,8 @@
 
 ## [2026-01-24]
 
+### v1.0(8)
+
 ### Features & Enhancements
 
 #### Timeline (Migration & UI/UX)
@@ -15,11 +17,14 @@
 - **Outcome Projections**: Introduced a new "Projections" tab in the Manager app, powered by a dedicated `OutcomeProjectionService` to forecast activity finishing states.
 
 #### Data & Infrastructure
+- **Unified Filtering System**: Implemented a reusable `ActivityFilterState` and `SharedFilterBar` to provide consistent filtering (Status, Priority, Outcome, Search) across both the Log and Timeline tabs.
 - **Enhanced Data Management**: Improved `CSVService` and `ActivityService` for more robust handling of activity data and outcomes.
 - **Navigation Updates**: Integrated the new Timeline and Projections features into the respective app's `MainTabView` and `AppState`.
 
 ### Technical Details
+- Added `ActivityFilterState` and `SharedFilterBar` reusable components.
 - Added `OutcomeProjectionService.swift`.
 - Added `ProjectionsTab.swift` to Manager app.
 - Moved and refactored `TimelineTab.swift` to Member app.
 - Updated `TeamMemberAppState` and `ManagerAppState` to support new tabs and data services.
+- Updated `LogTab.swift` to utilize the new shared filtering system.

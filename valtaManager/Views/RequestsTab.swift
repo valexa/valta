@@ -58,6 +58,8 @@ struct RequestsTab: View {
 struct RequestCard: View {
     let activity: Activity
     @Environment(ManagerAppState.self) private var appState
+    @Environment(\.theme) private var theme
+
     @State private var isHovered = false
 
     var body: some View {
@@ -66,7 +68,7 @@ struct RequestCard: View {
         return VStack(spacing: 0) {
             HStack(alignment: .center, spacing: AppSpacing.xl) {
                 // Requester avatar
-                MemberAvatar(member: activity.assignedMember, size: 48)
+                MemberAvatarColored(member: activity.assignedMember, size: theme.avatarSize)
 
                 VStack(alignment: .leading, spacing: AppSpacing.sm) {
                     // Header

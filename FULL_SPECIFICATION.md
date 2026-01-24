@@ -6,7 +6,7 @@
 
 * Description : Live Team Activities is a macOS application that allows users to monitor and manage team activities in real-time. It provides a centralized platform for tracking tasks, deadlines, and visibility of tasks progress among team members.
 
-* Features : The application consists of a manager app (valtaManager.app) and a team member app (valtaTeam.app). The manager app allows team leaders to create teams and assign activities to members in those teams, set deadlines, and monitor progress. The team member app enables members to trigger a activity completion event for their assigned activities and see a dashboard of all team activities, a log tab and notifications about the activities in the team they are a member of.
+* Features : The application consists of a manager app (valtaManager.app) and a team member app (valtaTeam.app). The manager app allows team leaders to create teams and assign activities to members in those teams, set deadlines, and monitor progress. The team member app enables members to trigger a activity completion event for their assigned activities and see a dashboard of all team activities, a timeline tab, a log tab and notifications about the activities in the team they are a member of.
 
 Manager Onboarding: When launching the manager app for the first time, users are guided through a setup process where they can create a new team by providing a team name and adding team members from a predefined list. This ensures that the team structure is established correctly from the outset.
 

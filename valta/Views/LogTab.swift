@@ -12,45 +12,10 @@ import SwiftUI
 
 struct LogTab: View {
     @Environment(TeamMemberAppState.self) private var appState
-    @State private var searchText: String = ""
-    @State private var statusFilter: ActivityStatus?
-    @State private var priorityFilter: ActivityPriority?
-    @State private var outcomeFilter: ActivityOutcome?
-    @State private var showOnlyMine: Bool = false
+    @State private var filterState = ActivityFilterState()
 
     var filteredEntries: [ActivityLogEntry] {
-        var entries = appState.activityLog
-
-        // Filter by "mine"
-        if showOnlyMine, let member = appState.currentMember {
-            entries = entries.filter { $0.activity.assignedMember.id == member.id }
-        }
-
-        // Filter by status
-        if let status = statusFilter {
-            entries = entries.filter { $0.activity.status == status }
-        }
-
-        // Filter by priority
-        if let priority = priorityFilter {
-            entries = entries.filter { $0.activity.priority == priority }
-        }
-
-        // Filter by outcome
-        if let outcome = outcomeFilter {
-            entries = entries.filter { $0.activity.outcome == outcome }
-        }
-
-        // Filter by search
-        if !searchText.isEmpty {
-            entries = entries.filter { entry in
-                entry.activity.name.localizedCaseInsensitiveContains(searchText) ||
-                    entry.activity.assignedMember.name.localizedCaseInsensitiveContains(searchText) ||
-                    entry.performedBy.localizedCaseInsensitiveContains(searchText)
-            }
-        }
-
-        return entries
+        filterState.apply(to: appState.activityLog, currentMemberId: appState.currentMember?.id)
     }
 
     var groupedEntries: [(date: String, entries: [ActivityLogEntry])] {
@@ -77,7 +42,7 @@ struct LogTab: View {
                 EmptyStateView(
                     icon: AppSymbols.listBulletClipboard,
                     title: "No Log Entries",
-                    message: showOnlyMine ? "You haven't had any activity yet" : "No activity log entries match your filter",
+                    message: filterState.showOnlyMine ? "You haven't had any activity yet" : "No activity log entries match your filter",
                     iconColor: .secondary
                 )
             } else {
@@ -93,51 +58,9 @@ struct LogTab: View {
             }
         }
         .background(Color(NSColor.controlBackgroundColor))
-        .searchable(text: $searchText, placement: .toolbarPrincipal, prompt: "Search log...")
+        .searchable(text: $filterState.searchText, placement: .toolbarPrincipal, prompt: "Search log...")
         .toolbar {
-
-            // Filters
-            ToolbarItemGroup(placement: .navigation) {
-                // All/My Activities
-                Picker("", selection: $showOnlyMine) {
-                    Text("All").tag(false)
-                    Text("Mine").tag(true)
-                }
-                .pickerStyle(.segmented)
-                .frame(width: 100)
-            }
-
-            ToolbarItem(placement: .automatic) {
-                // Status Filter
-                StatusFilterMenu(selection: $statusFilter)
-            }
-
-            ToolbarItem(placement: .automatic) {
-                // Priority Filter
-                PriorityFilterMenu(selection: $priorityFilter)
-            }
-
-            ToolbarItem(placement: .automatic) {
-                // Outcome Filter
-                OutcomeFilterMenu(selection: $outcomeFilter)
-            }
-            ToolbarItem(placement: .automatic) {
-                // Clear
-                if statusFilter != nil || priorityFilter != nil || outcomeFilter != nil {
-                    Button(action: {
-                        withAnimation {
-                            statusFilter = nil
-                            priorityFilter = nil
-                            outcomeFilter = nil
-                        }
-                    }) {
-                        Image(symbol: AppSymbols.xmarkCircleFill)
-                            .foregroundColor(.secondary)
-                    }
-                } else {
-                    Spacer()
-                }
-            }
+            SharedFilterBar(filterState: filterState)
         }
     }
 }
@@ -260,7 +183,7 @@ struct LogEntryRow: View {
                     if entry.action == .completed, let outcome = entry.activity.outcome {
                         HStack(spacing: AppSpacing.xxs) {
                             Image(symbol: outcome.icon)
-                            .font(AppFont.caption)
+                                .font(AppFont.caption)
                             Text(outcome.rawValue)
                                 .font(AppFont.caption)
                         }

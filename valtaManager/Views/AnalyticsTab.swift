@@ -53,7 +53,7 @@ struct OutcomesTimelineChart: View {
     private var chartData: [OutcomeDataPoint] {
         // Group completed activities by period and outcome
         let calendar = Calendar.current
-        let unit: Calendar.Component = useMonthlyGrouping ? .month : .day
+        let _: Calendar.Component = useMonthlyGrouping ? .month : .day
 
         // Get all completed activities with outcomes
         let completedWithOutcome = activities.filter { $0.completedAt != nil && $0.outcome != nil }
@@ -104,12 +104,12 @@ struct OutcomesTimelineChart: View {
                 ])
                 .chartXAxis {
                     if useMonthlyGrouping {
-                        AxisMarks(values: .stride(by: .month)) { value in
+                        AxisMarks(values: .stride(by: .month)) { _ in
                             AxisGridLine()
                             AxisValueLabel(format: .dateTime.year().month(.abbreviated))
                         }
                     } else {
-                        AxisMarks(values: .stride(by: .day)) { value in
+                        AxisMarks(values: .stride(by: .day)) { _ in
                             AxisGridLine()
                             AxisValueLabel(format: .dateTime.month(.abbreviated).day())
                         }
@@ -235,12 +235,12 @@ struct ActivityTimelineChart: View {
                 ])
                 .chartXAxis {
                     if useMonthlyGrouping {
-                        AxisMarks(values: .stride(by: .month)) { value in
+                        AxisMarks(values: .stride(by: .month)) { _ in
                             AxisGridLine()
                             AxisValueLabel(format: .dateTime.year().month(.abbreviated))
                         }
                     } else {
-                        AxisMarks(values: .stride(by: .day)) { value in
+                        AxisMarks(values: .stride(by: .day)) { _ in
                             AxisGridLine()
                             AxisValueLabel(format: .dateTime.month(.abbreviated).day())
                         }

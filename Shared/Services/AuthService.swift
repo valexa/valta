@@ -17,6 +17,7 @@ import Observation
 @MainActor
 protocol AuthProviding {
     var isAuthenticated: Bool { get }
+
     func signInAnonymously() async throws
 }
 

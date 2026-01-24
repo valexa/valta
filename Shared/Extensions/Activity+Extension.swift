@@ -139,8 +139,8 @@ extension Array where Element == Activity {
     var active: [Activity] {
         filter {
             $0.status == .running ||
-            $0.status == .teamMemberPending ||
-            $0.status == .managerPending
+                $0.status == .teamMemberPending ||
+                $0.status == .managerPending
         }
     }
 
@@ -180,8 +180,8 @@ extension Array where Element == Activity {
         guard !query.isEmpty else { return self }
         return filter { activity in
             activity.name.localizedCaseInsensitiveContains(query) ||
-            activity.description.localizedCaseInsensitiveContains(query) ||
-            activity.assignedMember.name.localizedCaseInsensitiveContains(query)
+                activity.description.localizedCaseInsensitiveContains(query) ||
+                activity.assignedMember.name.localizedCaseInsensitiveContains(query)
         }
     }
 

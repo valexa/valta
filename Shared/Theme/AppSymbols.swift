@@ -91,7 +91,7 @@ enum AppSymbols {
     static let tabPerson = "person"
     static let tabLog = "server.rack"
     static let tabProjections = "robotic.vacuum"
-    static let tabTimeline = "calendar.day.timeline.left"
+    static let tabTimeline = "chart.line.flattrend.xyaxis"
     static let booksVertical = "books.vertical"
 }
 

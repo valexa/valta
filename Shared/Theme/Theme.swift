@@ -33,8 +33,10 @@ protocol AppTheme {
     var shadow: Color { get }
     var statTotal: Color { get }
 
+    // UI Dimensions
+    var avatarSize: CGFloat { get }
+
     // Gradients
-    var avatarGradient: AnyGradient { get }
     var successGradient: LinearGradient { get }
 }
 
@@ -88,9 +90,11 @@ struct DefaultTheme: AppTheme {
     var shadow: Color { AppColors.shadow }
     var statTotal: Color { AppColors.statTotal }
 
+    // MARK: - UI Dimensions
+    var avatarSize: CGFloat { AppFontSize.iconXL }
+
     // MARK: - Gradients
 
-    var avatarGradient: AnyGradient { AppColors.avatar.gradient }
     var successGradient: LinearGradient { AppGradients.success }
 }
 

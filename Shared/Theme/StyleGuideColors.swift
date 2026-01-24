@@ -66,12 +66,15 @@ enum AppColors {
     // MARK: - Avatar
 
     /// Neutral avatar color for all team members
-    static let avatar = Color(red: 0.45, green: 0.5, blue: 0.55)
+    static let avatar = Color.brown
 
     // MARK: - UI Colors
 
     /// Shadow color
     static let shadow = Color.black
+
+    /// Shadow color
+    static let frame = Color(NSColor.windowBackgroundColor)
 
     // MARK: - Manager App Theme (Purple/Blue)
 

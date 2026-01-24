@@ -144,9 +144,9 @@ struct OutcomeProjectionService {
         // Filter completed activities for this member and priority
         let relevantActivities = activities.filter {
             $0.assignedMember.id == member.id &&
-            $0.priority == priority &&
-            $0.status == .completed &&
-            $0.outcome != nil
+                $0.priority == priority &&
+                $0.status == .completed &&
+                $0.outcome != nil
         }
 
         let sampleSize = relevantActivities.count

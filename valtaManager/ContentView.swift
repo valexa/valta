@@ -97,7 +97,7 @@ struct MainTabView: View {
             }
         }
         .tabViewStyle(.sidebarAdaptable)
-        .frame(minWidth: 1000, minHeight: 800)
+        .frame(minWidth: 1000, minHeight: 700)
     }
 }
 

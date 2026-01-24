@@ -18,7 +18,7 @@ struct TeamCard: View {
         Button(action: action) {
             VStack(alignment: .leading, spacing: AppSpacing.base) {
                 Image(symbol: AppSymbols.teamMembers)
-                        .font(AppFont.headerLargeRegular)
+                    .font(AppFont.headerLargeRegular)
                 VStack(alignment: .leading, spacing: AppSpacing.xxs) {
                     Text(team.name)
                         .font(AppFont.bodyLargeSemibold)
@@ -28,7 +28,7 @@ struct TeamCard: View {
                         .font(AppFont.bodyStandard)
                         .foregroundColor(.white.opacity(0.6))
                 }
-#if os(macOS)
+                #if os(macOS)
                 // Member preview avatars
                 HStack(spacing: -4) {
                     ForEach(Array(team.members.prefix(10))) { member in
@@ -41,7 +41,7 @@ struct TeamCard: View {
                             .padding(.leading, AppSpacing.base)
                     }
                 }
-#endif
+                #endif
             }
             .overlay(alignment: .topTrailing) {
                 CheckmarkButton(isSelected: isSelected)

@@ -233,3 +233,86 @@ struct ActivityLogEntry: Identifiable, Codable {
         self.performedBy = performedBy
     }
 }
+
+// MARK: - Activity Filter State
+
+@Observable
+final class ActivityFilterState {
+    var searchText: String = ""
+    var statusFilter: ActivityStatus?
+    var priorityFilter: ActivityPriority?
+    var outcomeFilter: ActivityOutcome?
+    var showOnlyMine: Bool = false
+
+    var hasActiveFilters: Bool {
+        statusFilter != nil || priorityFilter != nil || outcomeFilter != nil
+    }
+
+    func reset() {
+        statusFilter = nil
+        priorityFilter = nil
+        outcomeFilter = nil
+    }
+
+    /// Filters an array of activities based on the current state.
+    func apply(to activities: [Activity], currentMemberId: UUID?) -> [Activity] {
+        var filtered = activities
+
+        if showOnlyMine, let memberId = currentMemberId {
+            filtered = filtered.filter { $0.assignedMember.id == memberId }
+        }
+
+        if let status = statusFilter {
+            filtered = filtered.filter { $0.status == status }
+        }
+
+        if let priority = priorityFilter {
+            filtered = filtered.filter { $0.priority == priority }
+        }
+
+        if let outcome = outcomeFilter {
+            filtered = filtered.filter { $0.outcome == outcome }
+        }
+
+        if !searchText.isEmpty {
+            filtered = filtered.filter { activity in
+                activity.name.localizedCaseInsensitiveContains(searchText) ||
+                    activity.description.localizedCaseInsensitiveContains(searchText) ||
+                    activity.assignedMember.name.localizedCaseInsensitiveContains(searchText)
+            }
+        }
+
+        return filtered
+    }
+
+    /// Filters an array of log entries based on the current state.
+    func apply(to entries: [ActivityLogEntry], currentMemberId: UUID?) -> [ActivityLogEntry] {
+        var filtered = entries
+
+        if showOnlyMine, let memberId = currentMemberId {
+            filtered = filtered.filter { $0.activity.assignedMember.id == memberId }
+        }
+
+        if let status = statusFilter {
+            filtered = filtered.filter { $0.activity.status == status }
+        }
+
+        if let priority = priorityFilter {
+            filtered = filtered.filter { $0.activity.priority == priority }
+        }
+
+        if let outcome = outcomeFilter {
+            filtered = filtered.filter { $0.activity.outcome == outcome }
+        }
+
+        if !searchText.isEmpty {
+            filtered = filtered.filter { entry in
+                entry.activity.name.localizedCaseInsensitiveContains(searchText) ||
+                    entry.activity.assignedMember.name.localizedCaseInsensitiveContains(searchText) ||
+                    entry.performedBy.localizedCaseInsensitiveContains(searchText)
+            }
+        }
+
+        return filtered
+    }
+}

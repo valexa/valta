@@ -48,8 +48,8 @@ struct ActivityFilter {
     var active: [Activity] {
         activities.filter {
             $0.status == .running ||
-            $0.status == .teamMemberPending ||
-            $0.status == .managerPending
+                $0.status == .teamMemberPending ||
+                $0.status == .managerPending
         }
     }
 
@@ -124,8 +124,8 @@ struct ActivityFilter {
         guard !query.isEmpty else { return activities }
         return activities.filter { activity in
             activity.name.localizedCaseInsensitiveContains(query) ||
-            activity.description.localizedCaseInsensitiveContains(query) ||
-            activity.assignedMember.name.localizedCaseInsensitiveContains(query)
+                activity.description.localizedCaseInsensitiveContains(query) ||
+                activity.assignedMember.name.localizedCaseInsensitiveContains(query)
         }
     }
 

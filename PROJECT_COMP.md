@@ -104,7 +104,7 @@ Theme protocol and dependency injection for colors following SOLID principles.
 - `color(for outcome:)` - Get color for ActivityOutcome
 - Action colors: `destructive`, `success`, `warning`
 - UI colors: `avatar`, `shadow`, `statTotal`
-- Gradients: `avatarGradient`, `successGradient`
+- Gradients: `successGradient`
 
 **`DefaultTheme`** - Concrete implementation using AppColors
 
@@ -366,7 +366,7 @@ Reusable UI components used throughout both apps:
 ## Team Member App (`valta/`)
 
 ### Features
-- **Three tabs**: My Activities, Team, and Log (per app header comment)
+- **Four tabs**: My Activities, Team, Timeline, and Log (per updated app structure)
 - **Onboarding**: Select identity from team member list
 - **Activity management**: Start activities, request completion
 - **Team visibility**: View all team activities
@@ -392,6 +392,13 @@ Reusable UI components used throughout both apps:
 - Grouped by team member with `MemberAvatar` and expandable sections
 - Search and filter by completed activities
 - Visual indicator for current user's activities
+
+#### TimelineTab.swift
+- **Horizontally scrollable timeline** showing team activity intensity per week.
+- **Fall-back date logic**: Priority given to completion date, then start date, then creation date.
+- **Center-aligned**: View remains centered on large screens when data is sparse.
+- **Infinity Height**: Sections expand to use all available vertical space.
+- **Outcome Popovers**: Interactive bubbles showing activity details with outcome-specific color coding (Ahead=Green, JIT=Blue, Overrun=Red).
 
 #### LogTab.swift
 - Timeline view of activity events
@@ -481,6 +488,7 @@ Reusable UI components used throughout both apps:
 ✅ Start activities (changes status from pending to running)
 ✅ Request completion with outcome selection
 ✅ View all team activities
+✅ Timeline view with weekly activity intensity and outcome tracking
 ✅ Activity log with history
 
 ---

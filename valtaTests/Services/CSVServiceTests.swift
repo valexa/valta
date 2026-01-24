@@ -110,10 +110,10 @@ struct CSVServiceTests {
         )
 
         let csvString = csvService.serializeActivities([activity])
-        
+
         #expect(csvString.contains("\"Test, with comma\""))
         #expect(csvString.contains("\"Description, also with comma\""))
-        
+
         let parsed = csvService.parseActivities(csvString: csvString, teamMembers: mockMembers)
         #expect(parsed.count == 1)
         #expect(parsed[0].name == "Test, with comma")
@@ -123,7 +123,7 @@ struct CSVServiceTests {
     @Test func testParseLineWithEscapedQuotes() {
         let line = "96D53C78-1234-4567-8901-234567890001,Test Activity,\"Description with \"\"quotes\"\"\",Vlad Alexa,p0,Running,,2025-12-04T20:00:00Z,2025-12-04T22:45:00Z"
         let activities = csvService.parseActivities(csvString: "header\n\(line)", teamMembers: mockMembers)
-        
+
         #expect(activities.count == 1)
         #expect(activities[0].description == "Description with \"quotes\"")
     }
@@ -138,10 +138,10 @@ struct CSVServiceTests {
             status: .running,
             deadline: Date()
         )
-        
+
         let csv = csvService.serializeActivities([activity])
         let parsed = csvService.parseActivities(csvString: csv, teamMembers: mockMembers)
-        
+
         #expect(parsed.count == 1)
         #expect(parsed[0].description == specialText)
     }
@@ -265,7 +265,7 @@ struct CSVServiceTests {
         // We use the helper to split it correctly because simple splitting by comma would fail if fields had commas
         let dataLines = csvString.components(separatedBy: .newlines)
         #expect(dataLines.count > 1)
-        
+
         // Use a local helper or similar logic to parseCSVLine to verify
         // But since we want to verify the raw CSV content, we'll check it contains the quoted fields and the email at the end
         #expect(csvString.hasSuffix("test.manager@example.com\n"))

@@ -11,6 +11,7 @@ import SwiftUI
 
 struct NewActivitySheet: View {
     @Environment(ManagerAppState.self) private var appState
+    @Environment(\.theme) private var theme
     @Environment(\.dismiss) private var dismiss
 
     @State private var name: String = ""
@@ -166,11 +167,7 @@ struct NewActivitySheet: View {
         } label: {
             HStack {
                 if let member = selectedMember {
-                    HStack(spacing: AppSpacing.sm) {
-                        MemberAvatar(member: member, size: 44)
-                        Text(member.name)
-                            .foregroundColor(.primary)
-                    }
+                    MemberAvatarColored(member: member, size: theme.avatarSize)
                 } else {
                     Text("Team member")
                         .foregroundColor(.primary)

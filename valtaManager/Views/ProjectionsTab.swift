@@ -90,6 +90,8 @@ struct DataWarningBanner: View {
 // MARK: - Member Projection Card
 
 struct MemberProjectionCard: View {
+    @Environment(\.theme) private var theme
+
     let summary: MemberPerformanceSummary
 
     var body: some View {
@@ -97,15 +99,7 @@ struct MemberProjectionCard: View {
             // Header with member info and score
             HStack {
                 // Avatar
-                Circle()
-                    .fill(AppColors.avatar)
-                    .frame(width: 40, height: 40)
-                    .overlay(
-                        Text(summary.member.initials)
-                            .font(AppFont.bodyStandardSemibold)
-                            .foregroundColor(.white)
-                    )
-
+                MemberAvatarColored(member: summary.member, size: theme.avatarSize * 1.5)
                 VStack(alignment: .leading, spacing: AppSpacing.xxs) {
                     Text(summary.member.name)
                         .font(AppFont.bodyPrimary)

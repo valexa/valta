@@ -139,12 +139,12 @@ struct ActivitiesTab: View {
         .background(Color(NSColor.controlBackgroundColor))
         .searchable(text: $searchText, placement: .toolbarPrincipal, prompt: "Search activities...")
         .task {
-#if os(iOS) || os(macOS) || os(visionOS)
+            #if os(iOS) || os(macOS) || os(visionOS)
             try? Tips.configure([
                 .displayFrequency(.immediate),
                 .datastoreLocation(.applicationDefault)
             ])
-#endif
+            #endif
 
         }
     }
@@ -163,6 +163,8 @@ struct ActivitiesTab: View {
 
 struct ActivitiesHeader: View {
     @Environment(TeamMemberAppState.self) private var appState
+    @Environment(\.theme) private var theme
+
     @Binding var statsFilter: MyActivitiesFilter?
     private let avatarTip = AvatarTip()
 
@@ -172,7 +174,7 @@ struct ActivitiesHeader: View {
                 // User info
                 if let member = appState.currentMember {
                     HStack(spacing: AppSpacing.base) {
-                        MemberAvatar(member: member, size: 44)
+                        MemberAvatarColored(member: member, size: theme.avatarSize)
                             .popoverTip(avatarTip, arrowEdge: .top)
                         VStack(alignment: .leading, spacing: AppSpacing.xxxs) {
                             Text(member.name)
@@ -249,9 +251,9 @@ struct ActivitiesHeader: View {
                     }) {
                         HStack(spacing: AppSpacing.xxs) {
                             Image(symbol: AppSymbols.xmark)
-                            .font(AppFont.caption)
+                                .font(AppFont.caption)
                             Text("Clear Filter")
-                            .font(AppFont.bodyStandard)
+                                .font(AppFont.bodyStandard)
                         }
                         .foregroundColor(.secondary)
                     }

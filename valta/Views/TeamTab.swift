@@ -200,7 +200,10 @@ struct TeamTabHeader: View {
 struct TeamMemberSection: View {
     let member: TeamMember
     let activities: [Activity]
+
     @Environment(TeamMemberAppState.self) private var appState
+    @Environment(\.theme) private var theme
+
     @State private var isExpanded: Bool = true
 
     var isCurrentUser: Bool {
@@ -212,7 +215,7 @@ struct TeamMemberSection: View {
             // Member header
             Button(action: { withAnimation(AppAnimations.springInteractive) { isExpanded.toggle() } }) {
                 HStack(spacing: AppSpacing.base) {
-                    MemberAvatar(member: member, size: 40)
+                    MemberAvatarColored(member: member, size: theme.avatarSize)
 
                     VStack(alignment: .leading, spacing: 2) {
                         HStack(spacing: AppSpacing.xs) {

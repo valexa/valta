@@ -35,8 +35,8 @@ struct FloatingTextField: View {
 
     private var backgroundColor: Color {
         colorScheme == .dark
-        ? Color.white.opacity(0.05)
-        : Color(NSColor.textBackgroundColor)
+            ? Color.white.opacity(0.05)
+            : Color(NSColor.textBackgroundColor)
     }
 
     var body: some View {
