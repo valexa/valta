@@ -84,6 +84,10 @@ struct MainTabView: View {
                 AnalyticsTab()
             }
 
+            Tab("Projections", systemImage: AppSymbols.tabProjections) {
+                ProjectionsTab()
+            }
+
             TabSection("Team Members") {
                 ForEach(appState.team.members) { member in
                     Tab(member.name, systemImage: AppSymbols.tabPerson) {

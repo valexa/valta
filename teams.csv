@@ -1,2 +1,13 @@
-name, team, email, manager
-Vlad Alexa,Team Name,vlad.alexa@me.com,manager.email@me.com
+"name"," team"," email"," manager"
+"Sarah Chen","Platform Engineering","sarah.chen@company.com","contact@vladalexa.com"
+"Marcus Johnson","Platform Engineering","marcus.j@company.com","contact@vladalexa.com"
+"Elena Rodriguez","Platform Engineering","elena.r@company.com","contact@vladalexa.com"
+"Alex Kim","Platform Engineering","alex.kim@company.com","contact@vladalexa.com"
+"Jordan Taylor","Platform Engineering","jordan.t@company.com","contact@vladalexa.com"
+"Priya Patel","Platform Engineering","priya.p@company.com","contact@vladalexa.com"
+"Alex Thompson","Principal Engineers","alex.t@company.com","contact@vladalexa.com"
+"Maya Gupta","Principal Engineers","maya.g@company.com","contact@vladalexa.com"
+"James Wilson","Principal Engineers","james.w@company.com","contact@vladalexa.com"
+"Lisa Wang","Principal Engineers","lisa.w@company.com","contact@vladalexa.com"
+"David Miller","Devops","david.m@company.com","contact@vladalexa.com"
+"Sophie Martin","Devops","sophie.m@company.com","contact@vladalexa.com"

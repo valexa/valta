@@ -70,21 +70,9 @@ struct NewActivitySheet: View {
 
                     // Activity name
                     FloatingTextField(title: "Activity name", text: $name, error: nameError)
-                        .onChange(of: name) { _, newValue in
-                            let sanitized = newValue.sanitizedForCSV
-                            if sanitized != newValue {
-                                name = sanitized
-                            }
-                        }
 
                     // Description
                     FloatingTextField(title: "Activity description", text: $description, error: descriptionError, isMultiline: true, minHeight: 100)
-                        .onChange(of: description) { _, newValue in
-                            let sanitized = newValue.sanitizedForCSV
-                            if sanitized != newValue {
-                                description = sanitized
-                            }
-                        }
 
                     // Priority
                     HStack(spacing: AppSpacing.sm) {

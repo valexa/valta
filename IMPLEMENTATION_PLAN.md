@@ -234,6 +234,51 @@ Live Team Activities is a macOS application suite consisting of two apps:
 
 ---
 
+## Phase 7: ML Projections ✅ PHASE A / 🔮 PHASE B PLANNED
+
+### 7.1 Statistical Outcome Projection ✅ COMPLETED
+
+Implemented statistical projection for activity outcomes based on historical member performance.
+
+- [x] Create `OutcomeProjectionService.swift`
+  - Analyzes completed activities per member and priority
+  - Calculates outcome probability distributions (ahead/jit/overrun)
+  - Performance scoring: Ahead=100pts, JIT=70pts, Overrun=30pts
+  - Confidence ratings based on sample size
+- [x] Create `ProjectionsTab.swift` in manager app
+  - Member performance cards ranked by score
+  - Swift Charts bar charts for outcome distribution
+  - Priority projection grid (P0-P3)
+  - Data warning banner when <10 completed activities
+- [x] Add `tabProjections` symbol (`robotic.vacuum`) to `AppSymbols.swift`
+- [x] Integrate tab into manager `ContentView.swift`
+
+**Why Statistical (not Core ML):**
+- App started December 2025 — insufficient training data for ML models
+- Statistical approach automatically adapts as data grows
+- No model training/bundling required
+- Equivalent accuracy for probability distributions at this scale
+
+### 7.2 Core ML Upgrade 🔮 PLANNED (June 2026)
+
+After 6 months of data accumulation (~500+ completed activities):
+
+- [ ] Create `MLDataExporter.swift` — Export activities to training format
+- [ ] Train `OutcomePredictor.mlmodel` using `MLBoostedTreeClassifier`
+- [ ] Bundle model in app
+- [ ] Implement `CoreMLOutcomeProjectionService.swift`
+- [ ] Add `MLUpdateTask` for on-device incremental learning
+
+**Data Thresholds for Core ML Transition:**
+
+| Metric | Current | Target |
+|--------|---------|--------|
+| Days of history | ~15 days | 180+ days |
+| Completed activities | ~20 | 500+ |
+| Activities per member | ~3-5 | 50+ |
+
+---
+
 ## Technical Reference
 
 ### Data Model Enums
@@ -285,7 +330,8 @@ valta/
 │   ├── Services/
 │   │   ├── ActivityFilter.swift     # ✅ Filtering/querying
 │   │   ├── ActivityStats.swift      # ✅ Statistics
-│   │   └── ActivityService.swift    # ✅ Business logic
+│   │   ├── ActivityService.swift    # ✅ Business logic
+│   │   └── OutcomeProjectionService.swift # ✅ ML projection engine
 │   └── Components/
 │       ├── SharedComponents.swift   # ✅ Reusable UI components
 │       ├── ActivityRow.swift        # ✅ Unified activity row
@@ -309,7 +355,9 @@ valta/
 │       ├── ActivitiesTab.swift
 │       ├── ManagerActivityRow.swift
 │       ├── RequestsTab.swift
-│       └── NewActivitySheet.swift
+│       ├── NewActivitySheet.swift
+│       ├── AnalyticsTab.swift       # ✅ Swift Charts analytics
+│       └── ProjectionsTab.swift     # ✅ ML outcome projections
 ├── FULL_SPECIFICATION.md
 ├── IMPLEMENTATION_PLAN.md           # This file
 └── PROJECT_COMP.md                  # Implementation summary
@@ -327,8 +375,9 @@ valta/
 | Phase 4: Notifications | ✅ Complete | 100% |
 | Phase 5: Firestore Integration | ✅ Complete | 100% |
 | Phase 6: Polish & Testing | 🔄 In Progress | 90% |
+| Phase 7: ML Projections | ✅/🔮 Partial | 50% |
 
-**Overall Progress: ~98%** (5.9 of 6 phases complete)
+**Overall Progress: ~93%** (6.4 of 7 phases complete)
 
 ---
 

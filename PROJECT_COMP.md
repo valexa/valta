@@ -247,6 +247,24 @@ Handles activity mutations following Command pattern.
 
 > **Note:** Services are injectable and testable via `now` closure. ManagerAppState delegates to services.
 
+#### OutcomeProjectionService.swift
+Statistical projection engine for activity outcome forecasting.
+
+**Data Structures:**
+- `OutcomeProjection` - Projection result with probabilities for ahead/jit/overrun, sample size, confidence
+- `ProjectionConfidence` - Confidence levels: noData, veryLow, low, medium, high
+- `MemberPerformanceSummary` - Member stats with performance score and projections per priority
+
+**Service Methods:**
+- `generateProjections(activities:members:)` - Generate projections for all team members
+- `predict(for:priority:from:)` - Get projection for specific member and priority
+
+**Performance Scoring:**
+- Ahead = 100 points, JIT = 70 points, Overrun = 30 points
+- Score = weighted average of member's completed activities
+
+> **Note:** Uses statistical analysis (not Core ML) due to limited training data. Planned upgrade to Core ML after 6 months of data.
+
 ### SharedComponents.swift
 Reusable UI components used throughout both apps:
 
@@ -330,6 +348,18 @@ Reusable UI components used throughout both apps:
 - **Activity Timeline Chart**: Line chart showing created/started/completed counts over time
 - Uses Swift Charts with custom color scales for outcomes
 - Empty states when no data available
+
+#### ProjectionsTab.swift
+- **Member Performance Cards**: Ranked by performance score (0-100)
+  - Avatar, name, completed count, performance score badge
+  - Overall distribution chart (Swift Charts bar chart)
+  - Outcome legend with percentages
+- **Priority Projection Grid**: 4-column grid showing predicted outcome per priority (P0-P3)
+  - Predicted outcome icon and label
+  - Confidence rating based on sample size
+  - Sample size indicator (n=X)
+- **Data Warning Banner**: Shown when <10 completed activities
+- Uses `OutcomeProjectionService` for statistical projections
 
 ---
 

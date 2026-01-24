@@ -16,7 +16,9 @@ extension String {
     /// - Tabs (alternate delimiter in some systems)
     var sanitizedForCSV: String {
         return self.filter { char in
-            let isInvalid = char == "," || char == "\"" || char == "\t" || char.isNewline
+            // Allow commas and quotes; they will be handled by the CSVService escaping logic.
+            // Filter out characters that would break the row structure or cause fundamental issues.
+            let isInvalid = char == "\t" || char.isNewline
             return !isInvalid
         }
     }

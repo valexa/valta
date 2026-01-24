@@ -79,6 +79,12 @@ struct MainTabView: View {
                 }
                 .tag(TeamMemberTab.team)
 
+            TimelineTab()
+                .tabItem {
+                    Label("Timeline", systemImage: AppSymbols.tabTimeline)
+                }
+                .tag(TeamMemberTab.timeline)
+
             LogTab()
                 .tabItem {
                     Label("Log", systemImage: AppSymbols.tabLog)

@@ -90,6 +90,8 @@ enum AppSymbols {
     static let tabAnalytics = "chart.bar.xaxis"
     static let tabPerson = "person"
     static let tabLog = "server.rack"
+    static let tabProjections = "robotic.vacuum"
+    static let tabTimeline = "calendar.day.timeline.left"
     static let booksVertical = "books.vertical"
 }
 

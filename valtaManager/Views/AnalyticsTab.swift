@@ -41,27 +41,42 @@ struct AnalyticsTab: View {
 struct OutcomesTimelineChart: View {
     let activities: [Activity]
 
+    private var useMonthlyGrouping: Bool {
+        guard let first = activities.compactMap({ $0.completedAt }).min(),
+              let last = activities.compactMap({ $0.completedAt }).max() else {
+            return false
+        }
+        let diff = Calendar.current.dateComponents([.day], from: first, to: last)
+        return (diff.day ?? 0) > 30
+    }
+
     private var chartData: [OutcomeDataPoint] {
-        // Group completed activities by day and outcome
+        // Group completed activities by period and outcome
         let calendar = Calendar.current
+        let unit: Calendar.Component = useMonthlyGrouping ? .month : .day
 
         // Get all completed activities with outcomes
         let completedWithOutcome = activities.filter { $0.completedAt != nil && $0.outcome != nil }
 
-        // Group by day
+        // Group by period
         var dataPoints: [OutcomeDataPoint] = []
         let grouped = Dictionary(grouping: completedWithOutcome) { activity -> Date in
-            calendar.startOfDay(for: activity.completedAt!)
+            if useMonthlyGrouping {
+                let components = calendar.dateComponents([.year, .month], from: activity.completedAt!)
+                return calendar.date(from: components)!
+            } else {
+                return calendar.startOfDay(for: activity.completedAt!)
+            }
         }
 
-        for (day, dayActivities) in grouped.sorted(by: { $0.key < $1.key }) {
-            let ahead = dayActivities.filter { $0.outcome == .ahead }.count
-            let jit = dayActivities.filter { $0.outcome == .jit }.count
-            let overrun = dayActivities.filter { $0.outcome == .overrun }.count
+        for (period, periodActivities) in grouped.sorted(by: { $0.key < $1.key }) {
+            let ahead = periodActivities.filter { $0.outcome == .ahead }.count
+            let jit = periodActivities.filter { $0.outcome == .jit }.count
+            let overrun = periodActivities.filter { $0.outcome == .overrun }.count
 
-            if ahead > 0 { dataPoints.append(OutcomeDataPoint(date: day, count: ahead, outcome: .ahead)) }
-            if jit > 0 { dataPoints.append(OutcomeDataPoint(date: day, count: jit, outcome: .jit)) }
-            if overrun > 0 { dataPoints.append(OutcomeDataPoint(date: day, count: overrun, outcome: .overrun)) }
+            if ahead > 0 { dataPoints.append(OutcomeDataPoint(date: period, count: ahead, outcome: .ahead)) }
+            if jit > 0 { dataPoints.append(OutcomeDataPoint(date: period, count: jit, outcome: .jit)) }
+            if overrun > 0 { dataPoints.append(OutcomeDataPoint(date: period, count: overrun, outcome: .overrun)) }
         }
 
         return dataPoints
@@ -77,7 +92,7 @@ struct OutcomesTimelineChart: View {
             } else {
                 Chart(chartData) { point in
                     BarMark(
-                        x: .value("Date", point.date, unit: .day),
+                        x: .value("Date", point.date, unit: useMonthlyGrouping ? .month : .day),
                         y: .value("Count", point.count)
                     )
                     .foregroundStyle(by: .value("Outcome", point.outcome.displayName))
@@ -88,9 +103,16 @@ struct OutcomesTimelineChart: View {
                     "Overrun": AppColors.outcomeOverrun
                 ])
                 .chartXAxis {
-                    AxisMarks(values: .stride(by: .day)) { value in
-                        AxisGridLine()
-                        AxisValueLabel(format: .dateTime.month(.abbreviated).day())
+                    if useMonthlyGrouping {
+                        AxisMarks(values: .stride(by: .month)) { value in
+                            AxisGridLine()
+                            AxisValueLabel(format: .dateTime.year().month(.abbreviated))
+                        }
+                    } else {
+                        AxisMarks(values: .stride(by: .day)) { value in
+                            AxisGridLine()
+                            AxisValueLabel(format: .dateTime.month(.abbreviated).day())
+                        }
                     }
                 }
                 .chartYAxis {
@@ -130,37 +152,55 @@ struct OutcomesTimelineChart: View {
 struct ActivityTimelineChart: View {
     let activities: [Activity]
 
+    private var useMonthlyGrouping: Bool {
+        guard let first = activities.map({ $0.createdAt }).min(),
+              let last = activities.map({ $0.createdAt }).max() else {
+            return false
+        }
+        let diff = Calendar.current.dateComponents([.day], from: first, to: last)
+        return (diff.day ?? 0) > 30
+    }
+
     private var chartData: [ActivityTimelinePoint] {
         let calendar = Calendar.current
         var dataPoints: [ActivityTimelinePoint] = []
 
-        // Group by creation date
-        let createdGrouped = Dictionary(grouping: activities) { activity -> Date in
-            calendar.startOfDay(for: activity.createdAt)
+        let groupDate: (Date) -> Date = { date in
+            if useMonthlyGrouping {
+                let components = calendar.dateComponents([.year, .month], from: date)
+                return calendar.date(from: components)!
+            } else {
+                return calendar.startOfDay(for: date)
+            }
         }
 
-        for (day, dayActivities) in createdGrouped {
-            dataPoints.append(ActivityTimelinePoint(date: day, count: dayActivities.count, type: .created))
+        // Group by creation date
+        let createdGrouped = Dictionary(grouping: activities) { activity -> Date in
+            groupDate(activity.createdAt)
+        }
+
+        for (period, periodActivities) in createdGrouped {
+            dataPoints.append(ActivityTimelinePoint(date: period, count: periodActivities.count, type: .created))
         }
 
         // Group by start date
         let startedActivities = activities.filter { $0.startedAt != nil }
         let startedGrouped = Dictionary(grouping: startedActivities) { activity -> Date in
-            calendar.startOfDay(for: activity.startedAt!)
+            groupDate(activity.startedAt!)
         }
 
-        for (day, dayActivities) in startedGrouped {
-            dataPoints.append(ActivityTimelinePoint(date: day, count: dayActivities.count, type: .started))
+        for (period, periodActivities) in startedGrouped {
+            dataPoints.append(ActivityTimelinePoint(date: period, count: periodActivities.count, type: .started))
         }
 
         // Group by completion date
         let completedActivities = activities.filter { $0.completedAt != nil }
         let completedGrouped = Dictionary(grouping: completedActivities) { activity -> Date in
-            calendar.startOfDay(for: activity.completedAt!)
+            groupDate(activity.completedAt!)
         }
 
-        for (day, dayActivities) in completedGrouped {
-            dataPoints.append(ActivityTimelinePoint(date: day, count: dayActivities.count, type: .completed))
+        for (period, periodActivities) in completedGrouped {
+            dataPoints.append(ActivityTimelinePoint(date: period, count: periodActivities.count, type: .completed))
         }
 
         return dataPoints.sorted { $0.date < $1.date }
@@ -176,14 +216,14 @@ struct ActivityTimelineChart: View {
             } else {
                 Chart(chartData) { point in
                     LineMark(
-                        x: .value("Date", point.date, unit: .day),
+                        x: .value("Date", point.date, unit: useMonthlyGrouping ? .month : .day),
                         y: .value("Count", point.count)
                     )
                     .foregroundStyle(by: .value("Type", point.type.displayName))
                     .symbol(by: .value("Type", point.type.displayName))
 
                     PointMark(
-                        x: .value("Date", point.date, unit: .day),
+                        x: .value("Date", point.date, unit: useMonthlyGrouping ? .month : .day),
                         y: .value("Count", point.count)
                     )
                     .foregroundStyle(by: .value("Type", point.type.displayName))
@@ -194,9 +234,16 @@ struct ActivityTimelineChart: View {
                     "Completed": Color.green
                 ])
                 .chartXAxis {
-                    AxisMarks(values: .stride(by: .day)) { value in
-                        AxisGridLine()
-                        AxisValueLabel(format: .dateTime.month(.abbreviated).day())
+                    if useMonthlyGrouping {
+                        AxisMarks(values: .stride(by: .month)) { value in
+                            AxisGridLine()
+                            AxisValueLabel(format: .dateTime.year().month(.abbreviated))
+                        }
+                    } else {
+                        AxisMarks(values: .stride(by: .day)) { value in
+                            AxisGridLine()
+                            AxisValueLabel(format: .dateTime.month(.abbreviated).day())
+                        }
                     }
                 }
                 .chartYAxis {
