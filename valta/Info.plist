@@ -10,5 +10,9 @@
 	</array>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
+	<key>SUFeedURL</key>
+	<string>https://vladalexa.com/apps/universal/valta/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>+qT3XxEl5+dG2F2H7NYA5zIupA07rNka5riG+sxqC3A=</string>
 </dict>
 </plist>

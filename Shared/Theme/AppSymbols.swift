@@ -30,6 +30,7 @@ enum AppSymbols {
 
     // MARK: - Action Icons
 
+    static let pause = "pause"
     static let play = "play.fill"
     static let checkmark = "checkmark"
     static let checkmarkSeal = "checkmark.seal.fill"

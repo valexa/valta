@@ -5,15 +5,10 @@
 //
 
 import SwiftUI
-import Firebase
-import FirebaseAuth
+import MPLemons
 
 @main
 struct valtaApp: App {
-
-    init() {
-        FirebaseApp.configure()
-    }
 
     #if os(iOS) || os(visionOS) || os(tvOS)
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
@@ -65,6 +60,13 @@ struct valtaApp: App {
         #if os(macOS)
         .windowStyle(.hiddenTitleBar)
         .windowToolbarStyle(.unified)
+        .commands {
+            CommandGroup(after: .appInfo) {
+                Button("Check for Updates...") {
+                    SparkleUpdateManager.shared.checkForUpdates()
+                }
+            }
+        }
         #endif
     }
 }

@@ -17,6 +17,8 @@
 		F559C3C42EE2482D004EB3E0 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = F559C3C32EE2482D004EB3E0 /* FirebaseStorage */; };
 		F559C3CE2EE24C9B004EB3E0 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = F559C3CD2EE24C9B004EB3E0 /* FirebaseAuth */; };
 		F559C3D02EE24CA2004EB3E0 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = F559C3CF2EE24CA2004EB3E0 /* FirebaseAuth */; };
+		F5682B322F2CEDE800934C9D /* MPLemons in Frameworks */ = {isa = PBXBuildFile; productRef = F5682B312F2CEDE800934C9D /* MPLemons */; };
+		F5717F362F2CE84600B4006B /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = F5717F352F2CE84600B4006B /* Sparkle */; };
 		F5A10C172EE43C68006A8DFD /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = F5A10C162EE43C68006A8DFD /* AppIcon.icon */; };
 		F5A10C192EE441C3006A8DFD /* AppIconManager.icon in Resources */ = {isa = PBXBuildFile; fileRef = F5A10C182EE441C3006A8DFD /* AppIconManager.icon */; };
 		F5F030FF2EE4FFB400C5CA50 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = F5F030FE2EE4FFB400C5CA50 /* FirebaseFunctions */; };
@@ -152,11 +154,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				F5F031012EE4FFBC00C5CA50 /* FirebaseMessaging in Frameworks */,
+				F5717F362F2CE84600B4006B /* Sparkle in Frameworks */,
 				F559C3D02EE24CA2004EB3E0 /* FirebaseAuth in Frameworks */,
 				F559C3AE2EE240B4004EB3E0 /* FirebaseStorage in Frameworks */,
 				F5F030FF2EE4FFB400C5CA50 /* FirebaseFunctions in Frameworks */,
 				F559C3AA2EE240B4004EB3E0 /* FirebaseCrashlytics in Frameworks */,
 				F559C3AC2EE240B4004EB3E0 /* FirebasePerformance in Frameworks */,
+				F5682B322F2CEDE800934C9D /* MPLemons in Frameworks */,
 				F51414532EE5A436001609BF /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -305,6 +309,8 @@
 				F5F030FE2EE4FFB400C5CA50 /* FirebaseFunctions */,
 				F5F031002EE4FFBC00C5CA50 /* FirebaseMessaging */,
 				F51414522EE5A436001609BF /* FirebaseFirestore */,
+				F5717F352F2CE84600B4006B /* Sparkle */,
+				F5682B312F2CEDE800934C9D /* MPLemons */,
 			);
 			productName = valta;
 			productReference = F5338F872EE16BA300619943 /* valta.app */;
@@ -397,6 +403,8 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				F559C3A62EE240B4004EB3E0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				F5717F342F2CE84600B4006B /* XCRemoteSwiftPackageReference "Sparkle" */,
+				F5682B302F2CEDE800934C9D /* XCLocalSwiftPackageReference "../MagicPrefs/Packages/MPLemons" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F5338F882EE16BA300619943 /* Products */;
@@ -1106,6 +1114,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		F5682B302F2CEDE800934C9D /* XCLocalSwiftPackageReference "../MagicPrefs/Packages/MPLemons" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../MagicPrefs/Packages/MPLemons;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		F559C3A62EE240B4004EB3E0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -1113,6 +1128,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 12.6.0;
+			};
+		};
+		F5717F342F2CE84600B4006B /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.8.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -1167,6 +1190,15 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F559C3A62EE240B4004EB3E0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAuth;
+		};
+		F5682B312F2CEDE800934C9D /* MPLemons */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MPLemons;
+		};
+		F5717F352F2CE84600B4006B /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F5717F342F2CE84600B4006B /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
 		};
 		F5F030FE2EE4FFB400C5CA50 /* FirebaseFunctions */ = {
 			isa = XCSwiftPackageProductDependency;

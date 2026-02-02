@@ -27,6 +27,8 @@ The deadlines for each activity are monitored each minute, once a activity has p
 
 If a activity reaches deadline and it has the "team member pending" status set the status to canceled and outcome to empty
 
+Any attempt to complete an activity less than 5 minutes after it was started should trigger an alert to the user stating "You cannot complete an activity unless 5 minutes have passed since you started it".
+
 Activity status:
 running
 completed

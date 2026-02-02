@@ -11,6 +11,9 @@
 import AppKit
 import UserNotifications
 import FirebaseMessaging
+import Firebase
+import Sparkle
+import MPLemons
 
 class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDelegate {
 
@@ -20,6 +23,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
 
         // Setup notification center delegate
         UNUserNotificationCenter.current().delegate = self
+
+        // Init Firebase
+        UserDefaults.standard.register(defaults: ["NSApplicationCrashOnExceptions": true])
+        FirebaseApp.configure()
+
+        // Initialize Sparkle
+        SparkleUpdateManager.shared.start()
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {

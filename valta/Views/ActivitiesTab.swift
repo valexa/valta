@@ -330,14 +330,27 @@ struct ActivityRowWithSheet: View {
     let style: ActivitySectionStyle
     @Environment(TeamMemberAppState.self) private var appState
 
+    @State private var showingCompletionAlert = false
+
     var body: some View {
         ActivityRow(
             activity: activity,
             showAssignee: false,
             isHighlighted: false,
             onStart: style == .pending ? { withAnimation(AppAnimations.springAction) { appState.startActivity(activity) } } : nil,
-            onComplete: style == .running ? { withAnimation(AppAnimations.springAction) { appState.requestReview(activity) } } : nil
+            onComplete: style == .running ? {
+                if let startedAt = activity.startedAt, Date().timeIntervalSince(startedAt) < 300 {
+                    showingCompletionAlert = true
+                } else {
+                    withAnimation(AppAnimations.springAction) { appState.requestReview(activity) }
+                }
+            } : nil
         )
+        .alert("Cannot Complete Activity", isPresented: $showingCompletionAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("You cannot complete an activity unless 5 minutes have passed since you started it.")
+        }
     }
 }
 
