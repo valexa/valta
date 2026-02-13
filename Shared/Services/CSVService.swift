@@ -238,7 +238,13 @@ class CSVService: CSVParsing {
     }
 
     private func escapeCSV(_ string: String) -> String {
-        let escaped = string.replacingOccurrences(of: "\"", with: "\"\"")
+        // Normalize smart quotes to ASCII equivalents
+        var normalized = string
+            .replacingOccurrences(of: "\u{2018}", with: "'")  // left single quote
+            .replacingOccurrences(of: "\u{2019}", with: "'")  // right single quote
+            .replacingOccurrences(of: "\u{201C}", with: "\"") // left double quote
+            .replacingOccurrences(of: "\u{201D}", with: "\"") // right double quote
+        let escaped = normalized.replacingOccurrences(of: "\"", with: "\"\"")
         return "\"\(escaped)\""
     }
 }

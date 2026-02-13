@@ -121,7 +121,7 @@ class StorageService {
     func uploadActivities(_ csvString: String) async throws {
         guard let data = csvString.data(using: .utf8) else { return }
         try await provider.uploadData(path: activitiesPath, data: data, metadata: [
-            "contentType": "text/csv",
+            "contentType": "text/csv; charset=utf-8",
             "cacheControl": "no-cache"
         ])
         // Update timestamp after successful upload
