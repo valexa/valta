@@ -21,6 +21,8 @@
 		F5717F362F2CE84600B4006B /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = F5717F352F2CE84600B4006B /* Sparkle */; };
 		F5A10C172EE43C68006A8DFD /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = F5A10C162EE43C68006A8DFD /* AppIcon.icon */; };
 		F5A10C192EE441C3006A8DFD /* AppIconManager.icon in Resources */ = {isa = PBXBuildFile; fileRef = F5A10C182EE441C3006A8DFD /* AppIconManager.icon */; };
+		F5CB809D2F36432500F1C672 /* MPLemons in Frameworks */ = {isa = PBXBuildFile; productRef = F5CB809C2F36432500F1C672 /* MPLemons */; };
+		F5CB809F2F36432C00F1C672 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = F5CB809E2F36432C00F1C672 /* Sparkle */; };
 		F5F030FF2EE4FFB400C5CA50 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = F5F030FE2EE4FFB400C5CA50 /* FirebaseFunctions */; };
 		F5F031012EE4FFBC00C5CA50 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = F5F031002EE4FFBC00C5CA50 /* FirebaseMessaging */; };
 		F5F031032EE4FFC800C5CA50 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = F5F031022EE4FFC800C5CA50 /* FirebaseFunctions */; };
@@ -132,9 +134,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F5CB809F2F36432C00F1C672 /* Sparkle in Frameworks */,
 				F5F031052EE4FFCE00C5CA50 /* FirebaseMessaging in Frameworks */,
 				F559C3CE2EE24C9B004EB3E0 /* FirebaseAuth in Frameworks */,
 				F559C3C42EE2482D004EB3E0 /* FirebaseStorage in Frameworks */,
+				F5CB809D2F36432500F1C672 /* MPLemons in Frameworks */,
 				F5F031032EE4FFC800C5CA50 /* FirebaseFunctions in Frameworks */,
 				F559C3C02EE2482D004EB3E0 /* FirebaseCrashlytics in Frameworks */,
 				F559C3C22EE2482D004EB3E0 /* FirebasePerformance in Frameworks */,
@@ -255,6 +259,8 @@
 				F5F031022EE4FFC800C5CA50 /* FirebaseFunctions */,
 				F5F031042EE4FFCE00C5CA50 /* FirebaseMessaging */,
 				F51414542EE5A43F001609BF /* FirebaseFirestore */,
+				F5CB809C2F36432500F1C672 /* MPLemons */,
+				F5CB809E2F36432C00F1C672 /* Sparkle */,
 			);
 			productName = valtaManager;
 			productReference = F51CBB262EE17C8F00615E23 /* valtaManager.app */;
@@ -1196,6 +1202,16 @@
 			productName = MPLemons;
 		};
 		F5717F352F2CE84600B4006B /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F5717F342F2CE84600B4006B /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+		F5CB809C2F36432500F1C672 /* MPLemons */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F5682B302F2CEDE800934C9D /* XCLocalSwiftPackageReference "../MagicPrefs/Packages/MPLemons" */;
+			productName = MPLemons;
+		};
+		F5CB809E2F36432C00F1C672 /* Sparkle */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = F5717F342F2CE84600B4006B /* XCRemoteSwiftPackageReference "Sparkle" */;
 			productName = Sparkle;

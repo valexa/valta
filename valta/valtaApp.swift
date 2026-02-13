@@ -49,9 +49,11 @@ struct valtaApp: App {
 
                         // Start periodic refresh every 60 seconds
                         while true {
-                            try? await Task.sleep(nanoseconds: 60 * 1_000_000_000) // 60 seconds
+                            try await Task.sleep(nanoseconds: 60 * 1_000_000_000) // 60 seconds
                             await dataManager.loadData()
                         }
+                    } catch is CancellationError {
+                        print("loadData Task cancelled")
                     } catch {
                         print("Authentication error: \(error.localizedDescription)")
                     }
