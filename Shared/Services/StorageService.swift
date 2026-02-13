@@ -4,6 +4,7 @@
 //
 //  Handles Firebase Storage operations for CSV files.
 //  Exposes provider for testing.
+//  Includes timestamp tracking for conflict detection.
 //
 //  Created by vlad on 2025-12-04.
 //
@@ -17,6 +18,7 @@ import Observation
 protocol StorageProvider {
     func downloadData(path: String, maxSize: Int64) async throws -> Data
     func uploadData(path: String, data: Data, metadata: [String: String]?) async throws
+    func fetchMetadata(path: String) async throws -> Date
 }
 
 // MARK: - Firebase Implementation
@@ -42,6 +44,12 @@ struct FirebaseStorageProvider: StorageProvider {
         }
         _ = try await ref.putDataAsync(data, metadata: storageMetadata)
     }
+
+    func fetchMetadata(path: String) async throws -> Date {
+        let ref = storage.reference().child(path)
+        let metadata = try await ref.getMetadata()
+        return metadata.updated ?? metadata.timeCreated ?? Date()
+    }
 }
 
 // MARK: - Storage Service
@@ -56,6 +64,9 @@ class StorageService {
 
     var isSyncing = false
     var lastSyncError: Error?
+
+    /// Tracks the last known remote modification time for conflict detection
+    var lastKnownRemoteTimestamp: Date?
 
     init(provider: StorageProvider = FirebaseStorageProvider()) {
         self.provider = provider
@@ -80,6 +91,31 @@ class StorageService {
         return string
     }
 
+    /// Downloads activities and fetches the remote timestamp for conflict tracking
+    func downloadActivitiesWithTimestamp() async throws -> (csv: String, remoteTimestamp: Date) {
+        let csv = try await downloadActivities()
+        let timestamp = try await provider.fetchMetadata(path: activitiesPath)
+        lastKnownRemoteTimestamp = timestamp
+        return (csv, timestamp)
+    }
+
+    // MARK: - Metadata
+
+    /// Fetches the current remote modification timestamp for activities.csv
+    func fetchActivitiesTimestamp() async throws -> Date {
+        return try await provider.fetchMetadata(path: activitiesPath)
+    }
+
+    /// Returns true if the remote file has been modified since our last download
+    func hasRemoteConflict() async throws -> Bool {
+        guard let lastKnown = lastKnownRemoteTimestamp else {
+            // First time — no baseline, no conflict
+            return false
+        }
+        let remoteTimestamp = try await fetchActivitiesTimestamp()
+        return remoteTimestamp > lastKnown
+    }
+
     // MARK: - Upload
 
     func uploadActivities(_ csvString: String) async throws {
@@ -88,5 +124,7 @@ class StorageService {
             "contentType": "text/csv",
             "cacheControl": "no-cache"
         ])
+        // Update timestamp after successful upload
+        lastKnownRemoteTimestamp = try? await fetchActivitiesTimestamp()
     }
 }
