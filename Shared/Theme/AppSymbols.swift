@@ -30,6 +30,7 @@ enum AppSymbols {
 
     // MARK: - Action Icons
 
+    static let pause = "pause"
     static let play = "play.fill"
     static let checkmark = "checkmark"
     static let checkmarkSeal = "checkmark.seal.fill"
@@ -90,6 +91,8 @@ enum AppSymbols {
     static let tabAnalytics = "chart.bar.xaxis"
     static let tabPerson = "person"
     static let tabLog = "server.rack"
+    static let tabProjections = "robotic.vacuum"
+    static let tabTimeline = "chart.line.flattrend.xyaxis"
     static let booksVertical = "books.vertical"
 }
 

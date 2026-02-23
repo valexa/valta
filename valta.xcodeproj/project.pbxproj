@@ -17,8 +17,12 @@
 		F559C3C42EE2482D004EB3E0 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = F559C3C32EE2482D004EB3E0 /* FirebaseStorage */; };
 		F559C3CE2EE24C9B004EB3E0 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = F559C3CD2EE24C9B004EB3E0 /* FirebaseAuth */; };
 		F559C3D02EE24CA2004EB3E0 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = F559C3CF2EE24CA2004EB3E0 /* FirebaseAuth */; };
+		F5682B322F2CEDE800934C9D /* MPLemons in Frameworks */ = {isa = PBXBuildFile; productRef = F5682B312F2CEDE800934C9D /* MPLemons */; };
+		F5717F362F2CE84600B4006B /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = F5717F352F2CE84600B4006B /* Sparkle */; };
 		F5A10C172EE43C68006A8DFD /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = F5A10C162EE43C68006A8DFD /* AppIcon.icon */; };
 		F5A10C192EE441C3006A8DFD /* AppIconManager.icon in Resources */ = {isa = PBXBuildFile; fileRef = F5A10C182EE441C3006A8DFD /* AppIconManager.icon */; };
+		F5CB809D2F36432500F1C672 /* MPLemons in Frameworks */ = {isa = PBXBuildFile; productRef = F5CB809C2F36432500F1C672 /* MPLemons */; };
+		F5CB809F2F36432C00F1C672 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = F5CB809E2F36432C00F1C672 /* Sparkle */; };
 		F5F030FF2EE4FFB400C5CA50 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = F5F030FE2EE4FFB400C5CA50 /* FirebaseFunctions */; };
 		F5F031012EE4FFBC00C5CA50 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = F5F031002EE4FFBC00C5CA50 /* FirebaseMessaging */; };
 		F5F031032EE4FFC800C5CA50 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = F5F031022EE4FFC800C5CA50 /* FirebaseFunctions */; };
@@ -130,9 +134,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F5CB809F2F36432C00F1C672 /* Sparkle in Frameworks */,
 				F5F031052EE4FFCE00C5CA50 /* FirebaseMessaging in Frameworks */,
 				F559C3CE2EE24C9B004EB3E0 /* FirebaseAuth in Frameworks */,
 				F559C3C42EE2482D004EB3E0 /* FirebaseStorage in Frameworks */,
+				F5CB809D2F36432500F1C672 /* MPLemons in Frameworks */,
 				F5F031032EE4FFC800C5CA50 /* FirebaseFunctions in Frameworks */,
 				F559C3C02EE2482D004EB3E0 /* FirebaseCrashlytics in Frameworks */,
 				F559C3C22EE2482D004EB3E0 /* FirebasePerformance in Frameworks */,
@@ -152,11 +158,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				F5F031012EE4FFBC00C5CA50 /* FirebaseMessaging in Frameworks */,
+				F5717F362F2CE84600B4006B /* Sparkle in Frameworks */,
 				F559C3D02EE24CA2004EB3E0 /* FirebaseAuth in Frameworks */,
 				F559C3AE2EE240B4004EB3E0 /* FirebaseStorage in Frameworks */,
 				F5F030FF2EE4FFB400C5CA50 /* FirebaseFunctions in Frameworks */,
 				F559C3AA2EE240B4004EB3E0 /* FirebaseCrashlytics in Frameworks */,
 				F559C3AC2EE240B4004EB3E0 /* FirebasePerformance in Frameworks */,
+				F5682B322F2CEDE800934C9D /* MPLemons in Frameworks */,
 				F51414532EE5A436001609BF /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -251,6 +259,8 @@
 				F5F031022EE4FFC800C5CA50 /* FirebaseFunctions */,
 				F5F031042EE4FFCE00C5CA50 /* FirebaseMessaging */,
 				F51414542EE5A43F001609BF /* FirebaseFirestore */,
+				F5CB809C2F36432500F1C672 /* MPLemons */,
+				F5CB809E2F36432C00F1C672 /* Sparkle */,
 			);
 			productName = valtaManager;
 			productReference = F51CBB262EE17C8F00615E23 /* valtaManager.app */;
@@ -305,6 +315,8 @@
 				F5F030FE2EE4FFB400C5CA50 /* FirebaseFunctions */,
 				F5F031002EE4FFBC00C5CA50 /* FirebaseMessaging */,
 				F51414522EE5A436001609BF /* FirebaseFirestore */,
+				F5717F352F2CE84600B4006B /* Sparkle */,
+				F5682B312F2CEDE800934C9D /* MPLemons */,
 			);
 			productName = valta;
 			productReference = F5338F872EE16BA300619943 /* valta.app */;
@@ -397,6 +409,8 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				F559C3A62EE240B4004EB3E0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				F5717F342F2CE84600B4006B /* XCRemoteSwiftPackageReference "Sparkle" */,
+				F5682B302F2CEDE800934C9D /* XCLocalSwiftPackageReference "../MagicPrefs/Packages/MPLemons" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F5338F882EE16BA300619943 /* Products */;
@@ -539,7 +553,7 @@
 				CODE_SIGN_ENTITLEMENTS = valtaManager/valtaManager.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 9;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 6P6BQ65AWN;
 				ENABLE_APP_SANDBOX = YES;
@@ -572,7 +586,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.1;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.valexa.valtaManager;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -598,7 +612,7 @@
 				CODE_SIGN_ENTITLEMENTS = valtaManager/valtaManager.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 9;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 6P6BQ65AWN;
 				ENABLE_APP_SANDBOX = YES;
@@ -631,7 +645,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.1;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.valexa.valtaManager;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -830,7 +844,7 @@
 				CODE_SIGN_ENTITLEMENTS = valta/valta.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 9;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 6P6BQ65AWN;
 				ENABLE_APP_SANDBOX = YES;
@@ -863,7 +877,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.1;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.valexa.valta;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -890,7 +904,7 @@
 				CODE_SIGN_ENTITLEMENTS = valta/valta.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 9;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 6P6BQ65AWN;
 				ENABLE_APP_SANDBOX = YES;
@@ -923,7 +937,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.1;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.valexa.valta;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1106,6 +1120,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		F5682B302F2CEDE800934C9D /* XCLocalSwiftPackageReference "../MagicPrefs/Packages/MPLemons" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../MagicPrefs/Packages/MPLemons;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		F559C3A62EE240B4004EB3E0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -1113,6 +1134,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 12.6.0;
+			};
+		};
+		F5717F342F2CE84600B4006B /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.8.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -1167,6 +1196,25 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F559C3A62EE240B4004EB3E0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAuth;
+		};
+		F5682B312F2CEDE800934C9D /* MPLemons */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MPLemons;
+		};
+		F5717F352F2CE84600B4006B /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F5717F342F2CE84600B4006B /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+		F5CB809C2F36432500F1C672 /* MPLemons */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F5682B302F2CEDE800934C9D /* XCLocalSwiftPackageReference "../MagicPrefs/Packages/MPLemons" */;
+			productName = MPLemons;
+		};
+		F5CB809E2F36432C00F1C672 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F5717F342F2CE84600B4006B /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
 		};
 		F5F030FE2EE4FFB400C5CA50 /* FirebaseFunctions */ = {
 			isa = XCSwiftPackageProductDependency;

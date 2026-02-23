@@ -10,50 +10,6 @@
 
 import SwiftUI
 
-// MARK: - Member Avatar
-
-struct MemberAvatar: View {
-    @Environment(\.theme) private var theme
-
-    let member: TeamMember?
-    var size: CGFloat = 36
-    var initialsOverride: String?
-
-    private var displayInitials: String {
-        if let override = initialsOverride {
-            return override
-        }
-        return member?.initials ?? "?"
-    }
-
-    var body: some View {
-        Button(action: {}) {
-            Text(displayInitials)
-                .font(.system(size: size * 0.36, weight: .semibold, design: .rounded))
-                .foregroundColor(.white)
-        }
-        .frame(width: size, height: size)
-        .tint(.brown)
-        .buttonStyle(.glass)
-        .buttonBorderShape(.capsule)
-        .allowsHitTesting(false)
-    }
-
-    /// Convenience initializer for member-based avatar
-    init(member: TeamMember, size: CGFloat = 36) {
-        self.member = member
-        self.size = size
-        self.initialsOverride = nil
-    }
-
-    /// Convenience initializer for preview avatar with custom initials
-    init(initials: String, size: CGFloat = 36) {
-        self.member = nil
-        self.size = size
-        self.initialsOverride = initials
-    }
-}
-
 // MARK: - Time Remaining Label
 
 struct TimeRemainingLabel: View {
@@ -239,7 +195,6 @@ struct SectionHeader: View {
         HStack(spacing: 12) {
             MemberAvatar(member: .mock)
             MemberAvatar(member: .mock, size: 72)
-            MemberAvatar(initials: "VA", size: 36)
                 .disabled(true)
         }
 

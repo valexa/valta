@@ -91,6 +91,7 @@ final class ManagerAppState: BaseAppState, ActivityDataProviding {
         activity.updateInBackend { mutableActivity in
             mutableActivity.status = .running
             mutableActivity.outcome = nil
+            mutableActivity.completedAt = nil
         }
 
         let managerName = team.managerEmail ?? "Manager"
@@ -140,6 +141,17 @@ final class ManagerAppState: BaseAppState, ActivityDataProviding {
     func cancelActivity(_ activity: Activity) {
         activity.updateInBackend { mutableActivity in
             mutableActivity.status = .canceled
+            mutableActivity.startedAt = nil
+            mutableActivity.completedAt = nil
+            mutableActivity.outcome = nil
+        }
+    }
+
+    func pauseActivity(_ activity: Activity) {
+        activity.updateInBackend { mutableActivity in
+            mutableActivity.status = .teamMemberPending
+            mutableActivity.startedAt = nil
+            mutableActivity.outcome = nil
         }
     }
 

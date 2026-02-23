@@ -5,6 +5,7 @@
       "layers" : [
         {
           "glass" : false,
+          "hidden" : false,
           "image-name" : "a 3.png",
           "name" : "a 3",
           "position" : {

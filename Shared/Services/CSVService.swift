@@ -113,18 +113,18 @@ class CSVService: CSVParsing {
 
         for activity in activities {
             let row = [
-                activity.id.uuidString,
+                escapeCSV(activity.id.uuidString),
                 escapeCSV(activity.name),
                 escapeCSV(activity.description),
                 escapeCSV(activity.assignedMember.name),
-                activity.priority.shortName.lowercased(), // p0, p1 etc
-                activity.status.rawValue,
-                activity.outcome?.rawValue ?? "",
-                dateFormatter.string(from: activity.createdAt),
-                dateFormatter.string(from: activity.deadline),
-                activity.startedAt.map { dateFormatter.string(from: $0) } ?? "",
-                activity.completedAt.map { dateFormatter.string(from: $0) } ?? "",
-                activity.managerEmail ?? ""
+                escapeCSV(activity.priority.shortName.lowercased()), // p0, p1 etc
+                escapeCSV(activity.status.rawValue),
+                escapeCSV(activity.outcome?.rawValue ?? ""),
+                escapeCSV(dateFormatter.string(from: activity.createdAt)),
+                escapeCSV(dateFormatter.string(from: activity.deadline)),
+                escapeCSV(activity.startedAt.map { dateFormatter.string(from: $0) } ?? ""),
+                escapeCSV(activity.completedAt.map { dateFormatter.string(from: $0) } ?? ""),
+                escapeCSV(activity.managerEmail ?? "")
             ]
 
             csv += row.joined(separator: ",") + "\n"
@@ -208,10 +208,24 @@ class CSVService: CSVParsing {
         var result: [String] = []
         var current = ""
         var insideQuotes = false
+        var skipNext = false
 
-        for char in line {
+        let characters = Array(line)
+        for i in 0..<characters.count {
+            if skipNext {
+                skipNext = false
+                continue
+            }
+
+            let char = characters[i]
             if char == "\"" {
-                insideQuotes.toggle()
+                if insideQuotes && i + 1 < characters.count && characters[i + 1] == "\"" {
+                    // Escaped quote: ""
+                    current.append("\"")
+                    skipNext = true
+                } else {
+                    insideQuotes.toggle()
+                }
             } else if char == "," && !insideQuotes {
                 result.append(current)
                 current = ""
@@ -224,10 +238,13 @@ class CSVService: CSVParsing {
     }
 
     private func escapeCSV(_ string: String) -> String {
-        if string.contains(",") || string.contains("\"") || string.contains("\n") {
-            let escaped = string.replacingOccurrences(of: "\"", with: "\"\"")
-            return "\"\(escaped)\""
-        }
-        return string
+        // Normalize smart quotes to ASCII equivalents
+        var normalized = string
+            .replacingOccurrences(of: "\u{2018}", with: "'")  // left single quote
+            .replacingOccurrences(of: "\u{2019}", with: "'")  // right single quote
+            .replacingOccurrences(of: "\u{201C}", with: "\"") // left double quote
+            .replacingOccurrences(of: "\u{201D}", with: "\"") // right double quote
+        let escaped = normalized.replacingOccurrences(of: "\"", with: "\"\"")
+        return "\"\(escaped)\""
     }
 }

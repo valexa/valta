@@ -11,19 +11,41 @@
 import AppKit
 import UserNotifications
 import FirebaseMessaging
+import Firebase
+import FirebaseFirestore
+import Sparkle
+import MPLemons
 
 class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        UserDefaults.standard.register(defaults: ["NSApplicationCrashOnExceptions": true])
         UserDefaults.standard.set(-1, forKey: "AppleAccentColor")
 
         // Setup notification center delegate
         UNUserNotificationCenter.current().delegate = self
+
+        // Init Firebase
+        UserDefaults.standard.register(defaults: ["NSApplicationCrashOnExceptions": true])
+        FirebaseApp.configure()
+
+        // Initialize Sparkle
+        SparkleUpdateManager.shared.start()
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
-        return true
+        // Prevent immediate termination to allow animation to finish and gRPC to close
+        Task {
+            // Wait for window animation (0.5s)
+            try? await Task.sleep(nanoseconds: 500_000_000)
+
+            // Clean up Firestore to prevent gRPC timeout
+            // We use a separate Task to ensure it doesn't block if it hangs, though terminate() is usually fast
+            try? await Firestore.firestore().terminate() // Ignore errors on shutdown to avoid blocking termination
+
+            // Quit the app gracefully
+            NSApplication.shared.terminate(nil)
+        }
+        return false
     }
 
     // MARK: - Remote Notification Registration

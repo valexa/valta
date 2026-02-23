@@ -11,6 +11,7 @@ import SwiftUI
 
 struct NewActivitySheet: View {
     @Environment(ManagerAppState.self) private var appState
+    @Environment(\.theme) private var theme
     @Environment(\.dismiss) private var dismiss
 
     @State private var name: String = ""
@@ -70,21 +71,9 @@ struct NewActivitySheet: View {
 
                     // Activity name
                     FloatingTextField(title: "Activity name", text: $name, error: nameError)
-                        .onChange(of: name) { _, newValue in
-                            let sanitized = newValue.sanitizedForCSV
-                            if sanitized != newValue {
-                                name = sanitized
-                            }
-                        }
 
                     // Description
                     FloatingTextField(title: "Activity description", text: $description, error: descriptionError, isMultiline: true, minHeight: 100)
-                        .onChange(of: description) { _, newValue in
-                            let sanitized = newValue.sanitizedForCSV
-                            if sanitized != newValue {
-                                description = sanitized
-                            }
-                        }
 
                     // Priority
                     HStack(spacing: AppSpacing.sm) {
@@ -178,11 +167,7 @@ struct NewActivitySheet: View {
         } label: {
             HStack {
                 if let member = selectedMember {
-                    HStack(spacing: AppSpacing.sm) {
-                        MemberAvatar(member: member, size: 44)
-                        Text(member.name)
-                            .foregroundColor(.primary)
-                    }
+                    MemberAvatarColored(member: member, size: theme.avatarSize)
                 } else {
                     Text("Team member")
                         .foregroundColor(.primary)

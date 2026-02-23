@@ -17,9 +17,13 @@ class MockStorageProvider: StorageProvider {
 
     // Track call counts
     var downloadCallCount = 0
+    var metadataCallCount = 0
 
     var shouldFailDownload = false
     var shouldFailUpload = false
+
+    /// Controllable timestamp for conflict detection testing
+    var mockTimestamp = Date()
 
     /// When true, returns empty CSV headers if data not found (useful for tests needing valid initial state).
     /// When false (default), throws URLError.fileDoesNotExist if data not found (stricter test behavior).
@@ -54,5 +58,12 @@ class MockStorageProvider: StorageProvider {
 
         storedData[path] = data
         uploadCalls.append(UploadCall(path: path, data: data, metadata: metadata))
+        // Advance timestamp to simulate server updating modification time
+        mockTimestamp = Date()
+    }
+
+    func fetchMetadata(path: String) async throws -> Date {
+        metadataCallCount += 1
+        return mockTimestamp
     }
 }

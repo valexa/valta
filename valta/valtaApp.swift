@@ -1,23 +1,14 @@
 //
 //  valtaApp.swift
 //  valta team member app entry point
-//  Synopsis: 3 tabs, activities, team and log
-//  Activities tab shows assigned activities and their status
-//  Team tab displays all running or pending activities assigned to the user's team
-//  Log tab provides a history of completed activities
 //  Created by vlad on 04/12/2025.
 //
 
 import SwiftUI
-import Firebase
-import FirebaseAuth
+import MPLemons
 
 @main
 struct valtaApp: App {
-
-    init() {
-        FirebaseApp.configure()
-    }
 
     #if os(iOS) || os(visionOS) || os(tvOS)
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
@@ -58,9 +49,11 @@ struct valtaApp: App {
 
                         // Start periodic refresh every 60 seconds
                         while true {
-                            try? await Task.sleep(nanoseconds: 60 * 1_000_000_000) // 60 seconds
+                            try await Task.sleep(nanoseconds: 60 * 1_000_000_000) // 60 seconds
                             await dataManager.loadData()
                         }
+                    } catch is CancellationError {
+                        print("loadData Task cancelled")
                     } catch {
                         print("Authentication error: \(error.localizedDescription)")
                     }
@@ -69,6 +62,13 @@ struct valtaApp: App {
         #if os(macOS)
         .windowStyle(.hiddenTitleBar)
         .windowToolbarStyle(.unified)
+        .commands {
+            CommandGroup(after: .appInfo) {
+                Button("Check for Updates...") {
+                    SparkleUpdateManager.shared.checkForUpdates()
+                }
+            }
+        }
         #endif
     }
 }

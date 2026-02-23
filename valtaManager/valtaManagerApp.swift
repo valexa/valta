@@ -15,17 +15,13 @@ import FirebaseAuth
 @main
 struct valtaManagerApp: App {
 
-    init() {
-        FirebaseApp.configure()
-    }
-
-    #if os(iOS) || os(visionOS) || os(tvOS)
+#if os(iOS) || os(visionOS) || os(tvOS)
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    #endif
+#endif
 
-    #if os(macOS)
+#if os(macOS)
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    #endif
+#endif
 
     @State private var dataManager = DataManager.shared
     @State private var authService = AuthService.shared
@@ -58,9 +54,11 @@ struct valtaManagerApp: App {
 
                         // Start periodic refresh every 60 seconds
                         while true {
-                            try? await Task.sleep(nanoseconds: 60 * 1_000_000_000) // 60 seconds
+                            try await Task.sleep(nanoseconds: 60 * 1_000_000_000) // 60 seconds
                             await dataManager.loadData()
                         }
+                    } catch is CancellationError {
+                        print("loadData Task cancelled")
                     } catch {
                         print("Authentication error: \(error.localizedDescription)")
                     }

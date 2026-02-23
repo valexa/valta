@@ -79,6 +79,12 @@ struct MainTabView: View {
                 }
                 .tag(TeamMemberTab.team)
 
+            TimelineTab()
+                .tabItem {
+                    Label("Timeline", systemImage: AppSymbols.tabTimeline)
+                }
+                .tag(TeamMemberTab.timeline)
+
             LogTab()
                 .tabItem {
                     Label("Log", systemImage: AppSymbols.tabLog)
@@ -92,7 +98,7 @@ struct MainTabView: View {
                 .tag(TeamMemberTab.help)
         }
         .tabViewStyle(.sidebarAdaptable)
-        .frame(minWidth: 1000, minHeight: 800)
+        .frame(minWidth: 1000, minHeight: 700)
     }
 }
 

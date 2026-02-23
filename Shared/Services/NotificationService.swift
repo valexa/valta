@@ -125,7 +125,7 @@ final class NotificationService: NSObject {
                 let nsError = error as NSError
                 // Check if it's the "No APNS token" error
                 let isAPNSError = nsError.localizedDescription.contains("APNS") ||
-                                  nsError.localizedDescription.contains("No APNS token")
+                    nsError.localizedDescription.contains("No APNS token")
 
                 if isAPNSError && attempt < maxRetries {
                     print("⏳ APNS token not ready, retrying in \(delay / 1_000_000)ms (attempt \(attempt)/\(maxRetries))...")

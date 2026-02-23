@@ -6,7 +6,7 @@
 
 * Description : Live Team Activities is a macOS application that allows users to monitor and manage team activities in real-time. It provides a centralized platform for tracking tasks, deadlines, and visibility of tasks progress among team members.
 
-* Features : The application consists of a manager app (valtaManager.app) and a team member app (valtaTeam.app). The manager app allows team leaders to create teams and assign activities to members in those teams, set deadlines, and monitor progress. The team member app enables members to trigger a activity completion event for their assigned activities and see a dashboard of all team activities, a log tab and notifications about the activities in the team they are a member of.
+* Features : The application consists of a manager app (valtaManager.app) and a team member app (valtaTeam.app). The manager app allows team leaders to create teams and assign activities to members in those teams, set deadlines, and monitor progress. The team member app enables members to trigger a activity completion event for their assigned activities and see a dashboard of all team activities, a timeline tab, a log tab and notifications about the activities in the team they are a member of.
 
 Manager Onboarding: When launching the manager app for the first time, users are guided through a setup process where they can create a new team by providing a team name and adding team members from a predefined list. This ensures that the team structure is established correctly from the outset.
 
@@ -26,6 +26,8 @@ The manager can trigger a activity completion event for a team member's assigned
 The deadlines for each activity are monitored each minute, once a activity has passed the deadline without a manager completion it gets automatically transitioned to status being updated to completed, outcome to overrun and color code to red unless there is a pending completion event from the team member in which case the activity status is updated to pending.
 
 If a activity reaches deadline and it has the "team member pending" status set the status to canceled and outcome to empty
+
+Any attempt to complete an activity less than 5 minutes after it was started should trigger an alert to the user stating "You cannot complete an activity unless 5 minutes have passed since you started it".
 
 Activity status:
 running

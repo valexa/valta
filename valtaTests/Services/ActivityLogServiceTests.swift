@@ -150,7 +150,7 @@ struct ActivityLogServiceTests {
         #expect(entries[0].timestamp >= entries[1].timestamp)
         for i in 0..<(entries.count - 1) {
             #expect(entries[i].timestamp >= entries[i + 1].timestamp,
-                          "Entries should be sorted by timestamp descending")
+                    "Entries should be sorted by timestamp descending")
         }
     }
 

@@ -29,7 +29,7 @@ struct MemberSelectionCard: View {
     var button: some View {
         Button(action: { action?() }) {
             HStack(spacing: AppSpacing.base) {
-                MemberAvatar(member: member, size: avatarSize)
+                MemberAvatarColored(member: member, size: avatarSize)
                     .padding(.leading)
                 info
             }
@@ -44,10 +44,10 @@ struct MemberSelectionCard: View {
             )
         }
         .buttonStyle(.plain)
-#if os(macOS)
+        #if os(macOS)
         .disabled(isDisabled)
         .blur(radius: isDisabled ? 1.0 : 0.0)
-#endif
+        #endif
         .onHover { hovering in
             withAnimation(AppAnimations.easeQuick) {
                 isHovered = hovering

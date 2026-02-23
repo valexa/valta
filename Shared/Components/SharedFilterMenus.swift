@@ -121,3 +121,47 @@ struct OutcomeFilterMenu: View {
     }
     .padding()
 }
+
+// MARK: - Shared Filter Bar
+
+struct SharedFilterBar: ToolbarContent {
+    @Bindable var filterState: ActivityFilterState
+
+    var body: some ToolbarContent {
+        ToolbarItemGroup(placement: .navigation) {
+            Picker("", selection: $filterState.showOnlyMine) {
+                Text("All").tag(false)
+                Text("Mine").tag(true)
+            }
+            .pickerStyle(.segmented)
+            .frame(width: 100)
+        }
+
+        ToolbarItem(placement: .automatic) {
+            StatusFilterMenu(selection: $filterState.statusFilter)
+        }
+
+        ToolbarItem(placement: .automatic) {
+            PriorityFilterMenu(selection: $filterState.priorityFilter)
+        }
+
+        ToolbarItem(placement: .automatic) {
+            OutcomeFilterMenu(selection: $filterState.outcomeFilter)
+        }
+
+        ToolbarItem(placement: .automatic) {
+            if filterState.hasActiveFilters {
+                Button(action: {
+                    withAnimation {
+                        filterState.reset()
+                    }
+                }) {
+                    Image(symbol: AppSymbols.xmarkCircleFill)
+                        .foregroundColor(.secondary)
+                }
+            } else {
+                Spacer()
+            }
+        }
+    }
+}

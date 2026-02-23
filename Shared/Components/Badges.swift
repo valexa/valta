@@ -38,10 +38,10 @@ struct StatusBadge: View {
     var body: some View {
         HStack(spacing: AppSpacing.xxs) {
             Image(symbol: status.icon)
-            .font(AppFont.caption)
+                .font(AppFont.caption)
 
             Text(status.rawValue)
-            .font(compact ? AppFont.badgeCompact : AppFont.badge)
+                .font(compact ? AppFont.badgeCompact : AppFont.badge)
         }
         .foregroundColor(displayColor)
         .padding(.horizontal, compact ? AppSpacing.xs : AppSpacing.sm)
@@ -65,10 +65,10 @@ struct OutcomeBadge: View {
     var body: some View {
         HStack(spacing: AppSpacing.xxs) {
             Image(symbol: outcome.icon)
-            .font(AppFont.caption)
+                .font(AppFont.caption)
 
             Text(outcome.rawValue)
-            .font(AppFont.badge)
+                .font(AppFont.badge)
         }
         .foregroundColor(color)
         .padding(.horizontal, AppSpacing.sm)

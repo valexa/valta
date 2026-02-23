@@ -104,7 +104,7 @@ Theme protocol and dependency injection for colors following SOLID principles.
 - `color(for outcome:)` - Get color for ActivityOutcome
 - Action colors: `destructive`, `success`, `warning`
 - UI colors: `avatar`, `shadow`, `statTotal`
-- Gradients: `avatarGradient`, `successGradient`
+- Gradients: `successGradient`
 
 **`DefaultTheme`** - Concrete implementation using AppColors
 
@@ -247,6 +247,24 @@ Handles activity mutations following Command pattern.
 
 > **Note:** Services are injectable and testable via `now` closure. ManagerAppState delegates to services.
 
+#### OutcomeProjectionService.swift
+Statistical projection engine for activity outcome forecasting.
+
+**Data Structures:**
+- `OutcomeProjection` - Projection result with probabilities for ahead/jit/overrun, sample size, confidence
+- `ProjectionConfidence` - Confidence levels: noData, veryLow, low, medium, high
+- `MemberPerformanceSummary` - Member stats with performance score and projections per priority
+
+**Service Methods:**
+- `generateProjections(activities:members:)` - Generate projections for all team members
+- `predict(for:priority:from:)` - Get projection for specific member and priority
+
+**Performance Scoring:**
+- Ahead = 100 points, JIT = 70 points, Overrun = 30 points
+- Score = weighted average of member's completed activities
+
+> **Note:** Uses statistical analysis (not Core ML) due to limited training data. Planned upgrade to Core ML after 6 months of data.
+
 ### SharedComponents.swift
 Reusable UI components used throughout both apps:
 
@@ -331,12 +349,24 @@ Reusable UI components used throughout both apps:
 - Uses Swift Charts with custom color scales for outcomes
 - Empty states when no data available
 
+#### ProjectionsTab.swift
+- **Member Performance Cards**: Ranked by performance score (0-100)
+  - Avatar, name, completed count, performance score badge
+  - Overall distribution chart (Swift Charts bar chart)
+  - Outcome legend with percentages
+- **Priority Projection Grid**: 4-column grid showing predicted outcome per priority (P0-P3)
+  - Predicted outcome icon and label
+  - Confidence rating based on sample size
+  - Sample size indicator (n=X)
+- **Data Warning Banner**: Shown when <10 completed activities
+- Uses `OutcomeProjectionService` for statistical projections
+
 ---
 
 ## Team Member App (`valta/`)
 
 ### Features
-- **Three tabs**: My Activities, Team, and Log (per app header comment)
+- **Four tabs**: My Activities, Team, Timeline, and Log (per updated app structure)
 - **Onboarding**: Select identity from team member list
 - **Activity management**: Start activities, request completion
 - **Team visibility**: View all team activities
@@ -362,6 +392,13 @@ Reusable UI components used throughout both apps:
 - Grouped by team member with `MemberAvatar` and expandable sections
 - Search and filter by completed activities
 - Visual indicator for current user's activities
+
+#### TimelineTab.swift
+- **Horizontally scrollable timeline** showing team activity intensity per week.
+- **Fall-back date logic**: Priority given to completion date, then start date, then creation date.
+- **Center-aligned**: View remains centered on large screens when data is sparse.
+- **Infinity Height**: Sections expand to use all available vertical space.
+- **Outcome Popovers**: Interactive bubbles showing activity details with outcome-specific color coding (Ahead=Green, JIT=Blue, Overrun=Red).
 
 #### LogTab.swift
 - Timeline view of activity events
@@ -451,6 +488,7 @@ Reusable UI components used throughout both apps:
 ✅ Start activities (changes status from pending to running)
 ✅ Request completion with outcome selection
 ✅ View all team activities
+✅ Timeline view with weekly activity intensity and outcome tracking
 ✅ Activity log with history
 
 ---

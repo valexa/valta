@@ -91,6 +91,16 @@ struct ManagerActivityRow: View {
                             .help("Complete Activity")
                         }
 
+                        if activity.status == .running {
+                            Button(action: { appState.pauseActivity(activity) }) {
+                                Image(symbol: AppSymbols.pause)
+                                    .font(AppFont.bodyStandardSemibold)
+                            }
+                            .buttonStyle(.glass)
+                            .foregroundColor(AppColors.warning)
+                            .help("Pause Activity")
+                        }
+
                         Button(action: { appState.cancelActivity(activity) }) {
                             Image(symbol: AppSymbols.xmark)
                                 .font(AppFont.bodyStandardSemibold)

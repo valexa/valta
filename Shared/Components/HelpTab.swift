@@ -19,8 +19,8 @@ struct HelpTab: View {
         ScrollView {
             VStack(alignment: .center) {
                 Text("Activity Lifecycle")
-                .font(AppFont.headerLarge)
-                .padding(.top, AppSpacing.md)
+                    .font(AppFont.headerLarge)
+                    .padding(.top, AppSpacing.md)
 
                 // Main lifecycle diagram
                 LifecycleDiagram()
@@ -50,8 +50,8 @@ struct LifecycleDiagram: View {
                 ActorBadge(actor: "Manager", icon: "person.badge.key.fill")
 
                 Button("Create", role: .confirm) {}
-                .buttonStyle(.glass)
-                .tint(AppColors.statusTeamMemberPending.opacity(0.25))
+                    .buttonStyle(.glass)
+                    .tint(AppColors.statusTeamMemberPending.opacity(0.25))
 
                 ActionArrow(label: "creates activity")
 

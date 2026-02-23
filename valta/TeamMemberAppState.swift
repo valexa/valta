@@ -185,6 +185,7 @@ final class TeamMemberAppState: BaseAppState, ActivityDataProviding {
 enum TeamMemberTab: Hashable {
     case activities
     case team
+    case timeline
     case log
     case help
 }

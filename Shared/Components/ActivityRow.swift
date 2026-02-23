@@ -116,7 +116,7 @@ struct ActivityRow: View {
     /// Check if there are any actions that can be shown
     private var hasAvailableActions: Bool {
         (activity.status == .teamMemberPending && onStart != nil) ||
-        (activity.status == .running && onComplete != nil)
+            (activity.status == .running && onComplete != nil)
     }
 
     @ViewBuilder

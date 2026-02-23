@@ -18,6 +18,7 @@ The workspace for team members to manage their assigned activities.
 - **Request Completion** - Submit completion requests with automatic outcome assessment
 - **Team Visibility** - See what everyone on the team is working on
 - **Activity Log** - Browse history of all activity events
+- **Timeline** - Weekly visualization of team activity intensity
 - **Dock Badge** - App icon shows count of pending activities awaiting start
 
 **Tabs:**
@@ -25,6 +26,7 @@ The workspace for team members to manage their assigned activities.
 |-----|-------------|
 | My Activities | Personal activity queue with pending, running, and completed sections |
 | Team | All team activities grouped by member |
+| Timeline | Weekly activity intensity with completion/start date tracking |
 | Log | Timeline of activity events with status, priority, and outcome filters |
 
 
@@ -178,3 +180,9 @@ These are available as slash commands and should be automatically loaded when re
 ## License
 
 See [LICENSE](LICENSE) file.
+
+## Project Tech Characteristics
+
+- **Firestore APN**: Uses Firestore for efficient FCM token management to facilitate reliable Apple Push Notifications.
+- **Firebase Storage**: Implements a dual-layered persistence strategy using CSV files for robust activity data storage.
+- **Firebase Cloud Functions**: Orchestrates server-side logic for automatic outcome assessment and completion request flows.
