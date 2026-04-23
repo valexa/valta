@@ -1,5 +1,7 @@
 {
   "projects": {
     "default": "valta-a397c"
-  }
+  },
+  "targets": {},
+  "etags": {}
 }

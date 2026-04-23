@@ -19,5 +19,13 @@
   "firestore": {
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
+  },
+  "auth": {
+    "providers": {
+      "googleSignIn": {
+        "oAuthBrandDisplayName": "vladalexa.com",
+        "supportEmail": "valexa@gmail.com"
+      }
+    }
   }
 }
