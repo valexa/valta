@@ -14,7 +14,6 @@ import FirebaseMessaging
 import Firebase
 import FirebaseFirestore
 import Sparkle
-import MPLemons
 
 class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDelegate {
 
