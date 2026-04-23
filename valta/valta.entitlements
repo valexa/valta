@@ -14,5 +14,10 @@
 	<array>
 		<string>$(AppIdentifierPrefix)com.valexa.valta</string>
 	</array>
+	<key>com.apple.security.temporary-exception.mach-lookup.global-name</key>
+	<array>
+		<string>com.valexa.valta-spks</string>
+		<string>com.valexa.valta-spki</string>
+	</array>
 </dict>
 </plist>
