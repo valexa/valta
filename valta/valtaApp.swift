@@ -5,7 +5,6 @@
 //
 
 import SwiftUI
-import MPLemons
 
 @main
 struct valtaApp: App {
