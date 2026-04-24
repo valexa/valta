@@ -9,6 +9,7 @@
 //
 
 import Foundation
+import Firebase
 import FirebaseAuth
 import FirebaseFunctions
 
@@ -25,9 +26,15 @@ protocol AuthChecking {
 // MARK: - Default Implementations
 
 struct FirebaseFunctionProvider: CloudFunctionProvider {
-    private let functions = Functions.functions()
+    private var functions: Functions? {
+        guard FirebaseApp.app() != nil else { return nil }
+        return Functions.functions()
+    }
 
     func call(name: String, data: [String: Any]) async throws -> Any {
+        guard let functions = functions else {
+            throw NotificationError.cloudFunctionError("Firebase not initialized")
+        }
         let result = try await functions.httpsCallable(name).call(data)
         return result.data
     }
@@ -35,7 +42,8 @@ struct FirebaseFunctionProvider: CloudFunctionProvider {
 
 struct FirebaseAuthChecker: AuthChecking {
     var isAuthenticated: Bool {
-        Auth.auth().currentUser != nil
+        guard FirebaseApp.app() != nil else { return false }
+        return Auth.auth().currentUser != nil
     }
 }
 

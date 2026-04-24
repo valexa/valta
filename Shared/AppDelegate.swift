@@ -18,14 +18,15 @@ import Sparkle
 class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        UserDefaults.standard.set(-1, forKey: "AppleAccentColor")
-
         // Setup notification center delegate
         UNUserNotificationCenter.current().delegate = self
 
-        // Init Firebase
-        UserDefaults.standard.register(defaults: ["NSApplicationCrashOnExceptions": true])
-        FirebaseApp.configure()
+        // Init Firebase via Orchestrator — must be in applicationDidFinishLaunching, not in App.init().
+        // This ensures the readiness flag is set for the UI.
+        AppOrchestrator.shared.configureFirebase()
+        
+        // Setup services after Firebase is ready
+        NotificationService.shared.setup()
 
         // Initialize Sparkle
         SparkleUpdateManager.shared.start()
@@ -50,6 +51,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
     // MARK: - Remote Notification Registration
 
     func application(_ application: NSApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        // Guard against early registration before Firebase is ready
+        guard FirebaseApp.app() != nil else {
+            print("⏳ AppDelegate: Delaying APNS token registration until Firebase is ready")
+            return
+        }
+
         #if DEBUG
         Messaging.messaging().setAPNSToken(deviceToken, type: .sandbox)
         #else
@@ -152,6 +159,10 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         // Setup notification center delegate
         UNUserNotificationCenter.current().delegate = self
 
+        // Init Firebase via Orchestrator
+        AppOrchestrator.shared.configureFirebase()
+        NotificationService.shared.setup()
+
         return true
     }
 
@@ -159,6 +170,13 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
 
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         print("✅ Registered for remote notifications")
+        
+        // Guard against early registration before Firebase is ready
+        guard FirebaseApp.app() != nil else {
+            print("⏳ AppDelegate (iOS): Delaying APNS token registration until Firebase is ready")
+            return
+        }
+
         #if DEBUG
         Messaging.messaging().setAPNSToken(deviceToken, type: .sandbox)
         #else

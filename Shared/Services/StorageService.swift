@@ -10,6 +10,7 @@
 //
 
 import Foundation
+import Firebase
 import FirebaseStorage
 import Observation
 
@@ -24,16 +25,23 @@ protocol StorageProvider {
 // MARK: - Firebase Implementation
 
 struct FirebaseStorageProvider: StorageProvider {
-    private var storage: Storage {
-        Storage.storage()
+    private var storage: Storage? {
+        guard FirebaseApp.app() != nil else { return nil }
+        return Storage.storage()
     }
 
     func downloadData(path: String, maxSize: Int64) async throws -> Data {
+        guard let storage = storage else {
+            throw URLError(.cancelled)
+        }
         let ref = storage.reference().child(path)
         return try await ref.data(maxSize: maxSize)
     }
 
     func uploadData(path: String, data: Data, metadata: [String: String]?) async throws {
+        guard let storage = storage else {
+            throw URLError(.cancelled)
+        }
         let ref = storage.reference().child(path)
         let storageMetadata = StorageMetadata()
         if let contentType = metadata?["contentType"] {
@@ -46,6 +54,9 @@ struct FirebaseStorageProvider: StorageProvider {
     }
 
     func fetchMetadata(path: String) async throws -> Date {
+        guard let storage = storage else {
+            throw URLError(.cancelled)
+        }
         let ref = storage.reference().child(path)
         let metadata = try await ref.getMetadata()
         return metadata.updated ?? metadata.timeCreated ?? Date()

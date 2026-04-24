@@ -8,6 +8,7 @@
 //
 
 import Foundation
+import Firebase
 import FirebaseAuth
 import Observation
 
@@ -37,6 +38,12 @@ final class AuthService: AuthProviding {
     }
 
     func signInAnonymously() async throws {
+        // Guard against early access before Firebase is configured
+        guard FirebaseApp.app() != nil else {
+            print("❌ AuthService: Firebase not initialized. Aborting sign-in.")
+            return
+        }
+
         // Check if already signed in
         if let user = Auth.auth().currentUser {
             self.currentUser = user

@@ -11,7 +11,7 @@
 import Foundation
 import UserNotifications
 import FirebaseMessaging
-import FirebaseAuth
+import Firebase
 import FirebaseFirestore
 import Observation
 
@@ -38,6 +38,15 @@ final class NotificationService: NSObject {
 
     private override init() {
         super.init()
+    }
+
+    /// Sets up the notification service.
+    /// MUST be called after FirebaseApp.configure()
+    func setup() {
+        guard FirebaseApp.app() != nil else {
+            print("⚠️ NotificationService: Skipping setup - Firebase not ready")
+            return
+        }
         // Setup FCM token delegate
         Messaging.messaging().delegate = self
     }
@@ -96,10 +105,12 @@ final class NotificationService: NSObject {
     /// Includes retry logic for when APNS token is not yet available
     func retrieveFCMToken() async {
         // Prevent concurrent retrieval attempts
-        guard !isRetrievingToken else {
-            print("⏭️ FCM token retrieval already in progress, skipping duplicate call")
+        // Guard against early access
+        guard FirebaseApp.app() != nil else {
+            print("❌ NotificationService: Firebase not initialized. Aborting token retrieval.")
             return
         }
+
         isRetrievingToken = true
         defer { isRetrievingToken = false }
 
@@ -163,6 +174,7 @@ final class NotificationService: NSObject {
 
     /// Subscribes to team-specific notification topics
     func subscribeToTeamNotifications(teamId: String) {
+        guard FirebaseApp.app() != nil else { return }
         Messaging.messaging().subscribe(toTopic: "team_\(teamId)") { error in
             if let error = error {
                 print("Error subscribing to team topic: \(error.localizedDescription)")
@@ -174,6 +186,7 @@ final class NotificationService: NSObject {
 
     /// Unsubscribes from team-specific notification topics
     func unsubscribeFromTeamNotifications(teamId: String) {
+        guard FirebaseApp.app() != nil else { return }
         Messaging.messaging().unsubscribe(fromTopic: "team_\(teamId)") { error in
             if let error = error {
                 print("Error unsubscribing from team topic: \(error.localizedDescription)")
@@ -248,22 +261,34 @@ import UIKit
 /// Helper class for Firestore operations (FCM Tokens only)
 class FirestoreService {
     static let shared = FirestoreService()
-    private let db: Firestore
-
-    private init() {
+    
+    private var _db: Firestore?
+    private var db: Firestore? {
+        if let existing = _db { return existing }
+        
+        guard FirebaseApp.app() != nil else {
+            print("❌ FirestoreService: Firebase not initialized. Cannot create Firestore instance.")
+            return nil
+        }
+        
         let settings = FirestoreSettings()
         // Use in-memory cache instead of persistent disk cache.
         // This avoids file system permission issues and ensures fresh data on each app launch.
         // FCM token data is small and quickly fetched, so persistent caching is unnecessary.
         settings.cacheSettings = MemoryCacheSettings()
+        
         let firestore = Firestore.firestore()
         firestore.settings = settings
-        self.db = firestore
+        _db = firestore
+        return firestore
     }
+
+    private init() {}
 
     // MARK: - FCM Tokens
 
     func saveFCMToken(_ token: String, for userId: String) async throws {
+        guard let db = db else { return }
         let tokenData: [String: Any] = [
             "token": token,
             "updatedAt": FieldValue.serverTimestamp(),
@@ -273,20 +298,24 @@ class FirestoreService {
     }
 
     func deleteFCMToken(for userId: String) async throws {
+        guard let db = db else { return }
         try await db.collection("fcmTokens").document(userId).delete()
     }
 
     func getFCMToken(for userId: String) async throws -> String? {
+        guard let db = db else { return nil }
         let snapshot = try await db.collection("fcmTokens").document(userId).getDocument()
         return snapshot.data()?["token"] as? String
     }
 
     func updateMemberName(_ name: String, for userId: String) async throws {
+        guard let db = db else { return }
         try await db.collection("fcmTokens").document(userId).setData(["memberName": name], merge: true)
     }
 
     /// Returns all document IDs (member emails) from the fcmTokens collection
     func getAllFCMTokenEmails() async throws -> [String] {
+        guard let db = db else { return [] }
         let snapshot = try await db.collection("fcmTokens").getDocuments()
         return snapshot.documents.map { $0.documentID }
     }
